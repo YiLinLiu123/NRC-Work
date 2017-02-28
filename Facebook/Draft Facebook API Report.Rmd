@@ -1,0 +1,773 @@
+---
+title: "Draft Facebook API Report"
+author: "paul"
+date: "February 16, 2017"
+output: 
+    html_document:
+        toc: true
+        toc_depth: 4
+---
+
+#__Next Steps:__
+1:  Replace the Tokens to a test user (DONE)
+2:  Think about how to extract personal information:
+    +   compare just in general 
+    +   After your friend have accepted permissions to this facebook applications.
+3:  Think about segmenting searches
+    +   What parameters are avaiable for each of the functions
+    +   How would you go about sepcifiying geographical location
+    +   How would you track user information 
+    +   __Probably will have to figure out how to parse the returned list__
+
+
+#__Notes/Questions:__
+*   The entire process of extracting information can be simplified using `httr:GET()` and`httr: content(raw_URL_cotent,as="parsed")` The benefit of using Rfacebook, is that is provides clear documentation and organizes the output to data frames for direct data processing. Although the fields and information you can request is greatly reduced. 
+    +   for example: the _callAPI_ method handles the different _GET_ parameters for different types of tokens. This function can be used to request any number of fields/edges. However a list is returned. In order to format the returned data into an organized data frame requires some manual coding.
+
+
+#__Summary of Findings__:
+*   The application can not extract personnal information without permissions. 
+    +   given a particular user ID, i have only managed to extract the username and the corresponding user Id.
+
+*   Public information such as posts, comments can be accessed.
+
+
+
+#__Introduction to Facebook Graph API__
+*   The offical documentation is provided [here](https://developers.facebook.com/docs/graph-api)
+
+##__Quick Introduction:__
+*   The structure of the API is in the form of a "social graph":
+    +   __nodes:__ points of access to information. Nodes are "things" like User, page, group, comment etc.
+    +   __edges:__ the connections between nodes. Like a page's photo, or a photo's comment.
+    +   __fields:__ information about nodes. Ex: names of a user, birthday etc.
+
+
+*   Facebook api handles requests using stand _http_ methods, such as __GET, POST__. 
+    +   Each object/node has an _id_ which is used to to access that specific node. 
+    +   You also require an access token to request information. 
+        +   For a short lived token (2 hours), you can request one via the [Facebook API graph explorer]() by registering an developer account. 
+        +   For a long lived authorization token. You can register an app and use the corresponding inforatmion. More details later on. 
+        
+    +   Example of a request: 
+    ```GET graph.facebook.com /{node-id}/{edge-name}?fields = {first-level fields}{Second-level fields}```
+
+*   When you make a request, you normally get all the possible results. In order to gain access to more information, refer to [Using-graph-api](https://developers.facebook.com/docs/graph-api/using-graph-api) and look for the section titled: "pagniation"
+    +   The _Rfacebook_ package abstracts away from this step, but for more flexibility, the pagniation information is also returned as part of the __GET__ request.
+        +   Note: the returned "next" and "before" pagniations are URLs which can be directly used in another __GET__ request.
+
+
+##__Rate Limit:__
+*   [Rate Limit](https://developers.facebook.com/docs/graph-api/advanced/rate-limiting)
+*   Two main types of rate limits:
+    +   Application-Level Rate Limiting
+    +   Page-Level Rate Limiting
+*   [Automated Data Collection Terms](https://www.facebook.com/apps/site_scraping_tos_terms.php?hc_location=ufi)
+    
+
+
+### __Page-Level Rate Limiting:__
+*   These apply to calls made using a page access token. 
+    +   app will recieve error code _32_ if limits are hit.
+    
+*   Limits imposed on each page rather than the app. Rate limiting tool on facebook provides information regarding page rate limits.
+*   A total call of 4800 calls per daily engaged user per 24 hours. If page has 100 daily users, then 480,000 calls can be made on behalf of the page in 24-hour period. 
+The total calls is 480,000, not limited to each app. One app could make 480,000 requests.
+*   Any subsequent calls once the limit has been hit will result in errors being thrown. 
+
+
+
+### __Application-Level Rate Limiting:__
+*   Restricted to application acess token.
+*   Each application have a limit of 200 requests per hour for each user that uses the application.
+
+
+```{r libraries,message =F}
+    ##Loading Libraries needed for the rest of the report:
+
+    library(jsonlite)
+    library(knitr)
+    library(Rfacebook)
+    knitr::opts_chunk$set(error=T,warning=TRUE)
+
+    rm(list = ls())
+```
+
+
+
+
+
+#__Experimenting With Facebook Graph API Using Graph Explorer__
+*   [The Facebook Graph Explorer](https://developers.facebook.com/tools/explorer) is a convenient tool developed by Facebook that allows the user to easily explore the facebook API.
+*   This section outlines some of the results I noticed while playing around with the facebook API. I used my own personnal facebook to register as a developer.
+
+
+## __Exploring the "user" rootNode:__
+
+*   the _/me_ ID is a special user id which indicates the local developer who is using the graph API Explorer. 
+*   __The return type of any request seems to be in JSON format__
+*   Trying to extract basic information about __"me"__   
+    +   the API version used is _v2.8_
+    +   The access token generated is set to include all permissions. The information I obtained is shown below: 
+```{r,echo=F}
+    # The following is just to illustrate the information I recieved: 
+    API_Explorer_Parameters = c("/me")
+    API_Response = jsonlite::toJSON(data.frame(name = "Paul Liu", id = "10207154569334139"))
+    fromJSON(API_Response)
+    rm(list = ls())
+```
+*   if only _/me_ is typed in, the information returned depends on the security setting of the individual user.
+
+*   ___Attempt to see if I can get Ids of my friends and get their friend list:___
+    +   1   I used the edge _friendlists_ to extract a list of my friend's user IDs 
+        +   ` GET graph.facebook.com/me/friendlists`
+    +   2   I then selected a random User ID and tried to extract further information. 
+    +   3   ___However I am unable to extract further information using those Ids, not even basic information such as names. I am limited by the users who have given me permission to access their data. Thus it would appear that it will be diffcult to extract information via their own user Ids without proper permissions.___
+
+
+1.  __/friends__ edge to extract a list of my friends, a warning message that stated: _"only friends who use the same app are returned"_
+    +   It is important to note 
+
+2.  ___/likes___ edge can extract all the pages that the user likes. The return is a JSON array of different facebook page names and the corresponding page IDs. 
+    +   _Note: The complete list is not shown, to navigate to view more of the listed information, refer to the pagination style on [Using the Graph API](https://developers.facebook.com/docs/graph-api/using-graph-api)_
+    +   With the page IDs, I can gain limited access to the information on the public facebook pages, things like: "current location", "description", "fan_count".
+    +   A more complete list is available at [Facebook API-Page](https://developers.facebook.com/docs/graph-api/reference/page/)
+
+3. the field: ___cover___ returns a URL pointing to the cover photo of the user. 
+
+4.  field: ___group___ returns list of facebook pages that the person is the admin of. 
+
+In general, most information requires proper authorization so that you can access the user's personal information. Thus it would appears accessing the __"User"__ root node is not sufficient for the purposes of data scraping unless you have permisison to acess their information. However, it could be interesting to use a user as a starting point and use edges to get access to other information could be beneficial. 
+
+For a more complete of possible fields/edges related to the __"User"__ root node, refer to the [Facebook API Reference](https://developers.facebook.com/docs/graph-api/reference/user/). 
+
+
+
+##__Exploring the "Page" root node:__
+
+*   [Facebook API Reference - Page](https://developers.facebook.com/docs/graph-api/reference/page)
+
+1.  I started by going to a random facebook page: [Masterchef USA](https://www.facebook.com/masterchefusa/).
+2.  Using the URL of the above page and a __"Get"__ request, I am able to obtain the __pageID: "150316218324753"__ and the __pageName:"Masterchef USA"__
+3. using this ID, I tried to access some of the fields:
+    +   ___"about" field:___ I recieved a string outlining what the page is about. 
+    +   ___"feed" edge:___  returns the newsfeed on the page posted by non-admins.A limit of 100 messages/posts can be returned at a time. Thus if large amounts of data needs to be gathered, requests needs to be made to navigate the paging cursors. 
+        +   With the _ids_ of each posts returned, I can access the individual posts.
+        +   By nesting requests, you can also get the comments to show alongside the main message. `/{page-ID}/feed?fields=comments`
+        +   More information on __Nesting Requests__, refer to the "Nesting Requests" section in [Using API](https://developers.facebook.com/docs/graph-api/using-graph-api)
+    +   __"fan_count"field:__ returns the number likes
+*   it is possible to extract [insights](https://developers.facebook.com/docs/graph-api/reference/insights), which outline statics regarding a page, but a lot of the functions only work with pages owned by the user.
+
+
+
+
+
+### __Exploring "Application" root node:__
+1.  I started off by user the ___/me/achievements___ edge to display some of the games I have played.
+2.  Then I opened the URL of the game in the browser and copied the displayed URL: _"https://apps.facebook.com/texas_holdem/"_
+3.  I posted the URL into a __Get__ request on the explorer
+    +   `Get->/v2.8/https://apps.facebook.com/texas_holdem/`
+4.  The response includes: an object ID, basic descriptions, time of creation was returned. with no possiblity of accessing any further fields (since I do not own the application).
+![API Response using GET on Application URL](Pictures/API_Application_Response.jpg)
+
+
+
+
+
+
+#__Exploring Rfacebook Pacakge:__
+
+##__Basic Information:__ 
+*   [Documentation for Rfacebook](https://cran.r-project.org/web/packages/Rfacebook/Rfacebook.pdf)
+*   [Source Code on Github](https://github.com/pablobarbera/Rfacebook)
+
+```{r}
+# creating a folder under current working directory to store any data. 
+   
+    if(!dir.exists("Rfacebook Exploration"))
+    {
+        dir.create("Rfacebook Exploration")
+    }
+    
+    folder_Path  = "Rfacebook Exploration"
+    
+    rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+
+```
+
+## Creating Test Account:
+
+*   _First name:_ Api-Testing
+*   _Last name:_ nrc
+*   _Email:_  NRC.API.Testing@gmail.com
+*   _Password:_ NRCTesting123456!
+*   _Birthday:_   July 1st 1997
+*   _Gender:_ Males
+
+
+## __Creating Long Lasting Authorization Token With _fbOAuth_ Function:__
+
+*   Normally, a temporary access token normally has a 2 hour expiration time. A long-lived token(OAuth token) can be used for longer access. The following outlines how to obtain a long lived token:
+    +   __The _fbOAuth_ function documentation outlines the steps.
+    +   [Mining Facebook Data Using R & Facebook API!](https://bigdataenthusiast.wordpress.com/2016/03/19/mining-facebook-data-using-r-facebook-api/) also provides steps to creating a long lived token. There is also some examples on functions in _Rfacebook_
+    
+### Steps:   
+1.  Log in into [facebook developer website](https://developers.facebook.com/) and click __"Create App Button"__ on the top right corner. 
+    +   you will need to accept the [Facebook Plateform Policy](https://developers.facebook.com/policy/) and [Facebook privacy policy](https://www.facebook.com/about/privacy/).
+
+2.  I entered a name (NRC dataMining), my email and a random category and hit "create"
+    +   I clicked under _settings_ with my app and I noteded dowm my __app id: 1353820787971442__ and my __app secret:4841ab73f4f68960ebbf37e5705e2610__
+    
+3. Creating the long-lived access token using the _fbOAuth_ method.The following steps are taken from the _Rfacebook documentation_ 
+    +   1.  Run the fbOAuth function with your "App ID" and "App Secret" as arguments. It will
+return a URL, which you will need to paste into the "Website with Facebook login" field in your
+App Settings on Facebook. Once you've done so, press Enter.
+
+    +   2.  After pressing enter, R will try to open a browser window to sign the token. If everything
+works well, you will get a message that says you can return to R. If not, try again in a few minutes
+to make sure your app had its settings updated properly.
+    
+    +  NOTE: To ensure proper functioning of the "getInsights" function-family you will need to specify the exact
+permissions granted to your app. As this is (to our knowledge) currently not possible through the R
+based authentication process, please follow these steps:
+    +   Create App as mentioned above. 
+        +   1.  Open the [Graph API Explorer](https://developers.facebook.com/tools/explorer/)
+        +   2.  Select your app in the upper right corner 
+        +   3.  Click "Get Token"-> "Get Access Token" 
+        +   4.  In the popup navigate to "Extended Permissions" and select "Insights"
+        +   5.  Confirm. 
+            +   Ignore the following warning message ("Submit for Login Review...") and confirm
+again. 
+        +   6.  Go back to R and run fbOAuth with extended_permissions (still) set to FALSE. -> See
+2nd step for possible messages concerning token creation.
+
+```{r}
+
+    app_Id = 1353820787971442
+    app_Secret = "4841ab73f4f68960ebbf37e5705e2610"
+    
+    ## The following shows the code that calls the fbOAuth function and creates the OAuth token, it has been commented once executed and the result is saved in a file called "my_OAuth.txt" Please run the following code in case the file does not exist.
+    
+   # token = fbOAuth(app_id = app_Id,app_secret = app_Secret,extended_permissions = TRUE)
+   # if(!file.exists("My_OAuth"))
+   #  {
+   #      file.create("My_OAuth.txt")
+   #      save(token, file= "My_OAuth.txt")
+   #  }
+
+load("My_OAuth.txt")
+   rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+```
+
+
+
+## __The "CallAPI" function:__ 
+
+*   The "callAPI" function delegates the task of retriving information from the Facebook API to the _GET()_ method in the _httr_ pacakge and uses the _rjson_ package to parse the returned json formated response. 
+ 
+###   __Trying to extract my profile information:__
+```{r}    
+
+##Extracting my personnal information
+my_Data = callAPI("https://graph.facebook.com/me", token)
+## Extracting my ID, this can be passed on as the ids for other functions
+my_id = my_Data$id
+print(my_Data)
+
+##Adding fields to the URL to gain specific information (birthday, age_range)
+#no spaces anywhere within the URL should be included
+my_Specific_Information_Request = "https://graph.facebook.com/me?fields=birthday,age_range"
+my_Specific_Data = callAPI(my_Specific_Information_Request,token)
+print(my_Specific_Data)
+
+## Trying to form nested levels of field requests. Gonna try to extract information regarding the "abouts" of the games I like
+
+my_Games_Request= "https://graph.facebook.com/me?fields=games{about}"
+my_Games = callAPI(my_Games_Request,token)
+```
+
+
+```{r,echo=F}
+   rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+```
+
+###   __Extracting information about a public facebook page:__
+
+```{r}
+##Extracting facebook page basic information. The url of the page is: https://www.facebook.com/harrypottermovie/
+
+    
+    harry_Potter_Request = "https://graph.facebook.com/https://www.facebook.com/harrypottermovie/"
+    Harry_Potter_Page = callAPI(harry_Potter_Request,token=token)
+    print(Harry_Potter_Page)
+    
+    ##Trying to extract other fields as well using the callAPI function
+    harry_Potter_More = paste("https://graph.facebook.com",Harry_Potter_Page$id,"posts?fields=message",sep="/")
+    information = callAPI(harry_Potter_More,token=token)
+    names(information)
+    class(information)
+    length(information$data)
+```
+
+```{r,echo=F}
+    
+  rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+```
+*   __NOTE: the callAPI does not convert the returned information into a dataframe and other easily processed format. It is hard for me to extract the _messages_ information__
+
+###   __Extracting informaiton about a comment to a post__:
+
+```{r, error=TRUE}
+## Extracing information about a post/comment: URL of comment to a post:     https://www.facebook.com/bbcnews/posts/10154388838082217?comment_id=10154388923362217&comment_tracking=%7B%22tn%22%3A%22R0%22%7D
+#     This was obtained by clicking on the "time stamp"  of a facebook post. NOTE: the comment URL also contains the original post URL, which in this case is: https://www.facebook.com/bbcnews/posts/10154388838082217
+    
+    comment_URL = "https://www.facebook.com/bbcnews/posts/10154388838082217?comment_id=10154388923362217&comment_tracking=%7B%22tn%22%3A%22R0%22%7D"
+
+      
+    comment = callAPI(comment_URL,token = token)
+```
+
+```{r,echo = F,message=F}
+   
+ rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+```
+
+*   Notes:
+    +   An error message is returned when _callAPI_ request was made to a URL of a comment to a post. The error stated: __"Error in rjson::fromJSON(rawToChar(url.data$content)): unexpected character '<'"__
+    +   It turns out that the facebook API does not support a direct call to the information about comments via the URL. I attempted it as well on the [facebook Graph API Explorer](https://developers.facebook.com/tools/explorer/). The returned data was information regarding the post itself instead of the comment. 
+
+###__Conclusion:__
+*   the _callAPI_ function allows you to call API using the GET methods using regular Facebook Query format. Its weakness is that it does not organize the information returned. __A potential new addition is to reference the source code to come with a way to better organize the returned JSON files into data frames__
+
+
+
+
+
+##__Exploring _getPage,getPost,getCommentReplies_:__
+
+* ___GOAL: To extract information regarding comments on a public facebook webpage___
+
+### __Developing a function to extract the "ID" of facebook object through using the URL of the object:__
+    +   __Will probably require more testing, I should also note the test cases__
+
+```{r}
+## ONLY VALID for SIMPLE Webaddresses with no id in the URL, ex: www.facebook.com/harrypotter
+
+    FbObjectId = function(object_URL,token)
+    {
+        beginning_Index = 1
+        # Checking the formating of the "object_URL"
+        if(class(object_URL)!= "character"){
+            warning("Object_URL is not a string")
+        }else if( grep(pattern = "(http|https)://www.facebook.com(/.*)*", x=object_URL)!= beginning_Index ) {
+    
+             warning("Invalid URL")
+        }
+        
+        #formating and checking the complete URL request to the facebook Graph API 
+        complete_URL = paste("https://graph.facebook.com",object_URL,sep = "/")
+        #print(complete_URL)
+        
+        #Extracting the ID of the facebook object
+        url_Data = Rfacebook::callAPI(complete_URL,token)
+        url_id = url_Data$id
+        
+        # If the Id is not numeric, something is wrong. 
+        if(length( grep(pattern="www.facebook.com",x=url_id))!=0 ) {
+              warning("Error In Returned ID: Not numeric values. URL likely not supported.")
+        }
+        
+      url_id
+    }
+
+    #   testCase1 = "https://graph.facebook.com/https://www.facebook.com/bbcnews" (fixed a bug, previous used grepl which returned true as long as the regular expression existed in the URL, leads to testCase1 to be recognized as a "Valid URL" )
+```
+
+
+*   Test cases:
+```{r testing_FbObjectId,error=T}
+    
+    ## For URLs that yield no ids, the facebook would return a version of the URL address as the object ID.(just discovered)
+
+    ## A URL of a post on the public facebook page Harry Potter
+    test1 = "https://www.facebook.com/harrypottermovie/photos/a.422515109312.180796.156794164312/10155042492264313"
+    original_Return = "https://www.facebook.com/harrypottermovie/photos/a.422515109312.180796.156794164312/10155042492264313: https://www.facebook.com/harrypottermovie/photos/a.422515109312.180796.156794164312/10155042492264313"
+    new_Return = "Error in FbObjectId(test1, token) : Error In Returned ID: Not numeric values. URL likely not supported."
+    
+    FbObjectId(test1,token)
+    
+    ## A comment on a public page    
+    test2 = "https://www.facebook.com/harrypottermovie/photos/a.422515109312.180796.156794164312/10155042492264313/?type=3&comment_id=10155042702764313&comment_tracking=%7B%22tn%22%3A%22R4%22%7D"
+    FbObjectId(test2,token)
+    
+    ## A URL of a public facebook page
+    test3 = "https://www.facebook.com/harrypottermovie"
+    FbObjectId(test3,token)
+    
+    ## A URL of a person's timeline (not my own)
+    test4 = "https://www.facebook.com/FSXAC"
+    FbObjectId(test4,token)
+```
+    
+
+### __Steps Taken To Extract Comment:__
+
+#### 1.  Get the comments from BBC webpage posts (posts made by BBC) using __manual coding:__
+``` {r}
+#Extracting the BBC webpage ID: (feels like this should be my own function.)
+    
+    facebook_API_URL = "https://graph.facebook.com"
+    BBC_URL = "https://www.facebook.com/bbcnews"
+    
+    BBC_Id = FbObjectId(BBC_URL,token)
+    print(BBC_Id)
+
+#Now I can specify the "Edge" parameter of the Get query through placing "/posts"
+    posts_Query = url <- paste0("https://graph.facebook.com/", BBC_Id, "/posts?fields=from,message,created_time,type,link,story,comments.summary(true)", 
+        ",likes.summary(true),shares")
+    
+    posts= callAPI(posts_Query,token)
+    class(posts$data)
+    
+    # at this stage, I am having trouble "subsetting" this list into more mangeable chunks: IE: have each individual post divided according to individual posts.It is currently outside my knowledge level to further subset this lists of elements. Such the pre-build pacakge is better because it organizes the information into dataframes.
+    
+```
+
+#### 2.  Get the comments using the Rfacebook pacakge()
+
+
+    1:  Starting with getting the post_Ids (mainly post Ids) using _getPage_
+```{r}
+    ## the getPage function returns a matrix, and one of the columns is the "postId"
+    page_Information = getPage(BBC_Id,token)
+    class(page_Information)
+    dim(page_Information)
+    names(page_Information)
+
+    post_Ids = page_Information$id
+```
+
+    2:  Getting information about each post using _getPost_ (mainly interested in comment ids)
+```{r}
+    ## trying to see getPost can be vectorized, it appears to be working through the use of lapply
+
+    ## The return type is a list of posts and each element within this represents the information for     a single post. Each "post" is a list composed of three sections: "post","likes","comments".
+
+    post_Information = lapply(post_Ids,getPost,n=100,token=token)
+    
+    names(post_Information[[2]])
+    
+    print("names from post subsection")
+    names(post_Information[[1]][[1]])
+    
+    print("names from likes subsection")
+    names(post_Information[[1]][[2]])
+    
+    print("names from comment subsection")
+    names(post_Information[[1]][[3]])
+    
+    
+    ### for a single post_Id, the get post function behaves as expected
+    single_Post = getPost(post_Ids[[2]],n=100,token=token)
+    names(single_Post)
+    class(single_Post)
+    head(single_Post[["comments"]]$id)
+```
+    
+    3:  Now that I have obtained a list of comments, I can use the _getCommentReplies_ to further investigate each reply to a comment.
+    
+```{r}   
+    ## I have extracted the list of comments_Id from the post_information 
+    ## the "comments" is a data frame where the column "id" represents the list of comments to the posts and each element within this "id" is another list of comment_ids.
+    ## I have printed out such a comment Id below (note, I had to subset the list twice).
+    comments_Id = lapply(post_Information, function(x){x[["comments"]]$id})
+    comments_Id[[1]][[1]]
+    
+    #Extracting the comment replies to each posts' comments
+    
+    ## The following returns an unexpected error, because the facebook API throughs an error:
+    ## "Unsupported get request. Object with ID '10154406740582217_10154386779424205' does not exist, cannot be loaded due to missing permissions, or does not support this operation.
+
+    single_Comment_Reply = getCommentReplies(comments_Id[[1]][[1]],token=token)
+    
+    single_Comment_Reply2 = getCommentReplies(comments_Id[[1]][[99]],token=token)
+    names(single_Comment_Reply2)
+```
+#### What if the posts are pictures?
+
+*   The information regarding attachments (such as photos and videos) can be accessed using the _attachments_ edge. However the Rfacebook pacakge does not seem to have explitict functions that support the extraction of information regarding attachments. This could be an area of further investigation.
+
+*   One way to extract this information is to use the _callAPI_ method with the _attachments_ edge specified as part of the query. However a method for successfully parsing and re-formating the returned output (list) into an organized data frame becomes the main issue at hand. One idea is to further investigate the source code of the _Rfacebook_ pacakge, especially in the [utils.R package](https://github.com/pablobarbera/Rfacebook/blob/master/Rfacebook/R/utils.R) to see how previous developers have parsed the JSON information into a data frame.
+
+```{r,echo = F}
+   rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+```
+
+## __Exploring _searchGroup & getGroup_ functions:__
+
+* ___GOAL: To extract information regarding a public facebook group: [couponboutique](https://www.facebook.com/groups/couponboutique2/) using the getGroup function___
+
+1:  Suppose the ID is not known, or not certain. _searchGroup()_ can be used to extract the group_Id:
+```{r error=TRUE}
+    group_Name = "The Coupon Boutique"
+    group_Id = searchGroup(group_Name,token=token)
+    print(group_Id)
+     
+```
+
+    +   An attempted solution found on [Stackoverflow](https://github.com/pablobarbera/Rfacebook/issues/7). Try to use _URLencode_ function to encode the name to in URL format.
+
+```{r}
+    group_Name_URL = URLencode("The Coupon Boutique")
+    group_Id2 = searchGroup(group_Name_URL,token=token)
+    class(group_Id2)
+    print(group_Id2)
+```
+
+    +   This solution appears to be working. Upon reading the documentation, it did specifcy that the name needs to be in "URL"
+
+
+2: Extracting information using _getGroups_
+```{r, error=TRUE}
+    start_Time = as.numeric(as.POSIXct("2016-12-01"))
+    id = group_Id2$id[[1]]
+    #I have verified that this id is linked with the URL for the group I have shown at the beginning of this section. 
+    print(id)
+    
+    #NOTE: the "groupId" is different from the "pageId" where the group is posting and hosting. 
+    
+    #NOTE: the default number of posts to return is 25.
+    group_posts = getGroup(id,token=token)
+    class(group_posts)
+    names(group_posts)
+    rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+    
+```
+
+
+
+
+## __Exploring _searchPage_:__
+
+```{r}
+    keyword ="Apples"
+    data = searchPages(keyword,token, n=100)
+    class(data)
+   names(data)
+   tail(data,n=2)
+   rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+
+```
+
+## __Trying _getLikes_:__
+*   ___GOAL:The documentation stated that it could provide information about a user or a page's likes given the id. I want to see if it works with user Ids that have been granted permissions to my application.___
+
+```{r getLikesTest,error = T}
+
+    rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+    user_Id =313298645491893
+    likes = getLikes(user_Id,token=token)
+    rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+
+```
+
+```{r getLikesTest2, error=T}
+    ##trying to see if I can get information about the test account's likes.
+    my_Id = 128648664323056
+    likes = getLikes(my_Id,token=token)
+    rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+```
+
+
+
+##__Exploring _GetUsers_:__
+*   ___GOAL: To see if it is possible to extract information about general users__
+
+```{r exploring GetUsers,error=T}
+    
+    ##List of Ids obtained from a public page's posts' comments.
+    list_Of_Id = c("885385688153798","313298645491893","617647818354222","10202298838257102")
+
+    #user_Info = getUsers(users = list_Of_Id, token=token, private_info = T)
+    
+    ##Example Listed in the documentation:
+    user_Info_Self = getUsers("me",token=token)
+    
+    ##Perhaps the issue is that the private_info parameters needs to be false
+    user_Info3 = getUsers(users=list_Of_Id,token=token)
+   rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+```
+*   __Conclusion:__ It appears that the _getUser_function does not seem to work either. 
+
+## __Methods that could be useful (not yet talked about):__
+*   _getReactions_ which returns total amount of reactions to a post/posts (Sentiment analysis??)
+*   _getUsers_  which retrieves public information about one or more Facebook users.Applicable to pages, if pageIds were entered instead (need to try) 
+
+
+
+
+## __List of Functions that have been limited due to V2.0 of Facebook API:__
+
+*   going to learn how to make tables.[knitr::kable](https://www.rdocumentation.org/packages/knitr/versions/1.15.1/topics/kable)
+
+```{r echo = FALSE,results="asis"}
+
+    functions = c("getCheckins","getFQLS","getFriends","getNetwork","searchFacebook")
+    description = c("deprecated","deprecated","only your friends who uses your application","only applicable to users of your application"
+                    ,"deprecated)")
+    table= data.frame(functions, description)
+    knitr::kable(table,col.names=c("functions","description"))
+```
+
+
+##  __Summary of _Rfacebook_:__
+
+```{r echo=FALSE,results="asis"}
+    
+    advantages = c(
+        "Clear documentation",
+        "High level of Abstraction, so no need to worry about the specifics",
+        "Good variety of functions that can provide data for data mining"
+    )
+    
+    disadvantages = c(
+        "Assumes that the data being searched for exists. If an error is thrown by the Facebook API, the search stops",
+        "Some functions are no longer supported due to upgraded Facebook API",
+        "Limited fields and edges, does not support the extraction of any number of fields and edges"
+    )
+    
+    summary = data.frame(advantages,disadvantages)
+    knitr::kable(summary,col.names = c("Advantages","Disadvantages"))
+ rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+
+
+```
+
+
+
+
+
+
+#Customizing Searches (Geographical Location, Users, Keywords etc)
+
+
+
+
+##__List of Customizable Parameters Within the Rfacebook Package:__
+
+
+### _getPage_:
+*   The bulit in package allows to specifiy the time period to extract information of the particular page by specifiying the since and until parameters(based on time of updates).
+
+*   Does not support parameters that allows filtering of information on a page other then the time stamp of update. 
+
+
+### _getPost_:
+*   Does not have parameters that allows you to filter the output (based on likes, based on geographical location etc) except to have extra information returned. 
+
+*   The return is a list with 3 components: _posts, likes and comments_. 
+    +   _post:_
+        +   author, creation date, id, count of like , comments and shares. 
+    +   _likes:_
+        +   name of all users' facebook ID that liked the post.
+    +   _comments:_
+        +   message, creation time, id, author. 
+
+###   _searchPage_:
+*   returns location information (city names, coordinates) on webpages if it is made available to the public. 
+*   Also returns "category" information if available, which can be helpful to filter information.
+
+
+##    _Location:_
+___GOAL: To try and explore what the facebook api offer regarding extracting location information.___
+
+
+###   Exploring Facebook API for Nodes that Contain Location Information:
+####    _Albums:_
+*   Contains a _location_ field. It is the "The textual location of the album." __Note, for general data collection, only public albums can be accessed with any access token.__
+*   The documentation is [here](https://developers.facebook.com/docs/graph-api/reference/v2.8/album/)
+*   I tried it on the [Masterchef Timeline Album](https://www.facebook.com/pg/Masterchef/photos/?tab=album&album_id=148022941877464)
+        +   the _location_ field returned no information on the facebook graph explorer.
+        +   the album id is marked in the URL.`album_id=148022941877464`.
+*   Often the _location_ field returns null.
+
+####    _Comments:_
+*   Does not provide a location field. 
+*   [Comments Documentation](https://developers.facebook.com/docs/graph-api/reference/v2.8/comment/)
+
+
+####    _Events:_
+*   [Events Documentation](https://developers.facebook.com/docs/graph-api/reference/event/)
+*   Provides a _place_ field which outlines the location of the event. 
+*   Only public events 
+*   Example:
+    +   URL: `https://www.facebook.com/events/175802919572863/`. 
+    +   Event Id: `175802919572863`
+    
+![Return from Facebook API Explorer](Pictures/Event_Place.jpg)
+
+
+####    _Pages:_
+*   _Pages_ have a _location_ field. This field is automatically returned, if available, as part of the _Rfacebook's searchPage_ function.
+
+
+
+####    _Posts:_
+*   Might have location assoicated with the post under the _place_ field. 
+*   [Page Documentation](https://developers.facebook.com/docs/graph-api/reference/v2.8/post/)
+*   The URL for the post is: `https://www.facebook.com/DonaldTrump/photos/a.488852220724.393301.153080620724/10158714687065725/?type=3&comment_id=10158714702225725&comment_tracking=%7B%22tn%22%3A%22R0%22%7D`.
+    +   The Post Id is part of URL. The id is: `10158714687065725`.
+*   The _getPost_ function in Rfacebook does not provide the _place_ information.
+    
+![Post API Explorer Return](Pictures/Post_Place.jpg)
+
+####    _Photos:_
+*   Also has a _place_ field to indicate any location information.
+*   [Photos Documentation](https://developers.facebook.com/docs/graph-api/reference/photo/)
+
+
+## Custom Parser
+___GOAL: to be able to parse the returned JSON formatted array for any aribitary request__
+
+### Trying to understand the Returned Parsed information:
+```{r }
+ rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
+    post_Id = "10158714687065725"
+    
+## Specifying that the field I want is the place field
+    request = paste("https://graph.facebook.com/",post_Id,"?fields=place",sep="")
+    content = callAPI(url=request, token=token)
+    ###content$place$name
+    
+## General information
+    request2 = paste("https://graph.facebook.com/",post_Id,"?fields=place,picture,link",sep="")
+    content2 = callAPI(url=request2, token=token)
+    ###content2
+
+#For simple requests, it would appear appear that the return format is nicely denoted and seperated via "$" Want to seperate into a column of information. 
+    
+    unlisted = unlist(content2,use.names=T,recursive=F)
+    length(unlisted)
+    unlisted
+    
+# Appears that the unlisted function automatically splits the elements into a list
+```
+
+
+### Experimenting with JSONlite
+
+```{r}
+    
+    orignal = jsonlite::toJSON(content2)
+    orignal
+    simplifed = jsonlite::fromJSON(orignal,simplifyDataFrame = T)
+    length(simplifed)
+```
+
+
+### Making Function:
+
+```{r}
+    
+
+```
