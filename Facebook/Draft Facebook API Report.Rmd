@@ -241,6 +241,8 @@ again.
         +   6.  Go back to R and run fbOAuth with extended_permissions (still) set to FALSE. -> See
 2nd step for possible messages concerning token creation.
 
+![Extended Permissions](Pictures/extended_Permissions.jpg)
+
 ```{r}
 
     app_Id = 1353820787971442
@@ -407,6 +409,7 @@ my_Games = callAPI(my_Games_Request,token)
     ## A URL of a person's timeline (not my own)
     test4 = "https://www.facebook.com/FSXAC"
     FbObjectId(test4,token)
+     rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
 ```
     
 
@@ -439,7 +442,7 @@ my_Games = callAPI(my_Games_Request,token)
     1:  Starting with getting the post_Ids (mainly post Ids) using _getPage_
 ```{r}
     ## the getPage function returns a matrix, and one of the columns is the "postId"
-    page_Information = getPage(BBC_Id,token)
+    page_Information = getPage(BBC_Id,token,n=2)
     class(page_Information)
     dim(page_Information)
     names(page_Information)
@@ -457,14 +460,14 @@ my_Games = callAPI(my_Games_Request,token)
     
     names(post_Information[[2]])
     
-    print("names from post subsection")
-    names(post_Information[[1]][[1]])
-    
-    print("names from likes subsection")
-    names(post_Information[[1]][[2]])
-    
-    print("names from comment subsection")
-    names(post_Information[[1]][[3]])
+    # print("names from post subsection")
+    # names(post_Information[[1]][[1]])
+    # 
+    # print("names from likes subsection")
+    # names(post_Information[[1]][[2]])
+    # 
+    # print("names from comment subsection")
+    # names(post_Information[[1]][[3]])
     
     
     ### for a single post_Id, the get post function behaves as expected
@@ -472,25 +475,34 @@ my_Games = callAPI(my_Games_Request,token)
     names(single_Post)
     class(single_Post)
     head(single_Post[["comments"]]$id)
+     
 ```
     
     3:  Now that I have obtained a list of comments, I can use the _getCommentReplies_ to further investigate each reply to a comment.
     
-```{r}   
-    ## I have extracted the list of comments_Id from the post_information 
+```{r error=T }   
+
+## Somehow the following was deprecated. Not sure why
+
+
+    ## I have extracted the list of comments_Id from the post_information
     ## the "comments" is a data frame where the column "id" represents the list of comments to the posts and each element within this "id" is another list of comment_ids.
     ## I have printed out such a comment Id below (note, I had to subset the list twice).
-    comments_Id = lapply(post_Information, function(x){x[["comments"]]$id})
-    comments_Id[[1]][[1]]
+
+
+    comments = unlist( lapply(post_Information, function(x) {x["comments"]}), recursive = F)
+    comments_Id = unlist(comments[[1]]["id"])
     
+
     #Extracting the comment replies to each posts' comments
-    
+
     ## The following returns an unexpected error, because the facebook API throughs an error:
     ## "Unsupported get request. Object with ID '10154406740582217_10154386779424205' does not exist, cannot be loaded due to missing permissions, or does not support this operation.
 
-    single_Comment_Reply = getCommentReplies(comments_Id[[1]][[1]],token=token)
-    
-    single_Comment_Reply2 = getCommentReplies(comments_Id[[1]][[99]],token=token)
+    #The following reported facebook error
+    #single_Comment_Reply = getCommentReplies(comments_Id[[1]][[1]],token=token)
+
+    single_Comment_Reply2 = getCommentReplies(comments_Id[[1]],token=token)
     names(single_Comment_Reply2)
 ```
 #### What if the posts are pictures?
@@ -509,7 +521,7 @@ my_Games = callAPI(my_Games_Request,token)
 
 1:  Suppose the ID is not known, or not certain. _searchGroup()_ can be used to extract the group_Id:
 ```{r error=TRUE}
-    group_Name = "The Coupon Boutique"
+    group_Name = URLencode("The Coupon Boutique")
     group_Id = searchGroup(group_Name,token=token)
     print(group_Id)
      
@@ -562,22 +574,33 @@ my_Games = callAPI(my_Games_Request,token)
 ## __Trying _getLikes_:__
 *   ___GOAL:The documentation stated that it could provide information about a user or a page's likes given the id. I want to see if it works with user Ids that have been granted permissions to my application.___
 
-```{r getLikesTest,error = T}
+```{r getLikesTest,error = T,message=T}
 
     rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
     user_Id =313298645491893
-    likes = getLikes(user_Id,token=token)
+    
+    # The following produces facebook error message:
+    #likes = getLikes(user_Id,token=token)
+    
     rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
 
 ```
+*   Result, a random user who has been given permission to your application will result a facbeook error. 
 
 ```{r getLikesTest2, error=T}
     ##trying to see if I can get information about the test account's likes.
+    ## It would appear that this function is not useable for my own personnal account. It also returns a facebook error. So this means 
     my_Id = 128648664323056
-    likes = getLikes(my_Id,token=token)
+    # likes = getLikes(my_Id,token=token)
     rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
 ```
 
+```{r}
+    page_Id = 156794164312
+    page_Likes = getLikes(page_Id,token=token)
+    
+    ##This works as it should.
+```
 
 
 ##__Exploring _GetUsers_:__
@@ -594,7 +617,7 @@ my_Games = callAPI(my_Games_Request,token)
     user_Info_Self = getUsers("me",token=token)
     
     ##Perhaps the issue is that the private_info parameters needs to be false
-    user_Info3 = getUsers(users=list_Of_Id,token=token)
+    # user_Info3 = getUsers(users=list_Of_Id,token=token)
    rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
 ```
 *   __Conclusion:__ It appears that the _getUser_function does not seem to work either. 
@@ -762,12 +785,123 @@ ___GOAL: to be able to parse the returned JSON formatted array for any aribitary
     orignal
     simplifed = jsonlite::fromJSON(orignal,simplifyDataFrame = T)
     length(simplifed)
+    class(simplifed)
+    
+    ##Does not return the expected data frame
 ```
 
+### Experimenting with tidyJSON
 
+*  [Tutorial](https://cran.r-project.org/web/packages/tidyjson/vignettes/introduction-to-tidyjson.html
+```{r}
+    library(tidyjson)
+    library(dplyr)
+
+    ## Converting the list into a dataframe
+    #y=as.tbl_json(toString(content2))
+    
+    
+    ##Trying to re-use fromJSON
+    x=jsonlite::fromJSON(jsonlite::toJSON(content2[[2]]),simplifyVector = F)
+    class(x)
+    
+    ## In general, it would appear you would have to parse into a dataframe by ourself. The reason why jsonlite returns a list is due to the multiple levels of nesting for the location field. 
+
+```
 ### Making Function:
 
 ```{r}
+    # Purpose: To extract the field information and divide return into a seperated list where each element correspondes to the first level fields' information. 
+
+    ExtractList = function(query,token)
+    {
+        unlist(
+            callAPI(url=query,token=token),
+            recursive = F,
+            use.names = T
+        )
+    }
+
+
+#finding the minimum number of rows
+    MinRow=function(list)
+    {
+        min_Row= min( as.numeric(lapply(list,function(x) length(x)) ) )
+    }
     
+    
+    #Purpose: To format the list into a rough Data Frame:
+    #Assumptions: The nested elements are in the format of a list
+  
+    RoughDF = function(list){
+    ## will just get the first level down
+        data_Frame <-data.frame()
+         
+         if(length(list)==1)
+        {
+            data_Frame<-data.frame(list)
+        }else if(length(list)==0 || is.null(list))
+        {
+            data_Frame=data.frame()
+        }else if(length(list)>=2)
+        {
+             ##organizing first level into a matrix
+            data_Frame = cbind(list[names(list)[1]], list[names(list)[2]] )
+            
+            if(length(list)>2)
+            {
+                for( i in 3:length(list) )x
+                {
+                    data_Frame = cbind(data_Frame,list[names(list)[i]])
+                
+                }
+                colnames(data_Frame)= names(list)
+            
+            
+                # ## initiating recursion to get the other levels parsed
+                # for(i in names(list))
+                # {
+                # 
+                #     if( class(list[i]) =="list" )
+                #     {
+                #         data_Frame[,i]=RoughDF( unlist(recursive = F, list[i]) )
+                #     }
+                # 
+                # }
+            }
+            
+        }
+      
+       data_Frame
+       
+       ## I have managaged to get the first level working. However problems would arrive if there are more than 1 row. It becomes hard to parse. THe idea behind this is that everythign will be stored as matrixes until the information is made available. 
+       
+    }
+```
+*  After experimentation, I realized that this method would not work. This is because you cannot append dataframes that are of a different dimension to existing data frames. The main idea behind this function was to first seperate the query information based on each fields, combine the fields into a data frame of 1 row and then append a data frame containing the details of the fields into the 1 row data frame. 
+* However due to the fact that each field contains arbitary number of details. 
+    +  EX: `data field: id, message, etc VS id field: id`. Organizing the details into a data frame produces different dimensions of data frames compared to the original.
+    
+### Making Function Part 2 (Potential Solution):
+*   The solution is to seperate the query by fields and store the each field as an element as a list.
+*   Then the information assoicated with each field will be stored as a dataFrame.
+    +   To address the potential problem of any arbitary levels of the data, a limit will be set such that after 3 levels of depth, any more subsequent details will be stored as a list. 
+    +   We will use _NA_ to indicate missing information.
+
+
+```{r}
+#Testing:
+ rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId","ExtractList","RoughDF","MinRow") ))
+
+    page_Url= "https://www.facebook.com/harrypottermovie/"
+    page_Id = FbObjectId(object_URL=page_Url, token=token)
+    query = paste("https://graph.facebook.com/",page_Id,"?fields=posts.limit(10)",sep="")
+    
+    return = ExtractList(query,token)
+    
+    ## Calculating required data frame row number, should be the minimum length
+    y=data.frame( seq(1:MinRow(return)) )
+    names(y)= "test"
+    rough_DF = RoughDF(return)
 
 ```
