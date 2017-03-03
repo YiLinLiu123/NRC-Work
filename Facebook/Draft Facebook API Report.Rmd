@@ -882,16 +882,14 @@ ___GOAL: to be able to parse the returned JSON formatted array for any aribitary
 * However due to the fact that each field contains arbitary number of details. 
     +  EX: `data field: id, message, etc VS id field: id`. Organizing the details into a data frame produces different dimensions of data frames compared to the original.
     
-### Making Function Part 2 (Potential Solution):
-*   The solution is to seperate the query by fields and store the each field as an element as a list.
-*   Then the information assoicated with each field will be stored as a dataFrame.
-    +   To address the potential problem of any arbitary levels of the data, a limit will be set such that after 3 levels of depth, any more subsequent details will be stored as a list. 
-    +   We will use _NA_ to indicate missing information.
+![Processing Query Chart](Pictures/Processing_Query.jpg)
+
+*   I have concluded to give up on this process. 
 
 
 ```{r}
 #Testing:
- rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId","ExtractList","RoughDF","MinRow") ))
+ rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId","ExtractList","RoughDF","MinRow","UnravelList") ))
 
     page_Url= "https://www.facebook.com/harrypottermovie/"
     page_Id = FbObjectId(object_URL=page_Url, token=token)
@@ -902,6 +900,209 @@ ___GOAL: to be able to parse the returned JSON formatted array for any aribitary
     ## Calculating required data frame row number, should be the minimum length
     y=data.frame( seq(1:MinRow(return)) )
     names(y)= "test"
-    rough_DF = RoughDF(return)
+
+```
+
+#__Search API:__
+*   Allows public searches on public information. 
+*   [Search Documentation](https://developers.facebook.com/docs/graph-api/using-graph-api/v2.0#search)
+*   __This API provides the same functionality as facebook's Search Bar.__
+*   Query example: `https:graph.facebook.com/search?q={string to search for}&type={type name}&{fields of type}`
+*   Allows:
+    +   [users](https://developers.facebook.com/docs/graph-api/reference/user/)
+    +   [page](https://developers.facebook.com/docs/graph-api/reference/page/)
+    +   [place-topic](https://developers.facebook.com/docs/graph-api/reference/place-topic/)
+    +   [event](https://developers.facebook.com/docs/graph-api/reference/event/)
+    +   [group](https://developers.facebook.com/docs/graph-api/reference/v2.8/group/)
+    +   [places](https://developers.facebook.com/docs/graph-api/reference/place/)
+    
+
+#   __Batched Requests__
+*   A way to simplify multiple requests and combine requests into one http requests.
+*   [Batched Request Documentation](https://developers.facebook.com/docs/graph-api/making-multiple-requests)
+*   __Still Have To Look Into__
+
+
+
+
+#__Mini Project1:__
+
+## Description:
+1:  To scrape the facebook API for all web pages that contains a series of keywords. Up to 300 pages, then graph distribution based on location.
+
+
+
+## Code:
+
+```{r}
+
+     rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId","ExtractList","RoughDF","MinRow","UnravelList") ))
+
+    #Loading libraries
+    library(Rfacebook)
+
+
+    # setting up authorization token
+    ## refer to above section for details
+    load("My_OAuth.txt")
+
+
+    #Gathering webpage Locations:
+    keywords = c("flower")
+    
+    ##Note: there might not be the specified number of pages that will be returned as the result.
+    webpage_Id= searchPages(keywords, token=token,n=2000)
+    
+    webpage_Location = webpage_Id$country
+    webpage_Location[is.na(webpage_Location)] = "Not Provided"
+    
+    #presenting information:
+    frequency_table = table(webpage_Location)
+    par(cex=0.75)
+    barplot(sort(frequency_table),las=2,main="Webpages that Mention Flowers by Country",ylab="Frequency",space=c(0.5))
+    
+    ## Replotting graphs to exclude the top 2 Countries. 
+    frequency_table1= frequency_table
+    for(i in 1:4)
+    {
+        frequency_table1= subset(frequency_table1, frequency_table1 < max(frequency_table1))
+    }
+    barplot(sort(frequency_table1),las=2,main="Webpages that Mention Flowers by Country Excluding Top 4",ylab="Frequency",space=c(0.5))
+    
+
+```
+
+# __MiniProject 2__:
+
+## Description:
+___To find the place most posted on a travel website from 500 posts. The main point is trying to illustrate the structure of the response and how I went about organizing it into a dataframe. __
+*   note: sometimes there is no location tag, could consider searching for it in the text of the comment.
+*   note: The _getPost_ function 
+
+
+## Code:
+
+### Gathering RawData:
+```{r}
+    website_URL = "https://www.facebook.com/thousandamazingplacesonearth/"
+    
+    website_Id = FbObjectId(website_URL, token)
+    
+    #Making the query. I first tested this out on the Graph API Explorer
+    ## Note: The limit for number of posts 
+    query= paste("https://graph.facebook.com",website_Id, "?fields=posts.limit(100){place}",sep="/")
+    
+    #Pulling RawData
+    raw_Data= callAPI(query,token)
+    
+    
+    #Formatting the raw Data:
+    ## I looked at the returned format again at the graph API explorer.
+```
+
+
+### Planning:
+
+
+####Query Response Structure:
+![](Pictures/MiniProject2_QueryResponseStructure.jpg)
+
+
+
+
+#### Paging Response Structure:
+![](Pictures/MiniProject2_PagingDataStructure.jpg)
+
+
+
+#### Desired Organized Output Structure:
+![](Pictures/MiniProject2_DesiredOutput.jpg)
+
+
+
+#### Desired Final DF:
+![](Pictures/MiniProject2_DesiredDataFrameStructure.jpg)
+
+
+### Pesudocode For Parsing: 
+__NOTE: This process is based on similar procedure as the source code of the Rfacebook Package. I do not take credit for the idea behind this parsing. I merely studied the structure of the Rfacebook source code and tried to adapts some parts of it. The functions that I studied are the [getPage](https://github.com/pablobarbera/Rfacebook/blob/master/Rfacebook/R/getPage.R) function, the _pageToDF & UnlistWithNA_ functions under the  [Utils.R package](https://github.com/pablobarbera/Rfacebook/blob/master/Rfacebook/R/utils.R)
+
+I strongly recommand to use the function _UnlistWithNA_(unavailable for direct access under the Rfacebook Package) under the [Utils.R package](https://github.com/pablobarbera/Rfacebook/blob/master/Rfacebook/R/utils.R) for parsing of queries not supported by the methods of the Rfacebook. _UnlistWithNa_ function includes pre-made parsing function for many possible fields. Furthermore, the general structure of this function can be adapted to parse JSON formatted information.__
+
+1:  Navigate to the _data_ section of the _roughData_, through format like: `rough_Data$posts$data`.
+
+2:  At the _data_ section, the underlying strcture is a list of elements. Each element containing it's own list of information.
+    +   In order to subset the list, the general structure of `list[element][[field_Lvl_1]][[field_Lvl_2]]`. for example. The _place_ field has a nested field of _location_. To extract it from the _data_ section. Something like: `data[[1]][["place"]][["location"]]` can be used.
+    +   The general format can be applied to multiple levels of nesting if the data is organized correctly. 
+    
+3:  Since some of the _posts_ won't have _location_ (or other fields), when trying to access them, a _NULL_ element will be the response. It will be needed to be replaced with _NA_. The end result is a list where each element corresponds to the post information.
+
+4:  By going through step 2 & 3 for all the desired fields (note they should all be the same length), should be in their own lists. Then a data frame can be merged from these lists. __The key is that the fields to be coerced into a data frame all need to be the same length. Which is one of the main diffculties for coming up with an automated program to format data frames.__
+
+5:  The _paging_ URLs are already in the correct query format and just need to be extracted using _callAPI_ function. Repeat steps 1 to 4 for the data that is pointed to by the _paging_ information.  
+
+6:  Finally merge all the data frames of the initial query and the subsequent paging matrix can be merged into one big matrix to be the final output.
+
+### Parsing and Processing information.
+PERHAPS ANOTHER WAY TO GO ABOUT IT using tidyJSON
+
+```{r}
+    num_Posts = 500
+    post_Limit = 100
+    
+    #step 1 of described procedure: navigating to list of posts data.
+    query_Data = raw_Data$posts$data
+    
+    #step 2 and 3; extracting information and formatting. This process is mostly done by the UnlistWithNA function. I will be producing a simple replicatation of it. 
+    
+    UnlistWithNA_Copy = function(field, list)
+    {
+        ## produce a list of NAs. 
+        complete = rep(NA, length(list))
+        
+        if(length(field)==1)
+        {
+            ## produces a vector indicating which indices are null. This is used              to indicate which values to replace with NA.
+            notNull = unlist(lapply(list,function(x) !is.null(x[[field]])))
+            
+            ## Combine the information within the fields as well as the NA_List to             form the complete and correct list regarding the field.
+            ##NOTE: differences between [[]] and []
+            
+            complete[notNull]= unlist(lapply(list, function(x) x[[field]]))
+            
+        }else if(length(field)==2)
+        {
+            ##similar logic as the above.
+            notNull=unlist(lapply(list,function(x){!is.null(x[[field[1]]][[field[2]]])}))
+            complete[notNull]= lapply(list,function(x) x[[field[1]]][[field[2]]]) 
+            
+        }
+        if (length(field)==3){
+		notnulls <- unlist(lapply(lst, function(x) 
+			tryCatch(!is.null(x[[field[1]]][[field[2]]][[field[3]]]),error=function(e) FALSE)))
+		complete <- rep(NA, length(lst))
+		complete[notnulls] <- unlist(lapply(lst[notnulls], function(x) X = x[[field[1]]][[field[2]]][[field[3]]]))
+        }
+        
+        
+        if (length(field)==4 & field[1]=="to"){
+		notnulls <- unlist(lapply(lst, function(x) 
+			tryCatch(!is.null(x[[field[1]]][[field[2]]][[as.numeric(field[3])]][[field[4]]]), 
+				error=function(e) FALSE)))
+		vect <- rep(NA, length(lst))
+		vect[notnulls] <- unlist(lapply(lst[notnulls], function(x) x[[field[1]]][[field[2]]][[as.numeric(field[3])]][[field[4]]]))
+	}
+        
+        
+        return(complete)
+        
+    }
+    
+    
+    
+    # Constructing lists corresponding to the desired fields using the above function.
+    
+    post_Id = UnlistWithNA_Copy(c("id"), query_Data)
+    place_Id = UnlistWithNA_Copy(c("place","id"),query_Data)
 
 ```
