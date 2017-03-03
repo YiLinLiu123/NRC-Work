@@ -1,0 +1,55 @@
+---
+title: "Facebook Draft Report V2"
+author: "paul"
+date: "March 3, 2017"
+output: 
+    html_document:
+        toc: true
+        toc_depth: 4
+---
+******
+
+# Quick Introduction To Facebook API:
+
+******
+
+### Structure:
+
+The Facebook API is in the form of a _graph_:
+```{r echo=FALSE,results="asis"}
+    
+    structure = c(
+        "nodes",
+        "edges",
+        "fields"
+    )
+    
+    description = c(
+        "Objects of facebook API. Nodes are \"things\" like Users, page, Group, comments etc. Each node has its' own ID that which is used to access it via the Graph API.",
+        "The connections that leads from one node to another. For example: the cover photo of a user, the comments and posts on a user's timeline. Edges are identified by a name",
+        "Information about the nodes, like the names, Id, birthday etc of a user.Fields are identified by a name."
+    )
+    
+    summary = data.frame(structure,description)
+    knitr::kable(summary,col.names = c("Structure","Description"))
+    
+    rm(list=ls())
+
+```
+
+
+******
+
+### Request Format:
+*   The _API request_ is in the format of a standard HTTP request. Methods like __GET,POST, DELETE, etc__ can be used to retrieve and modify information on facebook through the API. 
+*   Format of a request:  `GET graph.facebook.com /{node-id}/{edge-name}?fields = {first-level fields}{Second-level fields}`.
+*  
+
+******
+
+### Pagnation:
+
+
+# Further Information:
+*   [facebook API Overview](https://developers.facebook.com/docs/graph-api/overview)
+*   [Facebook API Request Information](https://developers.facebook.com/docs/graph-api/using-graph-api)

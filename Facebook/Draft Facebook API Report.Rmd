@@ -1062,47 +1062,161 @@ PERHAPS ANOTHER WAY TO GO ABOUT IT using tidyJSON
         
         if(length(field)==1)
         {
-            ## produces a vector indicating which indices are null. This is used              to indicate which values to replace with NA.
+            ## produces a vector indicating which indices are null. This is used to indicate which values to replace with NA.
             notNull = unlist(lapply(list,function(x) !is.null(x[[field]])))
             
-            ## Combine the information within the fields as well as the NA_List to             form the complete and correct list regarding the field.
+            ## Combine the information within the fields as well as the NA_List to form the complete and correct list regarding the                 field.
             ##NOTE: differences between [[]] and []
             
-            complete[notNull]= unlist(lapply(list, function(x) x[[field]]))
+            complete[notNull]= unlist(lapply(list, function(x) x=x[[field]]))
             
-        }else if(length(field)==2)
+        }
+        
+        if(length(field)==2)
         {
             ##similar logic as the above.
-            notNull=unlist(lapply(list,function(x){!is.null(x[[field[1]]][[field[2]]])}))
-            complete[notNull]= lapply(list,function(x) x[[field[1]]][[field[2]]]) 
+            notNull=unlist(lapply(list,function(x)!is.null(x[[field[1]]][[field[2]]])))
+            complete[notNull]= unlist(lapply(list,function(x) x=x[[field[1]]][[field[2]]]))
             
         }
         if (length(field)==3){
-		notnulls <- unlist(lapply(lst, function(x) 
-			tryCatch(!is.null(x[[field[1]]][[field[2]]][[field[3]]]),error=function(e) FALSE)))
-		complete <- rep(NA, length(lst))
-		complete[notnulls] <- unlist(lapply(lst[notnulls], function(x) X = x[[field[1]]][[field[2]]][[field[3]]]))
+		    notnull <- unlist(lapply(list, function(x) 
+		    !is.null(x[[field[1]]][[field[2]]][[field[3]]])))
+		
+		    complete[notnull] <- unlist(lapply(list[notnull], function(x) x = x[[field[1]]][[field[2]]][[field[3]]] ))
         }
         
-        
-        if (length(field)==4 & field[1]=="to"){
-		notnulls <- unlist(lapply(lst, function(x) 
-			tryCatch(!is.null(x[[field[1]]][[field[2]]][[as.numeric(field[3])]][[field[4]]]), 
-				error=function(e) FALSE)))
-		vect <- rep(NA, length(lst))
-		vect[notnulls] <- unlist(lapply(lst[notnulls], function(x) x[[field[1]]][[field[2]]][[as.numeric(field[3])]][[field[4]]]))
-	}
-        
-        
-        return(complete)
+         ##Note: for lists, data.frame corece it as a row. While for vectors, each vector is a column. Thus in order for each field to be its own column, the list needs to be a vector
+        return(as.vector(complete))
         
     }
     
     
+    # Takes a list of data and extract the fields of interest and organize into a data frame.
+    OrganizingDF = function(list)
+    {
+        # Constructing lists corresponding to the desired fields using the above          function.
     
-    # Constructing lists corresponding to the desired fields using the above function.
+        ##Similar Warning appeared that stated multiple of replacement length when         the package is called orginally.
+        
+            post_Id=UnlistWithNA_Copy(c("id"), list)
+            place_Id=UnlistWithNA_Copy(c("place","id"),list)
+            place_Name=UnlistWithNA_Copy(c("place","name"),list)
+            city=UnlistWithNA_Copy(c("place","location","city"),list)
+            country=UnlistWithNA_Copy(c("place","location","country"),list)
+            latitude=UnlistWithNA_Copy(c("place","location","latitude"),list)
+            longitude=UnlistWithNA_Copy(c("place","location","longitude"),list)
+            street=UnlistWithNA_Copy(c("place","location","street"),list)
+            
+        df = data.frame(post_Id, place_Id,place_Name,city,country,latitude,longitude,street,stringsAsFactors = F)
+        
+        return(df)
+    }
     
-    post_Id = UnlistWithNA_Copy(c("id"), query_Data)
-    place_Id = UnlistWithNA_Copy(c("place","id"),query_Data)
+    
+    
+   
+```
+
+```{r}
+     ##Continuing on with Data Processing: The query information is organized into a data frame.
+    
+    query_DF = OrganizingDF(query_Data)
+   
+    
+    #Moving on to organizing the paging informations. This can be done in a loop. 
+        ## Depending the number of posts desired, a custom function can be made to calculate how many posts are requestd.
+        ## By modifying the ".limit" modifier in the paging cursor, you can specify the number of posts to return. In this case, the maximum is 100, so i will need to loop through the cursors 4 times. 
+    
+    ## The format of the paging token location varies: For the initial query, it is under raw_Data$posts$paging[["next"]]. For any subsequent navigations, it is under raw_Data$paging[["next"]]
+
+
+    paging_Url = raw_Data$posts$paging[["next"]]
+    for(i in (1:4))
+    {
+        #formatting paging_Url to extract 100 posts (post limit) eaech time
+        paging_Url = gsub(pattern="place&limit=25", replacement = paste("place&limit=",post_Limit,sep=""), x=paging_Url)
+        
+        
+        # Extracting the raw_Data from the new paging_Url
+        raw_Data_Paging = callAPI(paging_Url,token)
+        
+        #formatting the data using the above functions into a data frame.
+        response_DF = OrganizingDF(raw_Data_Paging$data)
+        
+        #Formating final output:
+        query_DF = rbind(query_DF,response_DF)
+        
+        #Navigating to next paging cursor
+        paging_Url = raw_Data_Paging$paging[["next"]]
+    }
+    
+    dim(query_DF)
+    
+    
+    # Now the matrix is organized, time to get it into the final output format.
+    
+    final_Out = list(query_DF, raw_Data_Paging$paging)
+```
+  
+
+```{r}
+
+    #finding most visited location:
+
+    location = query_DF$country
+    max_Location = max(location, na.rm=T)
+    print(max_Location)
+
+```
+
+
+#   Miniproject 3:
+
+##  Goal:
+Exploring the tidy JSON package to see if I can use it to parse the returned JSON nested list. 
+
+*   To produce the same Data frame as Miniproject 2 using the tidy JSON, or report as to why that is diffcult to do.
+
+## Library Documenation:
+
+*   [Method Documentation](https://cran.r-project.org/web/packages/tidyjson/tidyjson.pdf)
+*   [tidyJSON Vignette](https://cran.r-project.org/web/packages/tidyjson/vignettes/introduction-to-tidyjson.html)
+
+
+## Code:
+```{r}
+    rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId","ExtractList","RoughDF","MinRow","UnravelList") ))
+
+    #Libraries:
+    library(jsonlite)
+    library(tidyjson)
+
+
+    # Getting JSON object
+    website_URL = "https://www.facebook.com/thousandamazingplacesonearth/"
+    website_Id = FbObjectId(website_URL, token)
+    query= paste("https://graph.facebook.com",website_Id, "?fields=posts.limit(100){place}",sep="/")
+    
+    ##forming a tidy_table
+    data= GET(query,config(token=token))
+    json_String = jsonlite::fromJSON(rawToChar(data$content))
+    json_String2 = jsonlite::toJSON(json_String)
+    
+    
+    tidy_table = as.tbl_json(json_String2)
+ 
+    
+    
+```
+#Testing Rate Limit:
+```{r}
+    library(Rfacebook)
+    x = list()
+    for(i in 1:300)
+    {
+        x[i]=callAPI("https://graph.facebook.com/me",token=token)[[1]]
+        
+    }
 
 ```
