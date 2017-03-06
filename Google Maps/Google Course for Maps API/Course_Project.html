@@ -1,0 +1,59 @@
+<! DOCTYPE html>
+
+	<html>
+	
+	
+		<head>
+	
+	
+			<style>
+				html,
+				
+				body{
+				
+					font-family: Arial, sans-serif;
+					height: 100%
+					maring: 5px;
+					padding: 0;
+				}
+			
+				#map{
+					height: 100%
+				}
+				
+			</style>
+			
+			
+		</head>
+		
+		<body>
+			
+			<script>
+			
+				var map;
+				
+				<!-- java script to load and initialize the map-->
+				function initMap(){
+					//Constructor creats a new map- only cneter and zoom are required
+					map = new google.maps.Map(document.getElementById("map"),{
+						center: {lat:40.7413549, lng: -73.9980244},
+						
+						<!-- zoom shows detail, higher -> detail, can go up to 21-->
+						zoom: 13
+					});
+				}		
+			</script>
+		
+		
+		
+			<!-- loading API-->
+			<!-- the endpoint is "https:maps.googleapis.come", "v=3" is version 3-->
+			<script async defer
+				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGTs-gZCbyP8n0Hvw_VZ76Z6YrST1DNa8
+				&v=3&callback=initMap">
+			</script>
+		
+		
+		</body>
+		
+	</html>

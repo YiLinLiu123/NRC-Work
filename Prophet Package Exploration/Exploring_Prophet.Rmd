@@ -1,0 +1,129 @@
+---
+title: "Prophet_Exploration"
+author: "paul"
+date: "March 6, 2017"
+output: 
+    html_document:
+        toc: yes
+        toc.depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#   References:
+*   [github Source Code](https://github.com/facebookincubator/prophet)
+*   [Quick Start In R](https://facebookincubator.github.io/prophet/docs/quick_start.html#r-api)
+*   [Wikipediatrend Vignette](https://cran.r-project.org/web/packages/wikipediatrend/vignettes/using-wikipediatrend.html)
+    +   used to scrape data from wikipedia pages.
+
+
+#   Notes about this Package:
+*   This package is used to forcast data and is used by facebook to account for seasonal and holiday affects on the data. 
+*   Always take a data frame with 2 columns: 
+    +   _ds:_ a date/datetime column indicating time.
+    +   _y:_ a column for the data to be forcasted. __Must be Numeric Values__
+        +   At least a year worth of data.
+*   Returns a model object that can be processed using _predict_ and _plot_.
+*   The _predict_ function defaults to predicting a linear trend. When trying to log transform the _y_ column, special attention needs to be taken to modify values of _0_.
+
+
+#General Steps:
+1:  Use _prophet_ function to fit the historic data. 
+2:  Use _make_future_dataframe_ function to make dataframe with future dates for forecasting.
+3:  Forcast using _predict_ function with both the historic and future data as parameters. 
+4:  Call _plot_ to plot the forcast (the historic data and the forecast)
+
+
+#   Working Through Tutorial Online: 
+*   ___Goal: Forecasting the time series of daily page views for the Wikipedia page for [Peyton Manning](https://en.wikipedia.org/wiki/Peyton_Manning).____
+
+```{r libraries, include=F}
+    #Libraries:
+    library(prophet);
+    library(dplyr);
+    library(wikipediatrend);
+
+```
+
+
+```{r ScrapingData, echo = F}
+## Have been commented out becasue the file is already saved in the local folder
+
+    # ## Scraping the data of the wikipedia page for 2 years from 2008-01-10 to 2016-01-10.
+    # raw_Data =wikipediatrend:: wp_trend(page="Peyton_Manning",from = "2010-01-10", to="2015-01-10")
+    # 
+    # #saving the data desired for futher processing.
+    # if(!file.exists("PeytonManningData.csv"))
+    # {
+    #     file.create("PeytonManningData.csv")
+    # }
+    #write.table(raw_Data,file="PeytonManningData.csv",sep=",")
+```
+
+```{r reading Data,results="hide"}
+
+    ## Due to limited understanding of statics, all zeros are removed from the data set. 
+
+    df = read.csv("./PeytonManningData.csv")%>% select(date:count)%>% filter(count>0)%>%mutate(count=log(count))
+    
+    ##Beware, The names of the data frame column needs to be ds and y.
+    colnames(df)= c("ds","y")
+
+```
+
+```{r fitting & Predicting data}
+    
+    m=prophet(df)
+    
+    future <- make_future_dataframe(m, periods = 365)
+    tail(future)
+```
+
+
+```{r forecast}
+
+    forecast <- predict(m, future)
+    
+    #yhat contains the predicated information.
+    tail(forecast[c('ds', 'yhat', 'yhat_lower', 'yhat_upper')])
+
+```
+
+```{r generic Plot}
+    plot(m,forecast)
+    
+    ## more detailed plot outlining where the data is broken down into: trend, weekly seasonality, and yearly seasonality
+
+    prophet_plot_components(m, forecast)
+```
+
+
+
+
+
+# Comparing To Actual Data:
+```{r Comparison}
+
+    ## Last 365 data point of forecast. The date for these data is needed to request the corresponding information from wikipedia
+    predicted_Data = tail(forecast[c("ds","yhat","yhat_lower","yhat_upper")],n=365)
+    dates = as.Date(predicted_Data[["ds"]],"%Y/%m/%d")
+    start_Date = tail(forecast[["ds"]],n=365)[[1]]
+    end_Date = tail(forecast[["ds"]],n=365)[[365]]
+    
+    actual_Data = wikipediatrend:: wp_trend(page="Peyton_Manning",from = start_Date, to=end_Date) %>% select(date:count) %>% filter(count>0) %>%mutate(count=log(count))
+    
+
+    
+    # plot(x=actual_Data[["date"]], y=actual_Data[["count"]],xlab="date",ylab="log of visit count",col="blue",main = "Prophet Trained Forcast vs Actual Data",type="l")
+    Hmisc::errbar(x=dates,y=predicted_Data[["yhat"]],yplus=predicted_Data[["yhat_upper"]],yminus = predicted_Data[["yhat_lower"]],lwd=0.1,pch=NA,errbar.col="gray",xlab="date",ylab="log of visit count")
+    title(main="Prophet Predicted Data vs Actual Data")
+    points(x=dates,y=predicted_Data[["yhat"]], col="red",lwd=2)
+    points(x=actual_Data[["date"]], y=actual_Data[["count"]],col="blue")
+    legend("topleft",legend=c("actual data","predicted trend"), col=c("blue","red"),pch=1,cex=0.8)
+    
+    
+    
+    
+```

@@ -1,0 +1,39 @@
+---
+title: "Learning About Google Maps API"
+author: "paul"
+date: "March 6, 2017"
+output: 
+    html_document:
+        toc: true
+        toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Potential R-Packages to Use:
+
+*   [DerekYves/placement](https://www.r-bloggers.com/placement-an-r-package-to-access-the-google-maps-api/)
+    +   [DerekYves/placement github](https://github.com/DerekYves/placement)
+    +   This package seems to be able to nicely format the response from the google API.
+    
+*   [RgoogleMaps](https://cran.r-project.org/web/packages/RgoogleMaps/RgoogleMaps.pdf)
+    +   used to extract map and visualize.
+
+*   [ggmap](https://cran.r-project.org/web/packages/ggmap/ggmap.pdf)
+
+
+
+# Google Maps APIs Course:
+*   [google Maps API Course](https://www.udacity.com/course/google-maps-apis--ud864)
+
+# Exploring Tools:
+*   [google api console](https://console.developers.google.com/iam-admin/projects?pli=1)
+
+## Notes:
+*   You can render your own maps (for websites)
+    +   default
+    +   real life 
+    +   hybrid (default + real life)
+    +   Terrian (terrian information)
