@@ -104,26 +104,37 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Comparing To Actual Data:
-```{r Comparison}
+```{r Comparison, results="hide"}
 
     ## Last 365 data point of forecast. The date for these data is needed to request the corresponding information from wikipedia
     predicted_Data = tail(forecast[c("ds","yhat","yhat_lower","yhat_upper")],n=365)
-    dates = as.Date(predicted_Data[["ds"]],"%Y/%m/%d")
     start_Date = tail(forecast[["ds"]],n=365)[[1]]
     end_Date = tail(forecast[["ds"]],n=365)[[365]]
     
-    actual_Data = wikipediatrend:: wp_trend(page="Peyton_Manning",from = start_Date, to=end_Date) %>% select(date:count) %>% filter(count>0) %>%mutate(count=log(count))
+    # data = wikipediatrend:: wp_trend(page="Peyton_Manning",from = start_Date, to=end_Date)
+    # ##writing data:
+    #  if(!file.exists("actualData.csv"))
+    #  {
+    #      file.create("actualData.csv")
+    #  }
+    # write.table(data, "./actualData.csv",sep=",")
     
-
-    
-    # plot(x=actual_Data[["date"]], y=actual_Data[["count"]],xlab="date",ylab="log of visit count",col="blue",main = "Prophet Trained Forcast vs Actual Data",type="l")
-    Hmisc::errbar(x=dates,y=predicted_Data[["yhat"]],yplus=predicted_Data[["yhat_upper"]],yminus = predicted_Data[["yhat_lower"]],lwd=0.1,pch=NA,errbar.col="gray",xlab="date",ylab="log of visit count")
-    title(main="Prophet Predicted Data vs Actual Data")
-    points(x=dates,y=predicted_Data[["yhat"]], col="red",lwd=2)
-    points(x=actual_Data[["date"]], y=actual_Data[["count"]],col="blue")
-    legend("topleft",legend=c("actual data","predicted trend"), col=c("blue","red"),pch=1,cex=0.8)
-    
-    
-    
+    actual_Data = read.csv("./actualData.csv") %>% select(date:count) %>%filter(count>0)%>%mutate(count=log(count))
     
 ```
+   
+```{r Graphs} 
+    # plot(x=actual_Data[["date"]], y=actual_Data[["count"]],xlab="date",ylab="log of visit count",col="blue",main = "Prophet Trained Forcast vs Actual Data",type="l")
+    Hmisc::errbar(x=predicted_Data[["ds"]],y=predicted_Data[["yhat"]],yplus=predicted_Data[["yhat_upper"]],yminus = predicted_Data[["yhat_lower"]],lwd=0.1,pch=NA,errbar.col="gray",xlab="date",ylab="log of visit count",xaxt="n")
+
+axis.Date(1, x=predicted_Data[["ds"]],format="%Y-%m-%d")
+    points(x=predicted_Data[["ds"]],y=predicted_Data[["yhat"]], col="red")
+    points(x=as.Date(actual_Data[["date"]],format="%Y-%m-%d"),y=actual_Data[["count"]],col="blue")
+    
+    title(main="Prophet Predicted Data vs Actual Data")
+    
+    legend("topleft",legend=c("actual data","predicted trend"), col=c("blue","red"),pch=1,cex=0.8)
+```
+    
+# Facebook Prophet Mathmatics:
+[Facebook Forcasting At Scale](https://facebookincubator.github.io/prophet/static/prophet_paper_20170113.pdf)
