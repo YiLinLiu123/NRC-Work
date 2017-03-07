@@ -2,10 +2,12 @@
 title: "Prophet_Exploration"
 author: "paul"
 date: "March 6, 2017"
-output: 
-    html_document:
-        toc: yes
-        toc.depth: 4
+output:
+  html_document:
+    toc: yes
+    toc.depth: 4
+  pdf_document:
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -21,13 +23,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 #   Notes about this Package:
-*   This package is used to forcast data and is used by facebook to account for seasonal and holiday affects on the data. 
+*   This package is used to forcast data and is used by facebook to account for seasonal 
+    and holiday affects on the data. 
 *   Always take a data frame with 2 columns: 
     +   _ds:_ a date/datetime column indicating time.
     +   _y:_ a column for the data to be forcasted. __Must be Numeric Values__
         +   At least a year worth of data.
 *   Returns a model object that can be processed using _predict_ and _plot_.
-*   The _predict_ function defaults to predicting a linear trend. When trying to log transform the _y_ column, special attention needs to be taken to modify values of _0_.
+*   The _predict_ function defaults to predicting a linear trend. When trying to log transform the _y_ column, 
+    special attention needs to be taken to modify values of _0_.
 
 
 #General Steps:
@@ -52,8 +56,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r ScrapingData, echo = F}
 ## Have been commented out becasue the file is already saved in the local folder
 
-    # ## Scraping the data of the wikipedia page for 2 years from 2008-01-10 to 2016-01-10.
-    # raw_Data =wikipediatrend:: wp_trend(page="Peyton_Manning",from = "2010-01-10", to="2015-01-10")
+    # ## Scraping the data of the wikipedia page for 
+      ## 2 years from 2008-01-10 to 2016-01-10.
+    # raw_Data =wikipediatrend:: wp_trend(page="Peyton_Manning"
+    # ,from = "2010-01-10", to="2015-01-10")
     # 
     # #saving the data desired for futher processing.
     # if(!file.exists("PeytonManningData.csv"))
@@ -67,7 +73,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
     ## Due to limited understanding of statics, all zeros are removed from the data set. 
 
-    df = read.csv("./PeytonManningData.csv")%>% select(date:count)%>% filter(count>0)%>%mutate(count=log(count))
+    df = read.csv("./PeytonManningData.csv")%>% select(date:count)%>% 
+    filter(count>0)%>%mutate(count=log(count))
     
     ##Beware, The names of the data frame column needs to be ds and y.
     colnames(df)= c("ds","y")
@@ -95,7 +102,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r generic Plot}
     plot(m,forecast)
     
-    ## more detailed plot outlining where the data is broken down into: trend, weekly seasonality, and yearly seasonality
+    ## more detailed plot outlining where the data is broken down 
+    ## into: trend, weekly seasonality, and yearly seasonality
 
     prophet_plot_components(m, forecast)
 ```
@@ -107,12 +115,14 @@ knitr::opts_chunk$set(echo = TRUE)
 # Comparing To Actual Data:
 ```{r Comparison, results="hide"}
 
-    ## Last 365 data point of forecast. The date for these data is needed to request the corresponding information from wikipedia
+    ## Last 365 data point of forecast. The date for these data is needed 
+    ## to request the corresponding information from wikipedia
     predicted_Data = tail(forecast[c("ds","yhat","yhat_lower","yhat_upper")],n=365)
     start_Date = tail(forecast[["ds"]],n=365)[[1]]
     end_Date = tail(forecast[["ds"]],n=365)[[365]]
     
-    # data = wikipediatrend:: wp_trend(page="Peyton_Manning",from = start_Date, to=end_Date)
+    # data = wikipediatrend:: wp_trend(page="Peyton_Manning",
+    # from = start_Date, to=end_Date)
     # ##writing data:
     #  if(!file.exists("actualData.csv"))
     #  {
@@ -120,21 +130,28 @@ knitr::opts_chunk$set(echo = TRUE)
     #  }
     # write.table(data, "./actualData.csv",sep=",")
     
-    actual_Data = read.csv("./actualData.csv") %>% select(date:count) %>%filter(count>0)%>%mutate(count=log(count))
+    actual_Data = read.csv("./actualData.csv") %>% select(date:count)%>%
+        filter(count>0)%>%mutate(count=log(count))
     
 ```
    
 ```{r Graphs} 
-    # plot(x=actual_Data[["date"]], y=actual_Data[["count"]],xlab="date",ylab="log of visit count",col="blue",main = "Prophet Trained Forcast vs Actual Data",type="l")
-    Hmisc::errbar(x=predicted_Data[["ds"]],y=predicted_Data[["yhat"]],yplus=predicted_Data[["yhat_upper"]],yminus = predicted_Data[["yhat_lower"]],lwd=0.1,pch=NA,errbar.col="gray",xlab="date",ylab="log of visit count",xaxt="n")
+    # plot(x=actual_Data[["date"]], y=actual_Data[["count"]],xlab="date",
+    # ylab="log of visit count",col="blue",main = "Prophet Trained Forcast 
+    # vs Actual Data",type="l")
+    Hmisc::errbar(x=predicted_Data[["ds"]],y=predicted_Data[["yhat"]],
+                  yplus=predicted_Data[["yhat_upper"]],yminus = predicted_Data[["yhat_lower"]],
+                  lwd=0.1,pch=NA,errbar.col="gray",xlab="date",ylab="log of visit count",xaxt="n")
 
 axis.Date(1, x=predicted_Data[["ds"]],format="%Y-%m-%d")
     points(x=predicted_Data[["ds"]],y=predicted_Data[["yhat"]], col="red")
-    points(x=as.Date(actual_Data[["date"]],format="%Y-%m-%d"),y=actual_Data[["count"]],col="blue")
+    points(x=as.Date(actual_Data[["date"]],format="%Y-%m-%d"),
+           y=actual_Data[["count"]],col="blue")
     
     title(main="Prophet Predicted Data vs Actual Data")
     
-    legend("topleft",legend=c("actual data","predicted trend"), col=c("blue","red"),pch=1,cex=0.8)
+    legend("topleft",legend=c("actual data","predicted trend"), 
+           col=c("blue","red"),pch=1,cex=0.8)
 ```
     
 # Facebook Prophet Mathmatics:
