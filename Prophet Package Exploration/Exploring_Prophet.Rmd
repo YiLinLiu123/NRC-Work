@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 *   [Quick Start In R](https://facebookincubator.github.io/prophet/docs/quick_start.html#r-api)
 *   [Wikipediatrend Vignette](https://cran.r-project.org/web/packages/wikipediatrend/vignettes/using-wikipediatrend.html)
     +   used to scrape data from wikipedia pages.
+*   [Prophet Function Documentation](https://cran.r-project.org/web/packages/prophet/prophet.pdf)
 
 
 #   Notes about this Package:

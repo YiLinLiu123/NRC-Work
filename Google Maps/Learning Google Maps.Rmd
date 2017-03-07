@@ -31,9 +31,58 @@ knitr::opts_chunk$set(echo = TRUE)
 # Exploring Tools:
 *   [google api console](https://console.developers.google.com/iam-admin/projects?pli=1)
 
+
+## Terms:
+*_Viewport:_ contains the recommended viewport for displaying the returned result, specified as two latitude, longitude values defining the southwest and northeast corner of the viewport bounding box. Generally the viewport is used to frame a result when displaying it to a user.
+
+* _Bounds:_ stores the bounding box which can fully contain the returned result. Note that these bounds may not match the recommended viewport. (For example, San Francisco includes the Farallon islands, which are technically part of the city, but probably should not be returned in the viewport)
+    +[more information](https://developers.google.com/maps/documentation/geocoding/intro#Results)
+
+
 ## Notes:
 *   You can render your own maps (for websites)
     +   default
     +   real life 
     +   hybrid (default + real life)
     +   Terrian (terrian information)
+*   You can place markers on the map
+    +   coordinate pairs looks like JSON information.
+*   InfoWindows needs to be called/triggered. Won't appear automatically.
+    +   you can add links, images etc.
+*   Styles:
+    +   map features: land, water, roads.
+    +   elements: parameters of features that can be modified.
+    +   stylers: changing colors etc.
+    +   many online styles.
+*   Street view:
+    +   Know what location you are looking at.
+    +   POint of view (heading: west or east) and (pitch: up or below)
+*   Visulization:
+    +   Library allowing you to plot data onto maps. 
+*   Geometry:
+    +   Library for mapping 3D sphereical to 2D 
+    +   [more information](https://classroom.udacity.com/courses/ud864/lessons/8304370457/concepts/3632a49f-9ce4-45aa-bb1d-859ee9fb1df4)
+*   Geocoding:
+    +   client side: ex: find movie theaters near me
+    +   sever side: already have data and client needs not to do much
+    +   Allows address to lat/lng conversation both ways.
+    +   HTTP request
+    +   Returns:
+        +   _address:_ the broken down components of the address: street, city, postal code, country etc __Components usually have more information.__
+        +   _formatted address:_ nicely formatted address
+        +   _geometry:_ lat/lng coordinates, bounds, viewport, location
+        +   _place_id:_ 
+        +   _  types_
+    +   if u specify a road, then you will get the middle of the road for the location return.
+    +   Any requests for geocode, provided an address and a key, you can get the information.
+    +   _geocoder_ instance allows you to take a location and parse it into a geo-coordinate
+*   Elevation API:
+    +   `/elevation/`
+*   Distance Matrix API:
+    +   travel distance for varying mode of travelling.
+    +   `/distancematrix/`
+        +   _key:_ 
+        +   _origins_
+        +   _destination_
+        +   _mode_
+        +   _avoid_: what types of road to avoid
