@@ -86,3 +86,41 @@ knitr::opts_chunk$set(echo = TRUE)
         +   _destination_
         +   _mode_
         +   _avoid_: what types of road to avoid
+*   Directions API:
+    +   provides directions to get to destination
+    +   returns several waypoints to outline path
+    +   Parameters:
+        + origin+ destination
+    +   You can specify perferences
+    +   Add waypoints (as a stop)
+        +   via: take u by the place
+        +   optimum true: optimize waypoint order for u
+    +   Like all services, a unique object is required to handle it. Also to display on map (directionsrenderer)
+    +   [specifics](https://classroom.udacity.com/courses/ud864/lessons/8306134879/concepts/c525e1a9-876f-43cd-836e-73f5806824ee)
+*   Roads API:
+    +   takes in questionably GPS points and snaps to the road most likely on
+    +   up to 100 points and roads api return similar points to be on a road. Smoothly follows gemotry road.
+    +   You can get speed limit data for road segments.
+    +   ONLY AVAILIABLE TO PERMIUM ACCOUNTs
+*   Places:
+    +   Search for favorite places.(libraries) Theaters etc.
+    +   Place autocomplete
+    +   searchbox allows users to search for points of interest
+    +   for _place details_, need place id
+    +   [cool stuff](https://classroom.udacity.com/courses/ud864/lessons/8306134879/concepts/365ca608-02b0-438d-b375-da52575bea06)
+    *
+*   Timezone API:(web service)
+    +   date/time stamp + coordinate to return the time zone.
+
+
+#   Other Tutorial Material:
+*   [RgoogleMaps](https://www.dropbox.com/sh/w75l0jqx4ir5a5y/AAAiiv5-rDbM1cm8hlBJBPSAa?dl=0)
+*   [RgoogleMaps Intro](http://mirrors.idg.pl/CRAN/web/packages/RgoogleMaps/vignettes/RgoogleMaps-intro.pdf)
+*   [Youtube Working with Google Maps plotting](https://www.youtube.com/watch?v=qSVwTj60di8)
+*   Ties in very closely with spatial data analayses:
+    +   [Introduction Video](https://www.youtube.com/watch?v=hDy0y-H_HRQ)--- 9:20 for a list of pacakges that could be useful
+    +   Needs to be converted to special data frame (spatial data frame)
+    +   2 types of coordinate reference system:
+        +   Geographic Coordinate System (lat, lng): WGS84
+        +   Cartesian/Projected/Planar Coordinate System (x,y)
+    +   _SP_ package is specially useful 

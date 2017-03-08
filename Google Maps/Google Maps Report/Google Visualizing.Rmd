@@ -1,0 +1,12 @@
+---
+title: "Google Visualizing"
+author: "paul"
+date: "March 8, 2017"
+output: html_document:
+        toc: true
+        toc.depth: 4
+---
+
+```{r googleVisualizingSetup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```

@@ -1,0 +1,21 @@
+---
+title: "Google Data Extraction"
+author: "paul"
+date: "March 8, 2017"
+output: html_document:
+        toc: true
+        toc.depth: 4
+---
+
+```{r googleDataSetup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Overview
+*   The [Google Web Services API](https://developers.google.com/maps/web-services/overview) is divided into multiple subsequent APIs each responsible for offering unique features.
+
+*   All API requests can be made using a __HTTP GET__ request.
+    +   Example format: `https:maps.googleapis.com/maps/api/{API Service Name}/{return format: json or xml}/{query}`
+    +   Example request example: 
+        `https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key=YOUR_API_KEY`

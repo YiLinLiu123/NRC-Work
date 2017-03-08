@@ -1,0 +1,38 @@
+---
+title: "Google Maps Report"
+author: "paul"
+date: "March 8, 2017"
+output: 
+    html_document:
+        toc: true
+        toc.depth: 4
+---
+
+```{r mainSetup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+#   Data Extraction from Google API:
+```{r child="Google Data.Rmd"}
+
+```
+
+
+
+
+#   Visualizing:
+```{r child="Google Visualizing.Rmd"}
+
+```
+
+
+
+#   Resources:
+```{r child="Google Resources.Rmd"}
+
+```
+
+
+
