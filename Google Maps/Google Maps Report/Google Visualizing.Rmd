@@ -216,7 +216,7 @@ decodeLine <- function(encoded){
  
 #### Main Example:  
 
-```{r Visualization Example 2 Libraries}
+```{r Visualization Example 2 Libraries, results="hide"}
  # Libraries:
     library(leaflet)
     library(httr)
@@ -306,25 +306,292 @@ decodeLine <- function(encoded){
             popup=popup_Content
         )
     
-    example2_Map
+   
 ```
 
 
 ```{r Visualization Example 2 Places_Of_Interest}
 
-    ## Setting up for URL requests
+    # Setting up for URL requests
     work_Lat = directions_Markers$lat[[1]]
     work_Lng = directions_Markers$lng[[1]]
-    home_Lat = directions_Markers$lat[[1]]
-    home_Lat = directions_Markers$lng[[1]]
+    home_Lat = directions_Markers$lat[[2]]
+    home_Lng = directions_Markers$lng[[2]]
     keyword = "point+of+interest"
-    #circular radius in meters
+    ## circular radius in meters
     radius = 2000
     
-    ##poi stands for points of interest
-    poi_Home_Request = paste(host,"/places/nearbysearch/json",
-        "?location=",work_Lat,",",work_Lng,"&radius=",
+    
+    #function to extract rawData:
+    place_Raw_data = function(lat, lng, keyword, radius, api_Key)
+    {
+        request = paste(host,"/place/nearbysearch/json",
+        "?location=",lat,",",lng,"&radius=",
         radius,"&keyword=",keyword, "&key=",
-        api_Key)
+        api_Key,sep="")
+        
+        raw = jsonlite::fromJSON(content(
+                GET(request),"text"
+            ))
+        
+    }
+    
+    # Getting Raw Data
+    poi_Work_Raw= place_Raw_data(work_Lat, work_Lng,
+                            keyword, radius, api_Key)
+    poi_Home_Raw = place_Raw_data(home_Lat, home_Lng,
+                            keyword, radius, api_Key)
+    
+    # Function to format Raw Data into organized DF:
+    
+    organizePlaceDF= function(raw_Data)
+    {
+        lat_Lng = raw_Data$results$geometry$location
+        names = as.vector(unlist(raw_Data$results$name))
+        icon = as.vector(unlist(raw_Data$results$icon))
+        rating = as.vector(unlist(raw_Data$results$rating))
+        organized_Data = cbind(lat_Lng,rating,icon,names)
+        organized_Data
+    }
     
     
+    # getting DF
+    home_Df = organizePlaceDF(poi_Home_Raw)
+    work_Df = organizePlaceDF(poi_Work_Raw)
+    place_Df = rbind(home_Df,work_Df)
+    
+    #setting up Icons:
+    place_Icons <- icons(
+      iconUrl = place_Df$icon,
+      iconWidth = 20, iconHeight = 20,
+      iconAnchorX = 0, iconAnchorY =0
+    )
+    
+    #setting up label contents:
+    content =list()
+    for(i in 1:length(place_Df$icon))
+    {
+        content_Name= paste("name:",
+            place_Df$names[[i]],"<br>")
+        
+        content_Rating= paste("rating:",
+            place_Df$rating[[i]],"<br>")
+        
+        content[[i]] = 
+            paste(content_Name, content_Rating,
+                  sep="<br>")
+        
+    }
+    
+    
+    # adding the loceations onto the map using google Icons
+    example2_Map = addMarkers(example2_Map, lat=place_Df$lat, 
+                    lng=place_Df$lng,icon=place_Icons,
+                    popup=as.vector(content))
+    
+    
+    
+     example2_Map
+    
+```
+
+
+
+
+
+
+
+
+
+### Example 3: Visualizing Density
+_GOAL: The goal is to map the number of crimes in Alabama  
+as a percentage of population and display it
+on the map.__
+
+
+1:  Downloading and Saving Data:
+```{r Visualitzation Example 3}
+    rm(list = ls())
+    require(httr)
+    require(dplyr)
+    require(leaflet)
+    require(jsonlite)
+
+    url = "https://ucr.fbi.gov/crime-in-the-u.s/2013/crime-in-the-u.s.-2013/tables/table-8/table-8-state-cuts/table_8_offenses_known_to_law_enforcement_alabama_by_city_2013.xls/output.xls"
+    api_Key = "&key=AIzaSyBGTs-gZCbyP8n0Hvw_VZ76Z6YrST1DNa8"
+    host = "https://maps.googleapis.com/maps/api/geocode/json"
+    query = "?address="
+    
+    
+##  Could not figure out why the file can not be opened.
+##  It is manually downloaded and reformated to a 
+##  excel format.
+
+    crime_Raw_Data = read.csv(file = "./USA_Crime_Data.csv",
+                          header=T,stringsAsFactors = F)
+
+    ## Reformatting Df to contain (city,population, total crime number)
+    
+    ## Sorting through NA = 0
+    for(i in names(select(crime_Raw_Data,
+            -(City))))
+    {
+        list = crime_Raw_Data[,i]
+        list = as.numeric(list)
+        list[is.na(list)] = 0
+        crime_Raw_Data[,i] = list
+
+    }
+    
+    numeric_Data = select(
+            crime_Raw_Data,
+            Violent.crime:Arson3
+        )
+    
+    ## new data frame
+    data = cbind(
+        city=crime_Raw_Data$City,
+        fraction=( rowSums(numeric_Data)/
+            as.numeric(crime_Raw_Data$Population))
+    )
+    # rm(list = c("numeric_Data","crime_Raw_Data"))
+    ```
+    
+```{r Visualization Example3: Lat and Lng}
+    ## function to extract lat and long for a list of cities
+    ## in USA
+    ##only the first 50 were plotted, it takes quite a while
+
+    ## to retrieve the data otherwise. 
+
+     length = 50
+     list = data[,"city"][1:length]
+     
+     location_Data = lapply(list,function(x){
+         
+                 x = gsub(pattern=" ", replacement= "+",
+                      x=x)
+                 request = paste(host, query, x,
+                            ",USA",api_Key,sep="")
+                 
+                 raw = jsonlite::fromJSON(
+                     content(GET(request),"text")
+                 )
+                raw$results$geometry$location  
+                
+                ##  The results for 19th element
+                ## "Bear creek" returned multiple
+                ## elements.Dont know why
+        })
+     
+   lat = list()
+   lng = list()
+    
+    ## merging the lat and lng into the data DF
+    for(i in 1:length)
+    {
+        ##just going to ignore the 19th element for now
+           lat[[i]]= location_Data[[i]]$lat
+            lng[[i]]= location_Data[[i]]$lng 
+            
+        if(i==19)
+        {
+            ##Selecting correct lat data
+            string = toString(unlist(
+                location_Data[[i]]$lat
+            ))
+            
+            index = regexpr(
+                pattern=",",
+                text=string
+            )
+            
+            lat[[i]]=as.numeric(
+                substr(
+                    string,1,
+                    as.numeric(index[1])-1
+                )
+            )
+            
+            
+            ##Selecting correct lng data
+            string = toString(unlist(
+                location_Data[[i]]$lng
+            ))
+            
+            index = regexpr(
+                pattern=",",
+                text=string
+            )
+            
+            lng[[i]]=as.numeric(
+                substr(
+                    string,1,
+                    as.numeric(index[1])-1
+                )
+            )
+            
+            
+        }
+    }
+```
+   
+  
+```{r Visualization Example3: organizing Data}  
+    org_Data = cbind(data[1:length,1:2],lat,
+            lng)
+    org_Data = as.data.frame(org_Data)
+   
+     ## Reorganizing data frame to chage class
+    org_Data$fraction = as.numeric(org_Data$fraction)
+    org_Data$lat = as.numeric(org_Data$lat)
+    org_Data$lng = as.numeric(org_Data$lng)
+    
+    
+    ##popup labels:  
+    popup = list()
+    for(i in 1:length(org_Data$fraction)){
+        precentage = paste("Precentage:",
+            signif(org_Data$fraction[[i]],4)*100)    
+        
+        city = paste("City:",org_Data$city[[i]])
+        
+        return = paste(city, precentage,sep="<br>")
+        popup[i] = return
+        
+    }
+    
+    
+    
+   
+    
+```
+
+
+```{r Visualization Example3: Map}
+    ##setting up the Map
+    center_Lat = median(org_Data$lat)
+    center_Lng = median(org_Data$lng)
+    
+    example3_Map = leaflet(data=org_Data) %>% 
+        addProviderTiles("OpenStreetMap.DE")%>%
+        setView(lat=center_Lat,lng=center_Lng,
+                zoom = 8) 
+        
+    
+  
+    
+    
+    ## Adding circle markers proportional to 
+    ## the fraction.
+    radius_Factor = 100000
+    
+     example3_Map = example3_Map %>%
+         addCircles(lng=org_Data$lng,
+             lat=org_Data$lat,
+             popup=popup,
+             radius = org_Data$fraction*radius_Factor)
+    
+    
+        example3_Map  
+```

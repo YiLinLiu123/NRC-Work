@@ -1,0 +1,23 @@
+---
+title: "Instagram_Learning"
+author: "paul"
+date: "March 13, 2017"
+output: html_document:
+    toc: true
+    toc.depth: 5
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#   Test Instagram Account:
+*   _Email:_ nrc.api.testing@gmail.com
+*   _Password:_ NRCTesting123
+
+#   Videos:
+*   [Application](https://www.youtube.com/watch?v=rfhrKWMSFKU)
+    this application allows you to click on the location of a map 
+    and you will fetch a list of photos taken at that location. 
+    
+#   Packages to Explore:

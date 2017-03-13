@@ -147,6 +147,7 @@ $(document).ready(function () {
 <li><a href="#overview-1">Overview:</a></li>
 <li><a href="#leaflet">Leaflet:</a></li>
 <li><a href="#example-2-showing-some-google-map-outputs">Example 2: Showing Some Google Map Outputs:</a></li>
+<li><a href="#example-3-visualizing-density">Example 3: Visualizing Density</a></li>
 </ul></li>
 <li><a href="#resources">Resources:</a></li>
 </ul>
@@ -322,8 +323,8 @@ $(document).ready(function () {
     ## Use tile providers to include custom map types
     mymap = addProviderTiles(mymap,provider=&quot;OpenStreetMap.Mapnik&quot;)
     mymap</code></pre>
-<p><div id="htmlwidget-00ace21534e1c62a65e2" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-00ace21534e1c62a65e2">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap\u003c/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA\u003c/a>"}]},{"method":"addProviderTiles","args":["OpenStreetMap.Mapnik",null,null,{"errorTileUrl":"","noWrap":false,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false}]}]},"evals":[],"jsHooks":[]}</script> * <strong><a href="https://leaflet-extras.github.io/leaflet-providers/preview/">Preview of Other Map Providers</a></strong></p>
+<p><div id="htmlwidget-ff63276bd8cac23c4412" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ff63276bd8cac23c4412">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap\u003c/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA\u003c/a>"}]},{"method":"addProviderTiles","args":["OpenStreetMap.Mapnik",null,null,{"errorTileUrl":"","noWrap":false,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false}]}]},"evals":[],"jsHooks":[]}</script> * <strong><a href="https://leaflet-extras.github.io/leaflet-providers/preview/">Preview of Other Map Providers</a></strong></p>
 <pre class="r"><code>    ## Seting view and adding markers
     
     taj_Mahal_Lat = 27.1750
@@ -335,8 +336,8 @@ $(document).ready(function () {
     mymap = addMarkers(mymap,lng=taj_Mahal_Lng,lat=taj_Mahal_Lat,
                        popup=&quot;Taj Mahal&quot;)
     mymap</code></pre>
-<div id="htmlwidget-96c7d91c2d1384f23c0a" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-96c7d91c2d1384f23c0a">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap\u003c/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA\u003c/a>"}]},{"method":"addProviderTiles","args":["OpenStreetMap.Mapnik",null,null,{"errorTileUrl":"","noWrap":false,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false}]},{"method":"addMarkers","args":[27.175,78.0419,null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},"Taj Mahal",null,null,null,null,null,null]}],"setView":[[27.175,78.0419],15,[]],"limits":{"lat":[27.175,27.175],"lng":[78.0419,78.0419]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-892332f98f577866f6b8" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-892332f98f577866f6b8">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"maxNativeZoom":null,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"continuousWorld":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap\u003c/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA\u003c/a>"}]},{"method":"addProviderTiles","args":["OpenStreetMap.Mapnik",null,null,{"errorTileUrl":"","noWrap":false,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false}]},{"method":"addMarkers","args":[27.175,78.0419,null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},"Taj Mahal",null,null,null,null,null,null]}],"setView":[[27.175,78.0419],15,[]],"limits":{"lat":[27.175,27.175],"lng":[78.0419,78.0419]}},"evals":[],"jsHooks":[]}</script>
 <pre class="r"><code>    rm(list = ls())</code></pre>
 <ul>
 <li><a href="https://cran.r-project.org/web/packages/sp/vignettes/intro_sp.pdf">SP package</a></li>
@@ -550,27 +551,286 @@ decodeLine &lt;- function(encoded){
         addPolylines( lng=route$lon, 
             lat=route$lat,
             popup=popup_Content
-        )
-    
-    example2_Map</code></pre>
-<div id="htmlwidget-f3dcd0d954c0ae4325ea" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f3dcd0d954c0ae4325ea">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap.Mapnik",null,null,{"errorTileUrl":"","noWrap":false,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false}]},{"method":"addMarkers","args":[[45.4470571,45.4401586],[-75.6234707,-75.6039452],null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,["work","home"],null,null]},{"method":"addPolylines","args":[[[[{"lng":[-75.62347,-75.62202,-75.61913,-75.61561,-75.61524,-75.61514,-75.61498,-75.61495,-75.61483,-75.61436,-75.61341,-75.61259,-75.61232,-75.61157,-75.6114,-75.61113,-75.61089,-75.61078,-75.60961,-75.60737,-75.60725,-75.60713,-75.60652,-75.60443,-75.60413,-75.60395],"lat":[45.44706,45.44696,45.44671,45.44646,45.44628,45.44622,45.44609,45.44604,45.44582,45.44505,45.44331,45.44178,45.44127,45.44147,45.44151,45.44154,45.4415,45.44147,45.44086,45.43971,45.43968,45.43969,45.43985,45.44041,45.4405,45.44016]}]]],null,null,{"lineCap":null,"lineJoin":null,"clickable":true,"pointerEvents":null,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":false,"fillColor":"#03F","fillOpacity":0.2,"dashArray":null,"smoothFactor":1,"noClip":false},"distance: 2.0 km<br>duration: 24 mins<br>",null,null,null,null]}],"fitBounds":[45.4470571,-75.6234707,45.4401586,-75.6039452],"limits":{"lat":[45.43968,45.44706],"lng":[-75.6234707,-75.6039452]}},"evals":[],"jsHooks":[]}</script>
-<pre class="r"><code>    ## Setting up for URL requests
+        )</code></pre>
+<pre class="r"><code>    # Setting up for URL requests
     work_Lat = directions_Markers$lat[[1]]
     work_Lng = directions_Markers$lng[[1]]
-    home_Lat = directions_Markers$lat[[1]]
-    home_Lat = directions_Markers$lng[[1]]
+    home_Lat = directions_Markers$lat[[2]]
+    home_Lng = directions_Markers$lng[[2]]
     keyword = &quot;point+of+interest&quot;
-    #circular radius in meters
+    ## circular radius in meters
     radius = 2000
     
-    ##poi stands for points of interest
-    poi_Home_Request = paste(host,&quot;/places/nearbysearch/json&quot;,
-        &quot;?location=&quot;,work_Lat,&quot;,&quot;,work_Lng,&quot;&amp;radius=&quot;,
+    
+    #function to extract rawData:
+    place_Raw_data = function(lat, lng, keyword, radius, api_Key)
+    {
+        request = paste(host,&quot;/place/nearbysearch/json&quot;,
+        &quot;?location=&quot;,lat,&quot;,&quot;,lng,&quot;&amp;radius=&quot;,
         radius,&quot;&amp;keyword=&quot;,keyword, &quot;&amp;key=&quot;,
-        api_Key)</code></pre>
-<hr />
+        api_Key,sep=&quot;&quot;)
+        
+        raw = jsonlite::fromJSON(content(
+                GET(request),&quot;text&quot;
+            ))
+        
+    }
+    
+    # Getting Raw Data
+    poi_Work_Raw= place_Raw_data(work_Lat, work_Lng,
+                            keyword, radius, api_Key)
+    poi_Home_Raw = place_Raw_data(home_Lat, home_Lng,
+                            keyword, radius, api_Key)
+    
+    # Function to format Raw Data into organized DF:
+    
+    organizePlaceDF= function(raw_Data)
+    {
+        lat_Lng = raw_Data$results$geometry$location
+        names = as.vector(unlist(raw_Data$results$name))
+        icon = as.vector(unlist(raw_Data$results$icon))
+        rating = as.vector(unlist(raw_Data$results$rating))
+        organized_Data = cbind(lat_Lng,rating,icon,names)
+        organized_Data
+    }
+    
+    
+    # getting DF
+    home_Df = organizePlaceDF(poi_Home_Raw)
+    work_Df = organizePlaceDF(poi_Work_Raw)
+    place_Df = rbind(home_Df,work_Df)
+    
+    #setting up Icons:
+    place_Icons &lt;- icons(
+      iconUrl = place_Df$icon,
+      iconWidth = 20, iconHeight = 20,
+      iconAnchorX = 0, iconAnchorY =0
+    )
+    
+    #setting up label contents:
+    content =list()
+    for(i in 1:length(place_Df$icon))
+    {
+        content_Name= paste(&quot;name:&quot;,
+            place_Df$names[[i]],&quot;&lt;br&gt;&quot;)
+        
+        content_Rating= paste(&quot;rating:&quot;,
+            place_Df$rating[[i]],&quot;&lt;br&gt;&quot;)
+        
+        content[[i]] = 
+            paste(content_Name, content_Rating,
+                  sep=&quot;&lt;br&gt;&quot;)
+        
+    }
+    
+    
+    # adding the loceations onto the map using google Icons
+    example2_Map = addMarkers(example2_Map, lat=place_Df$lat, 
+                    lng=place_Df$lng,icon=place_Icons,
+                    popup=as.vector(content))
+    
+    
+    
+     example2_Map</code></pre>
+<div id="htmlwidget-05091df11d3f8981b883" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-05091df11d3f8981b883">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap.Mapnik",null,null,{"errorTileUrl":"","noWrap":false,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false}]},{"method":"addMarkers","args":[[45.4470571,45.4401586],[-75.6234707,-75.6039452],null,null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,["work","home"],null,null]},{"method":"addPolylines","args":[[[[{"lng":[-75.62347,-75.62202,-75.61913,-75.61561,-75.61524,-75.61514,-75.61498,-75.61495,-75.61483,-75.61436,-75.61341,-75.61259,-75.61232,-75.61157,-75.6114,-75.61113,-75.61089,-75.61078,-75.60961,-75.60737,-75.60725,-75.60713,-75.60652,-75.60443,-75.60413,-75.60395],"lat":[45.44706,45.44696,45.44671,45.44646,45.44628,45.44622,45.44609,45.44604,45.44582,45.44505,45.44331,45.44178,45.44127,45.44147,45.44151,45.44154,45.4415,45.44147,45.44086,45.43971,45.43968,45.43969,45.43985,45.44041,45.4405,45.44016]}]]],null,null,{"lineCap":null,"lineJoin":null,"clickable":true,"pointerEvents":null,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":false,"fillColor":"#03F","fillOpacity":0.2,"dashArray":null,"smoothFactor":1,"noClip":false},"distance: 2.0 km<br>duration: 24 mins<br>",null,null,null,null]},{"method":"addMarkers","args":[[45.4517462,45.4540049,45.4327507,45.4459117,45.4285473,45.4285247,45.4512857,45.4561882,45.4234552,45.4346218,45.4552296,45.4302158,45.4561797,45.447839,45.4345852,45.448875,45.4577762,45.4285495,45.4346218,45.4406064,45.4327507,45.4407922,45.44744,45.4459117,45.4311021,45.458542,45.4635965,45.4346218,45.4321762,45.4552296,45.4472233,45.4302158,45.432532,45.4346218,45.4430184,45.4345852,45.4461107,45.4295391,45.4458801],[-75.5883623,-75.5902736,-75.6121222,-75.5956122,-75.6146506,-75.6148544,-75.5776306,-75.5844205,-75.6313875,-75.6046325,-75.6002057,-75.6228707,-75.5844284,-75.592674,-75.6055977,-75.589633,-75.5817281,-75.6147166,-75.6046325,-75.6459751,-75.6121222,-75.6470182,-75.6510575,-75.5956122,-75.6400462,-75.644077,-75.6427816,-75.6046325,-75.6409627,-75.6002057,-75.6390341,-75.6228707,-75.6459185,-75.6046325,-75.6391635,-75.6055977,-75.6138274,-75.6493883,-75.6498859],{"iconUrl":{"data":["https://maps.gstatic.com/mapfiles/place_api/icons/worship_general-71.png","https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png","https://maps.gstatic.com/mapfiles/place_api/icons/bank_dollar-71.png","https://maps.gstatic.com/mapfiles/place_api/icons/generic_recreational-71.png","https://maps.gstatic.com/mapfiles/place_api/icons/school-71.png","https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png","https://maps.gstatic.com/mapfiles/place_api/icons/civic_building-71.png","https://maps.gstatic.com/mapfiles/place_api/icons/shopping-71.png","https://maps.gstatic.com/mapfiles/place_api/icons/museum-71.png"],"index":[0,1,1,2,1,1,3,1,1,1,4,1,1,5,1,1,1,4,1,6,1,2,0,2,7,8,1,1,7,4,1,1,7,1,1,1,5,1,0]},"iconWidth":20,"iconHeight":20,"iconAnchorX":0,"iconAnchorY":0},null,null,{"clickable":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["name: UCC of Canada <br><br>rating: NA <br>","name: National Association of Federal Retirees <br><br>rating: NA <br>","name: Scotiabank <br><br>rating: 4 <br>","name: BMO Bank of Montreal <br><br>rating: 3 <br>","name: PixeLINK <br><br>rating: NA <br>","name: Champlain Local Health Integration Network <br><br>rating: 4 <br>","name: Green's Creek Sliding Hill <br><br>rating: 4.8 <br>","name: Canadian Foundation for Animal Assisted Support Services <br><br>rating: NA <br>","name: Accreditation Canada <br><br>rating: 5 <br>","name: Pennant Canada Limited <br><br>rating: NA <br>","name: Colonel By Secondary School <br><br>rating: 3.7 <br>","name: Ogilvie Villa <br><br>rating: NA <br>","name: Canadian Water and Wastewater Association <br><br>rating: NA <br>","name: Value Inn <br><br>rating: 2 <br>","name: iPlayHockey.ca <br><br>rating: NA <br>","name: BGM Real Estate Team <br><br>rating: NA <br>","name: Versature <br><br>rating: 4.7 <br>","name: Gymnastics Canada Gymnastique <br><br>rating: NA <br>","name: Encon Group Inc <br><br>rating: 1 <br>","name: Government Relations Institute Of Canada <br><br>rating: NA <br>","name: Scotiabank <br><br>rating: 4 <br>","name: BMO Bank of Montreal <br><br>rating: 3.3 <br>","name: Our Lady of Mount Carmel Parish <br><br>rating: 4 <br>","name: BMO Bank of Montreal <br><br>rating: 3 <br>","name: Surgenor Ottawa Chevrolet Buick GMC Cadillac <br><br>rating: 3.3 <br>","name: Canada Aviation and Space Museum <br><br>rating: 4.6 <br>","name: Rockcliffe Yacht Club <br><br>rating: 4.6 <br>","name: Pennant Canada Limited <br><br>rating: NA <br>","name: Surgenor Hyundai <br><br>rating: 4.2 <br>","name: Colonel By Secondary School <br><br>rating: 3.7 <br>","name: Montfort Long Term Care Centre <br><br>rating: NA <br>","name: Ogilvie Villa <br><br>rating: NA <br>","name: Bel-Air Lexus <br><br>rating: 4.8 <br>","name: Encon Group Inc <br><br>rating: 1 <br>","name: Trimaran Financial Ltd <br><br>rating: NA <br>","name: iPlayHockey.ca <br><br>rating: NA <br>","name: Beacon Hill Motel <br><br>rating: 2.8 <br>","name: CFORP <br><br>rating: 5 <br>","name: St David & St Martin Presbyterian Church <br><br>rating: NA <br>"],null,null,null,null,null,null]}],"fitBounds":[45.4470571,-75.6234707,45.4401586,-75.6039452],"limits":{"lat":[45.4234552,45.4635965],"lng":[-75.6510575,-75.5776306]}},"evals":[],"jsHooks":[]}</script>
 </div>
+</div>
+<div id="example-3-visualizing-density" class="section level3">
+<h3>Example 3: Visualizing Density</h3>
+<p>_GOAL: The goal is to map the number of crimes in Alabama<br />
+as a percentage of population and display it on the map.__</p>
+<p>1: Downloading and Saving Data:</p>
+<pre class="r"><code>    rm(list = ls())
+    require(httr)
+    require(dplyr)
+    require(leaflet)
+    require(jsonlite)
+
+    url = &quot;https://ucr.fbi.gov/crime-in-the-u.s/2013/crime-in-the-u.s.-2013/tables/table-8/table-8-state-cuts/table_8_offenses_known_to_law_enforcement_alabama_by_city_2013.xls/output.xls&quot;
+    api_Key = &quot;&amp;key=AIzaSyBGTs-gZCbyP8n0Hvw_VZ76Z6YrST1DNa8&quot;
+    host = &quot;https://maps.googleapis.com/maps/api/geocode/json&quot;
+    query = &quot;?address=&quot;
+    
+    
+##  Could not figure out why the file can not be opened.
+##  It is manually downloaded and reformated to a 
+##  excel format.
+
+    crime_Raw_Data = read.csv(file = &quot;./USA_Crime_Data.csv&quot;,
+                          header=T,stringsAsFactors = F)
+
+    ## Reformatting Df to contain (city,population, total crime number)
+    
+    ## Sorting through NA = 0
+    for(i in names(select(crime_Raw_Data,
+            -(City))))
+    {
+        list = crime_Raw_Data[,i]
+        list = as.numeric(list)
+        list[is.na(list)] = 0
+        crime_Raw_Data[,i] = list
+
+    }</code></pre>
+<pre><code>## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion
+
+## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>    numeric_Data = select(
+            crime_Raw_Data,
+            Violent.crime:Arson3
+        )
+    
+    ## new data frame
+    data = cbind(
+        city=crime_Raw_Data$City,
+        fraction=( rowSums(numeric_Data)/
+            as.numeric(crime_Raw_Data$Population))
+    )
+    # rm(list = c(&quot;numeric_Data&quot;,&quot;crime_Raw_Data&quot;))</code></pre>
+<pre class="r"><code>    ## function to extract lat and long for a list of cities
+    ## in USA
+    ##only the first 50 were plotted, it takes quite a while
+
+    ## to retrieve the data otherwise. 
+
+     length = 50
+     list = data[,&quot;city&quot;][1:length]
+     
+     location_Data = lapply(list,function(x){
+         
+                 x = gsub(pattern=&quot; &quot;, replacement= &quot;+&quot;,
+                      x=x)
+                 request = paste(host, query, x,
+                            &quot;,USA&quot;,api_Key,sep=&quot;&quot;)
+                 
+                 raw = jsonlite::fromJSON(
+                     content(GET(request),&quot;text&quot;)
+                 )
+                raw$results$geometry$location  
+                
+                ##  The results for 19th element
+                ## &quot;Bear creek&quot; returned multiple
+                ## elements.Dont know why
+        })
+     
+   lat = list()
+   lng = list()
+    
+    ## merging the lat and lng into the data DF
+    for(i in 1:length)
+    {
+        ##just going to ignore the 19th element for now
+           lat[[i]]= location_Data[[i]]$lat
+            lng[[i]]= location_Data[[i]]$lng 
+            
+        if(i==19)
+        {
+            ##Selecting correct lat data
+            string = toString(unlist(
+                location_Data[[i]]$lat
+            ))
+            
+            index = regexpr(
+                pattern=&quot;,&quot;,
+                text=string
+            )
+            
+            lat[[i]]=as.numeric(
+                substr(
+                    string,1,
+                    as.numeric(index[1])-1
+                )
+            )
+            
+            
+            ##Selecting correct lng data
+            string = toString(unlist(
+                location_Data[[i]]$lng
+            ))
+            
+            index = regexpr(
+                pattern=&quot;,&quot;,
+                text=string
+            )
+            
+            lng[[i]]=as.numeric(
+                substr(
+                    string,1,
+                    as.numeric(index[1])-1
+                )
+            )
+            
+            
+        }
+    }</code></pre>
+<pre class="r"><code>    org_Data = cbind(data[1:length,1:2],lat,
+            lng)
+    org_Data = as.data.frame(org_Data)
+   
+     ## Reorganizing data frame to chage class
+    org_Data$fraction = as.numeric(org_Data$fraction)
+    org_Data$lat = as.numeric(org_Data$lat)
+    org_Data$lng = as.numeric(org_Data$lng)
+    
+    
+    ##popup labels:  
+    popup = list()
+    for(i in 1:length(org_Data$fraction)){
+        precentage = paste(&quot;Precentage:&quot;,
+            signif(org_Data$fraction[[i]],4)*100)    
+        
+        city = paste(&quot;City:&quot;,org_Data$city[[i]])
+        
+        return = paste(city, precentage,sep=&quot;&lt;br&gt;&quot;)
+        popup[i] = return
+        
+    }</code></pre>
+<pre class="r"><code>    ##setting up the Map
+    center_Lat = median(org_Data$lat)
+    center_Lng = median(org_Data$lng)
+    
+    example3_Map = leaflet(data=org_Data) %&gt;% 
+        addProviderTiles(&quot;OpenStreetMap.DE&quot;)%&gt;%
+        setView(lat=center_Lat,lng=center_Lng,
+                zoom = 8) 
+        
+    
+  
+    
+    
+    ## Adding circle markers proportional to 
+    ## the fraction.
+    radius_Factor = 100000
+    
+     example3_Map = example3_Map %&gt;%
+         addCircles(lng=org_Data$lng,
+             lat=org_Data$lat,
+             popup=popup,
+             radius = org_Data$fraction*radius_Factor)
+    
+    
+        example3_Map  </code></pre>
+<div id="htmlwidget-4c91f27dc2e848ff6cfc" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4c91f27dc2e848ff6cfc">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap.DE",null,null,{"errorTileUrl":"","noWrap":false,"zIndex":null,"unloadInvisibleTiles":null,"updateWhenIdle":null,"detectRetina":false,"reuseTiles":false}]},{"method":"addCircles","args":[[29.9746502,33.6009389,32.96179,33.2442813,32.944012,33.1295681,31.3085039,33.6598257,34.3181497,34.1742611,34.0789929,41.8730657,42.1945758,35.5950581,33.9519347,31.0237921,32.6098566,30.8829628,45.2440227,33.4017766,33.5206608,34.0814863,30.4688079,31.1051779,41.1865478,40.2647925,40.8611755,40.2398118,33.8917742,35.9343305,34.1520406,38.8403909,30.7637991,33.2781686,31.0907338,32.8387371,42.235889,33.1590078,38.6703266,35.1598391,30.8918509,35.9489566,34.1748208,32.831238,31.3101719,30.6035255,30.2542565,34.6059253,32.5176361,33.728717],[-92.1342921,-86.9561059,-96.8291685,-86.8163773,-85.9538532,-88.1514166,-86.4832913,-85.8316318,-86.4958219,-97.1436254,-87.2122325,-72.1216163,-122.7094767,-82.5514869,-83.357567,-87.4938708,-85.4807825,-87.7730474,-118.5500798,-86.954437,-86.80249,-86.5911026,-87.2360826,-87.0721918,-73.1951767,-80.6261864,-79.8953328,-76.9199742,-87.5261236,-84.1118458,-85.6788531,-77.4288769,-88.0747222,-86.3549774,-88.2280622,-86.6294262,-122.780051,-87.340834,-89.9845476,-89.761545,-88.0397213,-85.0269014,-86.8436124,-85.7635692,-85.7129908,-87.9036047,-88.1124155,-86.9833417,-87.836402,-87.0902772],[5595.46313799622,15175.1841106896,6989.24731182796,4388.8354186718,10618.0234141029,4547.33360892931,11565.1503469545,21626.6336983398,16202.5316455696,5061.34969325153,16997.1671388102,5144.69453376206,7476.63551401869,8753.90799464046,6432.5045886868,5010.39706901673,7055.37346903571,7597.04691593237,3021.71860245515,27356.8281938326,16046.1507257041,9074.83794932233,4331.8348998774,11442.5060964172,1590.62369192131,6053.81165919283,4972.97297297297,10251.256281407,13581.4889336016,23263.5060639471,15265.0568970303,2658.78877400295,15130.8115314114,4108.78497358638,9842.82401442927,14950.472241419,3302.99966295922,12164.5796064401,7178.96865520728,6146.34146341463,6860.70686070686,2702.7027027027,8924.13144277938,10546.1393596987,4562.73764258555,4800.8963971729,11165.0485436893,9634.34419069013,9406.0773480663,14859.437751004],null,null,{"lineCap":null,"lineJoin":null,"clickable":true,"pointerEvents":null,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2,"dashArray":null},["City: Abbeville<br>Precentage: 5.595","City: Adamsville<br>Precentage: 15.18","City: Addison<br>Precentage: 6.989","City: Alabaster<br>Precentage: 4.389","City: Alexander City<br>Precentage: 10.62","City: Aliceville<br>Precentage: 4.547","City: Andalusia<br>Precentage: 11.57","City: Anniston<br>Precentage: 21.63","City: Arab<br>Precentage: 16.2","City: Ardmore<br>Precentage: 5.061","City: Arley<br>Precentage: 17","City: Ashford<br>Precentage: 5.145","City: Ashland<br>Precentage: 7.477","City: Ashville<br>Precentage: 8.754","City: Athens<br>Precentage: 6.433","City: Atmore<br>Precentage: 5.01","City: Auburn<br>Precentage: 7.055","City: Bay Minette<br>Precentage: 7.597","City: Bear Creek<br>Precentage: 3.022","City: Bessemer<br>Precentage: 27.36","City: Birmingham<br>Precentage: 16.05","City: Blountsville<br>Precentage: 9.075","City: Brent<br>Precentage: 4.332","City: Brewton<br>Precentage: 11.44","City: Bridgeport<br>Precentage: 1.591","City: Brilliant<br>Precentage: 6.054","City: Butler<br>Precentage: 4.973","City: Camp Hill<br>Precentage: 10.25","City: Carbon Hill<br>Precentage: 13.58","City: Cedar Bluff<br>Precentage: 23.26","City: Centre<br>Precentage: 15.27","City: Centreville<br>Precentage: 2.659","City: Chickasaw<br>Precentage: 15.13","City: Childersburg<br>Precentage: 4.109","City: Citronelle<br>Precentage: 9.843","City: Clanton<br>Precentage: 14.95","City: Clayton<br>Precentage: 3.303","City: Coaling<br>Precentage: 12.16","City: Collinsville<br>Precentage: 7.179","City: Cordova<br>Precentage: 6.146","City: Creola<br>Precentage: 6.861","City: Crossville<br>Precentage: 2.703","City: Cullman<br>Precentage: 8.924","City: Dadeville<br>Precentage: 10.55","City: Daleville<br>Precentage: 4.563","City: Daphne<br>Precentage: 4.801","City: Dauphin Island<br>Precentage: 11.17","City: Decatur<br>Precentage: 9.634","City: Demopolis<br>Precentage: 9.406","City: Dora<br>Precentage: 14.86"],null,null,null,null,null]}],"setView":[[33.6303823,-86.95527145],8,[]],"limits":{"lat":[29.9746502,45.2440227],"lng":[-122.780051,-72.1216163]}},"evals":[],"jsHooks":[]}</script>
+<hr />
 </div>
 </div>
 <div id="resources" class="section level1">
