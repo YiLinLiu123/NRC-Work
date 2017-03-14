@@ -30,6 +30,31 @@ output:
 #__Twitter Developer Registration:__
 *   !["Twitter Developer Registration"](Twitter_Developer.JPG)
 
+#   Creating Test Application:
+*   a placeholder URL was used for the website URL: `
+https://www.placeholder.com`
+*   Navigate to manage the application and click
+_create Token_ to generate access token.
+
+
+#   Package:
+*   TwitterR package
+*   Twitter does not 
+
+
+
+#   Other Notes:
+*   Twitter uses another type of security other
+    than OAuth.
+*   [TLS](https://dev.twitter.com/overview/api/tls)
+    +   Essentially a special connection code returned by
+        twitter sever upon "handshake" with local device.
+*   [Intro Notes](https://www.youtube.com/watch?v=lT4Kosc_ers)
+
+
+
+
+
     
 
 #__Overview:__
@@ -181,14 +206,14 @@ output:
 *   _Missing counts:_
     +   In cases where field is taking too long to acheive, the response might contain incomplete fields. EX: _-1_ for numeric counts. Use REST API to retrieve accurate values. 
 *   _Message Ordering:_
-    +   No specific ordering. Usually devlied within a few seconds of a total ordering. A small portion may be delivered tens of seconds to several minutes out of order.
+    +   No specific ordering. Usually delivered within a few seconds of a total ordering. A small portion may be delivered tens of seconds to several minutes out of order.
     +   Timelines may not be returned ordered, it is recommanded to sort it out of focus.
     +   Deleted messages may be delivered before orginal. 
 
 *   Duplicate messages may be delivered.
 *   _Gzip_ can reduce bandwidth, please refer to twitter documentation of this section for more information.
 
-## Streamign API Parameters:
+## Streaming API Parameters:
 *   [Streaming API Parameters](https://dev.twitter.com/streaming/overview/request-parameters)
 *   Allows for searching for specific phrases (track), specifiying geographical bounding boxes.
 

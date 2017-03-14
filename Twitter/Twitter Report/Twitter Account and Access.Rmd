@@ -1,0 +1,51 @@
+---
+title: "Twitter Account And Access"
+author: "paul"
+date: "March 14, 2017"
+output: html_document:
+        toc:true
+        toc.depth: 6
+---
+
+```{r AAA setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+*****
+
+### Test Gmail Account:
+*   _Name:_   API-Testing(first name) NRC(last name)
+*   _Username/Email:_   NRC.API.Testing@gmail.com
+*   _Password:_   NRCTesting123
+*   _Birthday:_   July 1st 1997
+*   _Gender_: Rather  not say
+
+
+
+*****
+
+### Twitter Test Account:
+*   _Username:_   NRC API-Testing
+*   _Email:_  NRC.API.Testing@gmail.com
+*   _Password:_   NRCTesting123
+*   _Twitter Username:_ NRC_API_Testing
+
+
+*****
+
+### Creating Application Access Token:
+
+1:  Register on to the [Twitter Application Site](https://apps.twitter.com/).
+
+2:  Create a new Application. Fill in a placeholder for the _Website URL_.
+
+3:  After creation, click on the "keys and Token" tab and create tokens. 
+
+![Twitter Token](./Pictures/TwitterToken.jpg)
+
+
+
+
+

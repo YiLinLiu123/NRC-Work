@@ -1,0 +1,84 @@
+---
+title: "Twitter Intro"
+author: "paul"
+date: "March 14, 2017"
+output: 
+    html_document:
+    toc: true
+    toc.depth: 6
+---
+
+```{r Intro setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*****
+
+### Twitter Intro: 
+*   Structure of data storage is a graph. The graph 
+    contains 4 main objects/nodes:
+    +   [Tweets](https://dev.twitter.com/overview/api/tweets)  
+    +   [Users](https://dev.twitter.com/overview/api/users)
+    +   [Entities](https://dev.twitter.com/overview/api/entities):
+        metadata and contextual information. Often appears as a field in 
+        other objects.
+    +   [Places](https://dev.twitter.com/overview/api/places): location 
+        information associated with endpoints.
+
+*   Each object can be referenced by an unique ID. 
+
+*   Requests are made using HTTP requests.
+    
+*   __Divided into 2 types of API:__
+    +   _REST API:_ which is used for requesting existing
+        objects within Twitter.
+    +   _Streaming API:_ used for streaming _LIVE_ data from
+        the twitter API stream. 
+
+*   Twitter goes beyond _OAuth_ for security purposes, twitter 
+    server will negotiate a cipher upon establishing connection. 
+    [TLS Information](https://dev.twitter.com/overview/api/tls)
+    +   This report likely uses pre-made pacakges and will not delve 
+    into the specifics for security. 
+
+*   Twitter results can be paginated. To request for cursored results,
+    add `&cursor=-1` to the request. If then endpoint/node support cursoring, 
+    the API will default `cursor` to `-1`. The response value for cursor can 
+    be used to navigate. 
+    +   [Cursoring](https://dev.twitter.com/overview/api/cursoring)
+    
+    
+*****
+
+### REST API:
+*   Only takes [Application-Only Authentication ](https://dev.twitter.com/oauth/application-only)(requests made on behalf of the 
+    application). 
+*   Request format:
+    +   `https://api.twitter.com/1.1/{endpoints}/{fields}.json?q={query}`
+*   Rate limited by 15 minute windows, each endpoint/requets have varying limitations. 
+    Limitations are a cucumlative sum. For more information refer to [REST Rate Limit](https://dev.twitter.com/rest/public/rate-limiting)
+    +   [Rate Limit Table](https://dev.twitter.com/rest/public/rate-limits)
+    +   GET requests can be made on the behalf of application or user account.
+    +   HTTP headers are available to request for rate limit information. 
+*   Working with Timelines:
+    +   Since timelines are changing in real time, twitter addes parameters 
+        to avoid redundant information retrival. 
+        +   _max_Id_: specifies the to retrieve posts up to and including the max_Id. 
+        This will return 1 redundant request.To avoid this, add 1 to the ID of the post 
+        (doesn't matter if the post exists or not).
+        +   _since_Id_: extract posts after an id. 
+        +   [Details on Working with Timelines](https://dev.twitter.com/rest/public/timelines)
+*   URLs in twitter are often shortened to "twitter format" but the expanded URL is 
+    usually available in the response as well. 
+*   Includes the option to retrieve/post private messages (not very applicable).
+
+#### Search API:
+*   Essentially the search engine of twitter and will return 
+    information from public feed that matches search string. 
+*   This is part of the REST API.
+*   Example Request:'https://api.twitter.com/1.1/search/tweets.json?q=%40twitterapi'
+*   [Search API](https://dev.twitter.com/rest/public/search)
+
+
+
+

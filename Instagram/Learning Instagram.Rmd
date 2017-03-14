@@ -2,9 +2,10 @@
 title: "Instagram_Learning"
 author: "paul"
 date: "March 13, 2017"
-output: html_document:
+output: 
+    html_document:
     toc: true
-    toc.depth: 5
+    toc_depth: 5
 ---
 
 ```{r setup, include=FALSE}
@@ -15,9 +16,63 @@ knitr::opts_chunk$set(echo = TRUE)
 *   _Email:_ nrc.api.testing@gmail.com
 *   _Password:_ NRCTesting123
 
+
+
+
+#   Registering an Application for Access Token:
+*   [Offical Instructions](https://www.instagram.com/developer/authentication/)
+
+1:  Log into [Instagram Developer](https://www.instagram.com/developer) and click 
+    "registration application"
+
+![Developer Site Registration](./Instagram Report/Pictures/AccessToken_1.jpg)
+
+2:  Register the application and fill in 4 fields. 
+
+![Application Registration](./Instagram Report/Pictures/AccessToken_2.jpg)
+
+
+3:  Click on manage the application that was just created and 
+    the _client ID, client status and client secret_ are all listed there.
+    Also click on _security_ and uncheck _disable implict OAuth_.
+
+![Application Data](./Instagram Report/Pictures/AccessToken_3.jpg)
+
+4:  Follow the instructions on the offical instruction website, 
+    the _Client-Side Sever_ instructions to retrieve the access
+    token. 
+    +   The request: `https://www.instagram.com/oauth/authorize/?client_id=1c5a8f81e7424f83be2e72d8d2e0847e&redirect_uri=http://127.0.0.1&response_type=token`
+    +   [Acess Token Website](https://elfsight.com/service/generate-instagram-access-token/)
+    
+    
+```{r InstagramKey}
+
+    instagram_Key = "4811430802.b4d28d2.92ac9c87c49448a2a166f09e9c7dc06d"
+
+```    
+    
+*   Cant guarantee that the user token is always available. 
+
+#   Sandbox
+*   [Sandbox mode](https://www.instagram.com/developer/sandbox/)
+*   Testing environment for applications. 
+    
+    
 #   Videos:
 *   [Application](https://www.youtube.com/watch?v=rfhrKWMSFKU)
     this application allows you to click on the location of a map 
     and you will fetch a list of photos taken at that location. 
-    
+    +   Web application video.
+
+*   [Getting Access Token](https://www.youtube.com/watch?v=fGMk8daxF08)
+
+
+
+#   Using API:
+*   All requests are made using HTTPS, to the host: __`api.instagram.com`__
+*   With new API, no longer easily to access data.
+    +   [Another Potential Way](https://electricarchaeology.ca/2016/12/06/scraping-instagram-with-r-with-php/)
+    +   [Scrapper](https://github.com/postaddictme/instagram-php-scraper)
+        +   Not obiding the Instagram API
+
 #   Packages to Explore:
