@@ -13,8 +13,153 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-### Tools and Packages
+*****
+
+### Tools and Packages:
 *   [Apigee Twitter API Console](https://apigee.com/console/twitter)
     +   Useful interface to test out queries to the API.
 *   [twitteR](https://cran.r-project.org/web/packages/twitteR/twitteR.pdf)
 
+
+*****
+
+### First Look at _twitteR_:
+*   The package provides methods for parsing returned data.
+*   Methods to setup, store, load twitter data bases.
+*   Classes/objects wrappersto represent twitter objects. 
+    +   includes functions to convert to Data frames.
+*   Extracting personal data:
+    +   favorites
+    +   friendships
+    +   direct messages
+*   Public data:
+    +   trends
+    +   public tweets
+    +   retweets
+    +   search Twitter
+*   Create access tokens 
+    (handling handshake between brower and Twitter Server)
+
+
+***** 
+
+
+### Example 1: Creating a Word Cloud From Twitter 
+
+__GOAL: To test out the _twitteR_ package's ability to
+    scrape public twitter data.__
+
+*   [Google Building wordCloud](https://sites.google.com/site/miningtwitter/questions/talking-about/wordclouds/wordcloud1)
+*   [ Building wordCloud](https://www.r-bloggers.com/building-wordclouds-in-r/)
+    
+1:  Import Libraries and getting Access Token
+```{r AAA Example1: libraries + Token, results = "hide",error=T,warning=FALSE}
+    
+    rm(list = ls())
+
+    library(twitteR)
+
+    library(tm)
+    library(wordcloud)
+    library(SnowballC)
+    library(RColorBrewer)
+
+    # access Tokens
+    consumer_Key = "oQ3PqERg75kPtgBcgOLaFShSC"
+    consumer_Secret = "d4cxaKc1Dt3ugagruUNPtWzvmqGHx8WvwYAQ8MywUqTIVTTj9O"
+    access_Token = "833674399224061952-tL4gGOyGUrz84IbVlkkAmQzqUPahL1N"
+    access_Secret = "qkNmkD7TU5uZtIENW3r5K20wkqfbL6w37xyXLwelYBZg6"
+    
+    
+    ##  Intially, the function asks the user to cache the credentials and 
+    ##  will be used for another session.
+    setup_twitter_oauth(consumer_Key,consumer_Secret,access_Token,access_Secret)
+    
+```
+
+2:  Getting Raw Data
+
+```{r AAA Example1: Getting Raw Data}
+
+    search_String = "NRC+OR+#NRC+OR+@NRC"
+    lang = "en"
+    since = "2016-01-01"
+    
+    ##  A list of tweets. Note, the return 
+    ## already a "status"
+    NRC_Search = searchTwitter(search_String, n=200, 
+                               lang=lang, since=since)
+    text_NRC = lapply(NRC_Search, function(x)
+            {
+                ##Clearning out URLs
+                gsub("(f|ht)tp(s?)://t.co/[[:alnum:]]+", 
+                     "",x$text)
+            }
+        )
+```
+
+
+3:  Make the word Map
+```{r AAA Example1: Making Word Map}
+    
+    ##  Constructing corpus (structure to process text)
+    cor= Corpus(VectorSource(text_NRC))
+    cor = tm_map(cor,removePunctuation)
+    cor = tm_map(cor, removeWords,stopwords('english'))
+    cor = tm_map(cor,stemDocument)
+    
+    
+    wordcloud(cor,max.words = 100,random.color=T,random.order = F,
+              colors =brewer.pal(8,"Paired") )
+```
+
+```{r, include=FALSE}
+    rm(list = setdiff(ls(),c("access_Secret","access_Token"
+        ,"consumer_Key","consumer_Secret") ))
+    
+```
+
+
+*****
+
+### REST API Example 2: Random Exploration 
+
+```{r REST Example2:}
+
+    ## Useful for examining rate 
+    ## remaining in 15 window
+    rate_Limit = getCurRateLimitInfo()
+
+```
+
+
+1:  Friendships and Users
+
+```{r REST Example2: Users And Information}
+    ## Screen names have no spaces in betwen
+
+    screen_Name = c("NRCAPI-Testing","CNN",
+        "DarrenCriss","CTVNews","MasterChef")
+
+    ## object "users"
+    users = lookupUsers(users= screen_Name)
+
+    # examining friendship data
+    friendships = lapply(users, function(x)
+    {
+        friendships(screen_names=x$screenName)
+    })
+```
+
+
+
+### Evaluation of _twitteR_:
+*   The built in glass wrappers provides
+    convient and organized information. 
+    +   functions associated with these class
+        are very useful. 
+*   The built in function provides substantial 
+    details and is shown in an easily accessible
+    way.
+*   Unlike facebook, many users are public and thus
+    the account details are easily accessed. 
