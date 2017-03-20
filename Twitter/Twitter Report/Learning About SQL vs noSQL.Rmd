@@ -1,0 +1,13 @@
+---
+title: "SQL And noSQL"
+author: "paul"
+date: "March 17, 2017"
+output: 
+    html_document:
+    toc :true
+    toc.depth: 5
+---
+
+
+## Resources
+*   [SQL vs noSQL](https://docs.microsoft.com/en-us/azure/documentdb/documentdb-nosql-vs-sql)

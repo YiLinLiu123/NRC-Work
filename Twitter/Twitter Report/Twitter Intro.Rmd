@@ -41,7 +41,7 @@ knitr::opts_chunk$set(echo = TRUE)
     +   This report likely uses pre-made pacakges and will not delve 
     into the specifics for security. 
 
-*   Twitter results can be paginated. To request for cursored results,
+*   Specific Twitter endpoints support pagination. To request for cursored results,
     add `&cursor=-1` to the request. If then endpoint/node support cursoring, 
     the API will default `cursor` to `-1`. The response value for cursor can 
     be used to navigate. 
@@ -79,6 +79,28 @@ knitr::opts_chunk$set(echo = TRUE)
 *   Example Request:'https://api.twitter.com/1.1/search/tweets.json?q=%40twitterapi'
 *   [Search API](https://dev.twitter.com/rest/public/search)
 
+
+
+### Streaming API:
+*   [Twitter Stream API](https://dev.twitter.com/streaming/overview)
+*   This stream provides access to new and updating public tweets data.
+*   Includes two useful types: _Public_ and _User_ stream api. 
+    +   [Public Stream](https://dev.twitter.com/streaming/public): Live stream 
+        of public posts. _GET_ for shorter URL requests while _POST_ for longer
+        URLs.
+    +   [User Stream]()
+*   General process is to establish a connection to the stream api with a request
+    and save the data into a database for future use. 
+*   Does not have normal rate limit caps, however connections will be closed if:
+    +   attempting to establish too many connections. 
+    +   suddenly stops reading data. 
+    +   reads data at a slow pace such that the queue is filled. 
+*   For more details regarding stalls, reconnecting etc, refer to 
+    [Connecting to Stream API](https://dev.twitter.com/streaming/overview/connecting)
+*   Each JSON return will be seperated by "\r\n"
+*   Missing fields will be indicated by a "-1", use REST API to retrieve information.
+*   [Stream Message Types](https://dev.twitter.com/streaming/overview/messages-types)
+    
 
 
 
