@@ -431,7 +431,7 @@ require(twitteR)
 __GOAL: Test to see how many tweets can twitter return.__
 *   The maximum number of tweets is 3200. 
     
-```{r REST API Example 4: Maximum, eval=FALSE}
+```{r REST API Example 4: Maximum, include=FALSE}
 
     rm(list = setdiff(ls(),c("token")))
 

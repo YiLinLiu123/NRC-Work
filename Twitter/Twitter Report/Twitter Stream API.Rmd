@@ -1,0 +1,67 @@
+---
+title: "Twitter Stream API"
+author: "paul"
+date: "March 20, 2017"
+output: html_document
+---
+
+```{r Stream API Setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*****
+
+### libraries
+*   [streamR:](https://cran.r-project.org/web/packages/streamR/streamR.pdf)
+    Handles connecting and extracting information from twitter stream apis.
+```{r Stream API libraries, include=FALSE }
+    rm(list = ls())
+    library(streamR)
+    library(ROAuth)
+    library(twitteR)
+    library(httr)
+
+```
+
+
+
+*****
+
+
+### Stream Example 1: Public Streams:
+
+```{r Stream Example 1:}
+
+    require(streamR)
+    require(ROAuth)
+    require(twitteR)
+    require(httr)
+    
+
+   ## Taken from examples in streamR Package Documentation
+
+    requestURL <- "https://api.twitter.com/oauth/request_token"
+    accessURL <- "http://api.twitter.com/oauth/access_token"
+    authURL <- "http://api.twitter.com/oauth/authorize"
+    consumer_Key = "oQ3PqERg75kPtgBcgOLaFShSC"
+    consumer_Secret = "d4cxaKc1Dt3ugagruUNPtWzvmqGHx8WvwYAQ8MywUqTIVTTj9O"
+    
+    my_oauth <- OAuthFactory$new(consumerKey=consumer_Key,
+    consumerSecret=consumer_Secret, 
+    requestURL=requestURL,accessURL=accessURL, authURL=authURL)
+    
+    my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
+    filterStream( file="tweets_rstats.json",
+    track="rstats", timeout=3600, oauth=my_oauth )
+
+    
+    ##Creating a file to store data
+    if(!file.exists("tweets_CNN.json"))
+        file.create("tweets_CNN.json")
+    
+    
+    filterStream( file.name="tweets_CNN.json",
+    track="CNN", tweets=10, oauth=token)
+
+
+```

@@ -80,6 +80,8 @@ knitr::opts_chunk$set(echo = TRUE)
 *   [Search API](https://dev.twitter.com/rest/public/search)
 
 
+*****
+
 
 ### Streaming API:
 *   [Twitter Stream API](https://dev.twitter.com/streaming/overview)
@@ -100,6 +102,9 @@ knitr::opts_chunk$set(echo = TRUE)
 *   Each JSON return will be seperated by "\r\n"
 *   Missing fields will be indicated by a "-1", use REST API to retrieve information.
 *   [Stream Message Types](https://dev.twitter.com/streaming/overview/messages-types)
+    +   will contain blank messages (to sustain connection), 
+        delete messages notifications, 
+        changes to tweets etc..
     
 
 
