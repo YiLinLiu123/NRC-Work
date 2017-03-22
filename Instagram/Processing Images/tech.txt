@@ -1,0 +1,4 @@
+SourceFile,FileName,Technology
+TestPictures/animal1.JPG,animal1.JPG,Cathode Ray Tube Display
+TestPictures/lake.jpg,lake.jpg,Cathode Ray Tube Display
+TestPictures/tiger.jpg,tiger.jpg,Cathode Ray Tube Display

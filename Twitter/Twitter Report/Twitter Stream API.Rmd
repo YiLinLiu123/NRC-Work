@@ -11,8 +11,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 *****
 
+
+### IMPORTANT NOTE:
+*   __Make sure that the twitter application has "obb" specified
+in the call back URL, this will take the user to the authorization 
+page to extract the pin to set up twitter handshake.__
+
+
+*   __It is recommanded to store the RAW JSON response into a file
+    and then process it later on to reduce possible delay for
+    streams.__
+
+*   __ The streaming functions provided by streamR only stores
+    complete tweets and disregardes deletion, updates, incomplete 
+    posts etc.__
+
+*   __User stream returns only data for the authenticated user 
+    for this session. Which is the twitter test account for this
+    report.Not much information due to the nature of the account
+    being a test account.__
+
+
 ### libraries
-*   [streamR:](https://cran.r-project.org/web/packages/streamR/streamR.pdf)
+*   [streamR:](https://cran.r-project.org/web/packages/streamR/index.html)
     Handles connecting and extracting information from twitter stream apis.
 ```{r Stream API libraries, include=FALSE }
     rm(list = ls())
@@ -30,7 +51,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Stream Example 1: Public Streams:
 
-```{r Stream Example 1:}
+```{r Stream Example 1, include=FALSE, echo=FALSE}
 
     require(streamR)
     require(ROAuth)
@@ -40,28 +61,82 @@ knitr::opts_chunk$set(echo = TRUE)
 
    ## Taken from examples in streamR Package Documentation
 
-    requestURL <- "https://api.twitter.com/oauth/request_token"
-    accessURL <- "http://api.twitter.com/oauth/access_token"
-    authURL <- "http://api.twitter.com/oauth/authorize"
-    consumer_Key = "oQ3PqERg75kPtgBcgOLaFShSC"
-    consumer_Secret = "d4cxaKc1Dt3ugagruUNPtWzvmqGHx8WvwYAQ8MywUqTIVTTj9O"
-    
-    my_oauth <- OAuthFactory$new(consumerKey=consumer_Key,
-    consumerSecret=consumer_Secret, 
-    requestURL=requestURL,accessURL=accessURL, authURL=authURL)
-    
-    my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
-    filterStream( file="tweets_rstats.json",
-    track="rstats", timeout=3600, oauth=my_oauth )
 
+
+    #   Set up Token, only needs to be run once, The token will 
+    #   be saved to a file for future use. 
+
+    ##  Code for setting up handshake, commented out because token is saved
+    ## into a file
+
+    # requestURL <- "https://api.twitter.com/oauth/request_token"
+    # accessURL <- "https://api.twitter.com/oauth/access_token"
+    # authURL <- "https://api.twitter.com/oauth/authorize"
+    # consumer_Key = "oQ3PqERg75kPtgBcgOLaFShSC"
+    # consumer_Secret = "d4cxaKc1Dt3ugagruUNPtWzvmqGHx8WvwYAQ8MywUqTIVTTj9O"
+    # 
+    # my_oauth <- OAuthFactory$new(consumerKey=consumer_Key,
+    # consumerSecret=consumer_Secret, 
+    # requestURL=requestURL,accessURL=accessURL, authURL=authURL)
+    # 
+    # my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
+```
+
+
+```{r Stream Exapmle 1: Saving and Loading Token}
+
+    if(!file.exists("stream Token")){
+        file.create("stream Token")
+        saveRDS(object = my_oauth, file="stream Token")
+       
+    }
+     
+    token = readRDS("stream Token")
+    
+```
+
+
+
+```{r stream Example 1: streaming}
     
     ##Creating a file to store data
-    if(!file.exists("tweets_CNN.json"))
+    if(!file.exists("tweets_CNN.json")){
         file.create("tweets_CNN.json")
+        
+         ## Can be controlled by either number of tweets
+        ## and maximum connection time (timeout)
+    
+        filterStream( file.name="tweets_CNN.json",
+        track="CNN", tweets=10, oauth=token)
+    }
+     
+    ## reading in saved file, converted to a data frame.
+    ## where each column is a field and each row is a tweet.
+    tweets_DB = parseTweets(tweets = "tweets_CNN.json")
+    names(tweets_DB)
     
     
-    filterStream( file.name="tweets_CNN.json",
-    track="CNN", tweets=10, oauth=token)
+    ## a list where each element is a JSON nested 
+    ## tweet
+    tweets_List = readTweets(tweets="tweets_CNN.json")
+
+```
+
+
+*****
+
+
+
+### Stream API Example 2: UserStream
+
+```{r Stream Example 2}
+    
+    if(!file.exists("user stream.json")){
+        file.create("user stream.json")
+        userStream(file.name="user stream.json",
+               timeout=120,oauth=token)
+      
+    }
 
 
 ```

@@ -90,7 +90,8 @@ knitr::opts_chunk$set(echo = TRUE)
     +   [Public Stream](https://dev.twitter.com/streaming/public): Live stream 
         of public posts. _GET_ for shorter URL requests while _POST_ for longer
         URLs.
-    +   [User Stream]()
+    +   [User Stream](https://dev.twitter.com/streaming/userstreams)
+        used to extract a person's view of twitter: direct messages,replies etc.
 *   General process is to establish a connection to the stream api with a request
     and save the data into a database for future use. 
 *   Does not have normal rate limit caps, however connections will be closed if:

@@ -8,9 +8,6 @@ output:
         toc.depth: 6
 ---
 
-```{r Rest API setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 
 *****
@@ -76,7 +73,7 @@ __GOAL: To test out the _twitteR_ package's ability to
 *   [Using tm Package](https://cran.r-project.org/web/packages/tm/vignettes/tm.pdf)
     
 1:  Import Libraries and getting Access Token
-```{r AAA Example1: libraries + Token, results = "hide",error=T,warning=FALSE}
+```{r AAA Example1: libraries, results = "hide",message= FALSE, warning=FALSE}
     
     rm(list = ls())
 
@@ -87,7 +84,9 @@ __GOAL: To test out the _twitteR_ package's ability to
     library(wordcloud)
     library(SnowballC)
     library(RColorBrewer)
+```
 
+```{r AAA Example 1: connections}
     # access Tokens
     consumer_Key = "oQ3PqERg75kPtgBcgOLaFShSC"
     consumer_Secret = "d4cxaKc1Dt3ugagruUNPtWzvmqGHx8WvwYAQ8MywUqTIVTTj9O"
@@ -266,8 +265,10 @@ __GOAL: To test out the _twitteR_ package's ability to
 
 
 1:  Friendships and Users
+*   __The _lookupUsers_ and _friendships_ function
+    behaves as specified by the documentation.__
 
-```{r REST Example2: Users And Information}
+```{r REST Example2: Users And Information, echo=FALSE,eval=FALSE}
     ## Screen names have no spaces in betwen
 
     screen_Name = c("NRC_API_Testing","CNN",
@@ -290,8 +291,10 @@ __GOAL: To test out the _twitteR_ package's ability to
 ```
 
 2:  Favorites:
+ __The _favorites_ function
+    behaves as specified by the documentation.__
 
-```{r REST Example2: Favorites}
+```{r REST Example2: Favorites, echo=FALSE,eval=FALSE}
 
     
     username="NRC_API_Testing"
@@ -304,23 +307,13 @@ __GOAL: To test out the _twitteR_ package's ability to
     
 ```
 
-3: Friendships(Could be used for social graphs) only for the Owner:
 
-```{r REST Example2: Friendships}
-
-    names = list("NRC_API_Testing","MASTERCHEFonFOX",
-              "DarrenCriss","LastWeekTonight","NRC_CNRC",
-              "CNN")
-
-    my_Friendships = friendships(names)
-
-```
-
-
-4:  Trending Section of Twitter:
-*   the trending section describes the popular
-    live disscussions. 
-```{r REST Example2: Trending}
+3:  Trending Section of Twitter:
+*   __the trending section describes the popular
+    live disscussions and behaves as the
+    documentation specifies.__
+    
+```{r REST Example2: Trending, echo=FALSE,eval=FALSE}
 
     google_Api_Key = "AIzaSyBGTs-gZCbyP8n0Hvw_VZ76Z6YrST1DNa8"
     google_Host = "https://maps.googleapis.com/maps/api"
@@ -350,7 +343,7 @@ __GOAL: To test out the _twitteR_ package's ability to
     search_Data = searchTwitter(searchString=trend$query[[2]],n=10,
                                 lang="en")
     
-  
+  rm(list=setdiff(ls(),c("token","search_Data")))
 
 ```
 
@@ -358,18 +351,16 @@ __GOAL: To test out the _twitteR_ package's ability to
 *****
 
 ### Example 3: DataBase Connection Functions of twitteR:
-
-```{r Example 3: Clearing Envrionment}
-
-    rm(list=setdiff(ls(),c("token","search_Data")))
-    library(twitteR)
-
-```
-
+*   The functionality provided by twitteR package behaves 
+    as the documentation outlines. To view testing code, 
+    refer to the _Twitter Rest API.Rmd_ file.
 
 
 ```{r Example 3: Saving data}
-
+    library(twitteR)
+    search_Data = searchTwitter(searchString="sports",n=10,
+                                lang="en")
+    
     db_Data = twitteR::twListToDF(search_Data)
     
       ##sorting text in search_Data
@@ -396,10 +387,15 @@ __GOAL: To test out the _twitteR_ package's ability to
 
 *   A very simple database containing the 10 tweets from the _db_Data_ 
     and stored it in a local sql data base. 
-
-```{r REST Example 3: MySqlData}
+    
+```{r REST Example 3: libraries,message=FALSE, warning= FALSE}
 require(RMySQL)
 require(twitteR)
+
+```
+
+```{r REST Example 3: MySqlData}
+
 
 
     db_name = "twitterdb"
@@ -412,6 +408,11 @@ require(twitteR)
 
     ## returns a list of twitteR status
     loaded_Data = load_tweets_db(table_name = "status")
+    paste("Length", length(loaded_Data))
+```
+
+
+```{r REST Example 3: saving to Db}
     
     ## Trying to store tweets into the same db:
       search_Data2 = searchTwitter(searchString="#glee",n=10,
@@ -419,6 +420,9 @@ require(twitteR)
       
     ## The new data is appended to the bottom 
     store_tweets_db(search_Data2,table_name="status")
+    
+    loaded_Data = load_tweets_db(table_name = "status")
+    paste("Length", length(loaded_Data))
     
     
 ```
@@ -431,7 +435,7 @@ require(twitteR)
 __GOAL: Test to see how many tweets can twitter return.__
 *   The maximum number of tweets is 3200. 
     
-```{r REST API Example 4: Maximum, eval=FALSE}
+```{r REST API Example 4: Maximum, eval=FALSE, echo=FALSE, eval=FALSE}
 
     rm(list = setdiff(ls(),c("token")))
 
