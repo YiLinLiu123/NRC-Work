@@ -1,0 +1,14 @@
+---
+title: "Weather_Mini_Project"
+author: "paul"
+date: "March 23, 2017"
+output: html_document:
+    toc: true
+    toc.depth: 5
+---
+
+##  Scheduling Tasks:
+
+*   [taskScheduleR](https://github.com/bnosac/taskscheduleR)
+    +   provides basic functionality to schedule R scripts.
+    +   be sure to first stop the task and then delete it.
