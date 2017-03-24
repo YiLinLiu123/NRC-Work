@@ -12,3 +12,9 @@ output: html_document:
 *   [taskScheduleR](https://github.com/bnosac/taskscheduleR)
     +   provides basic functionality to schedule R scripts.
     +   be sure to first stop the task and then delete it.
+
+
+##  Learning to WebScrape:
+*   [rvest ](https://blog.rstudio.org/2014/11/24/rvest-easy-web-scraping-with-r/)
+*   [rvest CRAN](https://cran.r-project.org/web/packages/rvest/index.html)
+*   [selecting css tags](http://flukeout.github.io/)
