@@ -1,5 +1,5 @@
 ---
-title: "Facebook Draft Report V2"
+title: "Facebook Draft Report V3"
 author: "paul"
 date: "March 3, 2017"
 output:
@@ -12,32 +12,42 @@ output:
 ---
 ******
 #Summary of Key Finidings:
-*   It is easy to retrieve data from Facebook API using the functions provided by the __Rfacebook__. 
-*   The facebook documentation does not provide specific information regarding [__Rate Limit__](https://developers.facebook.com/docs/graph-api/advanced/rate-limiting), 
+*   It is easy to retrieve data from Facebook API using the functions provided by the __RFacebook__. 
+*   The Facebook API documentation does not provide specific information regarding [__Rate Limit__](https://developers.Facebook.com/docs/graph-api/advanced/rate-limiting), 
     it specifies that the limit `differs depending on request`. 
     There was no rate limit related issues while working on this report.
     
-*   The __Utils.R__ package within _Rfacebook_ provides example frameworks to parse 
+*   The __Utils.R__ package within _RFacebook_ provides example frameworks to parse 
     the response JSON nested list into an organized data frame.
     +   Refer to _MiniProject2_ for an example.
     
-*   Facebook API V2.0 have heavy restrictions in terms of accessing personal information 
-such as profile information, posts and comments of a user. 
-Thus it is __not recommanded__ to scrape the facebook api to search for user related
+*   Facebook API V2.0 and above place heavy restrictions 
+on accessing personal information. Details
+such as profile information, user posts and comments etc. are not 
+generally publicly available due to privacy settings.
+It is __not recommended__ to scrape the Facebook api to search for user related
 information.
 
-*   It is easy to access public data of facebook through its [__search API__](https://developers.facebook.com/docs/graph-api/using-graph-api#search). 
-Information such as public pages, posts, comments and replies to comments. This makes it 
-easy to track public posts/pages and how other users reacted to it.
+*   It is easy to access public data of Facebook through its [__search API__](https://developers.Facebook.com/docs/graph-api/using-graph-api#search). Part
+of the functionality is covered by the _RFacebook_ package through the _searchGroup &
+searchPages_ function.
+Information such as public pages, posts, comments and replies to comments can 
+be easily accessed providing the Id is known.
 
-*   It was observed that many pages, posts does not include _location_ 
-    information as part of its content.
+*   It was observed that many pages, posts and comments
+    does not include _location_ information as part of its content.
 
-*   It is __recommanded__ to use the access token created through a developer's application. 
+*   It is __recommended__ to use the access token created through a developer's application. 
 There is no expiration date for this type of access token. 
 
-*   The [graph API Explorer](https://developers.facebook.com/tools/explorer/) tool is usefurl for testing API calls to understand structure 
+*   The [graph API Explorer](https://developers.Facebook.com/tools/explorer/) tool is useful for testing API calls to understand structure 
 as well as exploring possible fields and edges.
+
+*   To use custom API requests, use the _CallAPI_ function in _Rfacebook_ 
+    with the request URL to retrieve response.
+
+
+*   __CHECKED__
 
 ******
 
@@ -58,7 +68,7 @@ The Facebook API is in the form of a _graph_:
     )
     
     description = c(
-        "Objects of facebook API. Nodes are \"things\" like Users, page, Group, comments etc.Each node has its' own ID that which is used to access it via the Graph API.",
+        "Objects of Facebook API. Nodes are \"things\" like Users, page, Group, comments etc.Each node has its' own ID that which is used to access it via the Graph API.",
         "The connections that leads from one node to another. For example: the cover photo of a user, the comments and posts on a user's timeline. 
         Edges are identified by a name",
         "Information about the nodes, like the names, Id, birthday etc of a user.Fields are identified by a name."
@@ -77,16 +87,16 @@ The Facebook API is in the form of a _graph_:
 ### Request Format:
 *   The _API request_ is in the format of a standard HTTP request. 
 Methods like __GET,POST, DELETE, etc__ can be used to retrieve 
-and modify information of facebook users through the API. 
+and modify information of Facebook users through the API. 
 *   Format of a request:  
-`GET graph.facebook.com /{node-id}/{edge-name}?fields = {first-level fields}{Second-level fields}`.
+`GET graph.Facebook.com /{node-id}/{edge-name}?fields = {first-level fields}{Second-level fields}`.
 *  An access token is required to access any information.
 
 ******
 
 ### Pagnation:
 *   To manage the amount of information returned per API Call, 
-facebook divides the data using several pagnation techinques
+Facebook divides the data using several pagnation techinques
 (Cursors-based, Time-based and Offset-based).
 *   Most commonly used and the only ones encountered during this report 
     are the curosr based pagnations. 
@@ -100,30 +110,30 @@ and a _previous_ token which is a HTTP GET request for the previous page of data
 
 ### Rate Limit:
 *   The type of rate limit dealt with mainly in this report is __Application-Level Rate Limiting__.
-    Since only the application access key was used, others include [user access token](https://developers.facebook.com/docs/facebook-login/access-tokens#usertokens) 
-    and [page access token](https://developers.facebook.com/docs/facebook-login/access-tokens#pagetokens)
-*   The facebook API states that the limit for the application is __200 calls per hour per user in aggregate.__
+    Since only the application access key was used, others include [user access token](https://developers.Facebook.com/docs/Facebook-login/access-tokens#usertokens) 
+    and [page access token](https://developers.Facebook.com/docs/Facebook-login/access-tokens#pagetokens)
+*   The Facebook API states that the limit for the application is __200 calls per hour per user in aggregate.__
 *   However not all API calls are subjected to the rate limit. 
 *   There is a tool that monitors the application's API calls 
-and it is located under the dashboard of the application. [ Test Application](https://developers.facebook.com/apps/). 
+and it is located under the dashboard of the application. [ Test Application](https://developers.Facebook.com/apps/). 
 Have to log in using the test user account or the account 
 who owns the applications.
 
 ******
 
 # Further Information:
-*   [facebook API Overview](https://developers.facebook.com/docs/graph-api/overview)
-*   [Facebook API Request Information](https://developers.facebook.com/docs/graph-api/using-graph-api)
-*   [Facebook API Rate Limit](https://developers.facebook.com/docs/graph-api/advanced/rate-limiting)
-*   [Facebook API Documentations](https://developers.facebook.com/docs/)
+*   [Facebook API Overview](https://developers.Facebook.com/docs/graph-api/overview)
+*   [Facebook API Request Information](https://developers.Facebook.com/docs/graph-api/using-graph-api)
+*   [Facebook API Rate Limit](https://developers.Facebook.com/docs/graph-api/advanced/rate-limiting)
+*   [Facebook API Documentations](https://developers.Facebook.com/docs/)
 
 
 
 ******
-# Rfacebook Package:
-*   [Rfacebook](https://cran.r-project.org/web/packages/Rfacebook/index.html)
+# RFacebook Package:
+*   [RFacebook](https://cran.r-project.org/web/packages/RFacebook/index.html)
 
-## Summary of Findings For Rfacebook:
+## Summary of Findings For RFacebook:
 ```{r echo=FALSE,results="asis"}
     
     advantages = c(
@@ -170,7 +180,7 @@ who owns the applications.
 
     library(jsonlite)
     library(knitr)
-    library(Rfacebook)
+    library(RFacebook)
     knitr::opts_chunk$set(error=T,warning=TRUE)
 
     rm(list = ls())
@@ -195,8 +205,8 @@ who owns the applications.
 *   Normally, a temporary access token normally has a 2 hour expiration time. 
 A long-lived token(OAuth token) can be used for longer access. 
 The following outlines how to obtain a long lived token:
-    +   __The _fbOAuth_ function documentation in Rfacebook outlines the steps.
-    +   [Mining Facebook Data Using R & Facebook API!](https://bigdataenthusiast.wordpress.com/2016/03/19/mining-facebook-data-using-r-facebook-api/) 
+    +   __The _fbOAuth_ function documentation in RFacebook outlines the steps.
+    +   [Mining Facebook Data Using R & Facebook API!](https://bigdataenthusiast.wordpress.com/2016/03/19/mining-Facebook-data-using-r-Facebook-api/) 
     also provides steps to creating a long lived token.
 
 
@@ -235,7 +245,7 @@ load("My_OAuth.txt")
 ******
 
 ## _Location:_
-___GOAL: To try and explore what the facebook api offer regarding extracting location information.___
+___GOAL: To try and explore what the Facebook api offer regarding extracting location information.___
 
 
 ### Exploring Facebook API for Nodes that Contain Location Information:
@@ -274,15 +284,15 @@ ___GOAL: To try and explore what the facebook api offer regarding extracting loc
 *   The "callAPI" function delegates the task of retriving 
     information from the Facebook API to 
     the _GET()_ method in the _httr_ pacakge 
-    and returns the facebook API response,
+    and returns the Facebook API response,
 
 *   The main benefit is that the user can 
     pass in any arbitrary api request.
-    ex: `https://graph.facebook.com/me?fields=birthday,age_range`
+    ex: `https://graph.Facebook.com/me?fields=birthday,age_range`
     and pass in the token generated from _fbOAuth_ token. The 
     user will have to parse the returned nested list.
 
-*   Observation is that most facebook nodes needs
+*   Observation is that most Facebook nodes needs
     to be referenced via its object id. 
 
 *   Due to personal privacy protection, no useful information
@@ -293,14 +303,14 @@ ___GOAL: To try and explore what the facebook api offer regarding extracting loc
 ```{r}    
 
 ##Extracting my personnal information
-my_Data = callAPI("https://graph.facebook.com/me", token)
+my_Data = callAPI("https://graph.Facebook.com/me", token)
 ## Extracting my ID, this can be passed on as the ids for other functions
 my_id = my_Data$id
 print(my_Data)
 
 ##Adding fields to the URL to gain specific information (birthday, age_range)
 #no spaces anywhere within the URL should be included
-my_Specific_Information_Request = "https://graph.facebook.com/me?fields=birthday,age_range"
+my_Specific_Information_Request = "https://graph.Facebook.com/me?fields=birthday,age_range"
 my_Specific_Data = callAPI(my_Specific_Information_Request,token)
 
 print(my_Specific_Data)
@@ -311,13 +321,13 @@ print(my_Specific_Data)
 
 *****
 
-### Developing a function to extract the "ID" of facebook object through using the URL of the object:
+### Developing a function to extract the "ID" of Facebook object through using the URL of the object:
 
 *   The idea behind is that to access detials regarding pages, posts etc, 
     the id is required. A simple function is made to extract that information.
 
 ```{r, echo = FALSE}
-## ONLY VALID for SIMPLE Webaddresses with no id in the URL, ex: www.facebook.com/harrypotter
+## ONLY VALID for SIMPLE Webaddresses with no id in the URL, ex: www.Facebook.com/harrypotter
 
     FbObjectId = function(object_URL,token)
     {
@@ -325,22 +335,22 @@ print(my_Specific_Data)
         # Checking the formating of the "object_URL"
         if(class(object_URL)!= "character"){
             warning("Object_URL is not a string")
-        }else if( grep(pattern = "(http|https)://www.facebook.com(/.*)*"
+        }else if( grep(pattern = "(http|https)://www.Facebook.com(/.*)*"
                        , x=object_URL)!= beginning_Index ) {
     
              warning("Invalid URL")
         }
         
-        #formating and checking the complete URL request to the facebook Graph API 
-        complete_URL = paste("https://graph.facebook.com",object_URL,sep = "/")
+        #formating and checking the complete URL request to the Facebook Graph API 
+        complete_URL = paste("https://graph.Facebook.com",object_URL,sep = "/")
         #print(complete_URL)
         
-        #Extracting the ID of the facebook object
-        url_Data = Rfacebook::callAPI(complete_URL,token)
+        #Extracting the ID of the Facebook object
+        url_Data = RFacebook::callAPI(complete_URL,token)
         url_id = url_Data$id
         
         # If the Id is not numeric, something is wrong. 
-        if(length( grep(pattern="www.facebook.com",x=url_id))!=0 ) {
+        if(length( grep(pattern="www.Facebook.com",x=url_id))!=0 ) {
               warning("Error In Returned ID: Not numeric values. 
                       URL likely not supported.")
         }
@@ -355,29 +365,29 @@ print(my_Specific_Data)
 
 ```{r testing_FbObjectId,error=T, include = FALSE, eval = FALSE}
     
-    ## For URLs that yield no ids, the facebook would return a version of the 
+    ## For URLs that yield no ids, the Facebook would return a version of the 
     ##URL address as the object ID.(just discovered)
 
-    ## A URL of a post on the public facebook photo of Harry Potter 
+    ## A URL of a post on the public Facebook photo of Harry Potter 
     ##(This should also return an error)
-    test1 = "https://www.facebook.com/harrypottermovie/photos/
+    test1 = "https://www.Facebook.com/harrypottermovie/photos/
     a.422515109312.180796.156794164312/10155042492264313"
     
     FbObjectId(test1,token)
     
     ## A comment on a public page (This should return an error)    
-    test2 = "https://www.facebook.com/harrypottermovie/photos
+    test2 = "https://www.Facebook.com/harrypottermovie/photos
     /a.422515109312.180796.156794164312/10155042492264313/
     ?type=3&comment_id=10155042702764313&
     comment_tracking=%7B%22tn%22%3A%22R4%22%7D"
     FbObjectId(test2,token)
     
-    ## A URL of a public facebook page
-    test3 = "https://www.facebook.com/harrypottermovie"
+    ## A URL of a public Facebook page
+    test3 = "https://www.Facebook.com/harrypottermovie"
     FbObjectId(test3,token)
     
     ## A URL of a person's timeline (not my own)
-    test4 = "https://www.facebook.com/FSXAC"
+    test4 = "https://www.Facebook.com/FSXAC"
     FbObjectId(test4,token)
      rm(list = setdiff(ls(),c("token","FbObjectId") ))
 ```
@@ -388,15 +398,15 @@ print(my_Specific_Data)
 
 ## Exploring _getPage,getPost,getCommentReplies_:
 
- ___GOAL: To extract information regarding comments on a public facebook webpage___
+ ___GOAL: To extract information regarding comments on a public Facebook webpage___
 
     1:  Starting with getting the post_Ids (mainly post Ids) using _getPage_
 ```{r}
     
-    require(Rfacebook)
+    require(RFacebook)
 
     ## the getPage function returns a matrix, and one of the columns is the "postId"
-    BBC_URL = "https://www.facebook.com/bbcnews"
+    BBC_URL = "https://www.Facebook.com/bbcnews"
     load("My_OAuth.txt")
     BBC_Id = FbObjectId(BBC_URL,token)
     print(BBC_Id)
@@ -467,7 +477,7 @@ print(my_Specific_Data)
 
 *   The information regarding attachments (such as photos and videos) 
     can be accessed using the _attachments_ edge. 
-    However the Rfacebook pacakge does not seem to have explicit functions that support 
+    However the RFacebook pacakge does not seem to have explicit functions that support 
     the extraction of information regarding attachments. 
 
 *   One way to extract this information is to use the _callAPI_ method with the 
@@ -484,8 +494,8 @@ print(my_Specific_Data)
 
 ## Exploring _searchGroup & getGroup_ functions:
 
-* ___GOAL: To extract information regarding a public facebook group: 
-[couponboutique](https://www.facebook.com/groups/couponboutique2/) 
+* ___GOAL: To extract information regarding a public Facebook group: 
+[couponboutique](https://www.Facebook.com/groups/couponboutique2/) 
 using the getGroup function___
 
 *   The _search string_ must be URLencoded.
@@ -560,24 +570,24 @@ I want to see if it works with user Ids that have been granted permissions to my
 
 #__Search API:__
 *   Allows public searches on public information. 
-*   [Search Documentation](https://developers.facebook.com/docs/graph-api/using-graph-api/v2.0#search)
-*   __This API provides the same functionality as facebook's Search Bar.__
-*   Query example: `https:graph.facebook.com/search?q={string to search for}&type={type name}&{fields of type}`
+*   [Search Documentation](https://developers.Facebook.com/docs/graph-api/using-graph-api/v2.0#search)
+*   __This API provides the same functionality as Facebook's Search Bar.__
+*   Query example: `https:graph.Facebook.com/search?q={string to search for}&type={type name}&{fields of type}`
 *   Allows:
-    +   [users](https://developers.facebook.com/docs/graph-api/reference/user/)
-    +   [page](https://developers.facebook.com/docs/graph-api/reference/page/)
-    +   [place-topic](https://developers.facebook.com/docs/graph-api/reference/place-topic/)
-    +   [event](https://developers.facebook.com/docs/graph-api/reference/event/)
-    +   [group](https://developers.facebook.com/docs/graph-api/reference/v2.8/group/)
-    +   [places](https://developers.facebook.com/docs/graph-api/reference/place/)
+    +   [users](https://developers.Facebook.com/docs/graph-api/reference/user/)
+    +   [page](https://developers.Facebook.com/docs/graph-api/reference/page/)
+    +   [place-topic](https://developers.Facebook.com/docs/graph-api/reference/place-topic/)
+    +   [event](https://developers.Facebook.com/docs/graph-api/reference/event/)
+    +   [group](https://developers.Facebook.com/docs/graph-api/reference/v2.8/group/)
+    +   [places](https://developers.Facebook.com/docs/graph-api/reference/place/)
     
 
 ******
 
-#__Mini Project1:__
+#Mini Project1:
 
 ## Description:
-1:  To scrape the facebook API for all web pages that contains a series of keywords. 
+1:  To scrape the Facebook API for all web pages that contains a series of keywords. 
     Up to 2000 pages, then graph distribution based on location.
 
 
@@ -590,7 +600,7 @@ I want to see if it works with user Ids that have been granted permissions to my
                               "RoughDF","MinRow","UnravelList") ))
 
     #Loading libraries
-    library(Rfacebook)
+    library(RFacebook)
 
 
     # setting up authorization token
@@ -629,7 +639,7 @@ I want to see if it works with user Ids that have been granted permissions to my
 
 ***** 
 
-# __MiniProject 2__:
+# MiniProject 2:
 
 ## Description:
 ___To find the place most posted on a travel website from 500 posts. The main point is trying to illustrate the structure of the response and processing to a dataframe. __
@@ -643,13 +653,13 @@ ___To find the place most posted on a travel website from 500 posts. The main po
 ```{r}
 
     rm()
-    website_URL = "https://www.facebook.com/thousandamazingplacesonearth/"
+    website_URL = "https://www.Facebook.com/thousandamazingplacesonearth/"
     
     website_Id = FbObjectId(website_URL, token)
     
     #Making the query. I first tested this out on the Graph API Explorer
     ## Note: The limit for number of posts 
-    query= paste("https://graph.facebook.com",website_Id, 
+    query= paste("https://graph.Facebook.com",website_Id, 
                  "?fields=posts.limit(100){place}",sep="/")
     
     #Pulling RawData
@@ -685,14 +695,14 @@ ___To find the place most posted on a travel website from 500 posts. The main po
 
 
 ### Pesudocode For Parsing: 
-__NOTE: This process is based on similar procedure as the source code of the Rfacebook Package. 
+__NOTE: This process is based on similar procedure as the source code of the RFacebook Package. 
 I do not take credit for the idea behind this parsing. 
-I merely studied the structure of the Rfacebook source code and tried to adapts some parts of it. 
-The functions that I studied are the [getPage](https://github.com/pablobarbera/Rfacebook/blob/master/Rfacebook/R/getPage.R) function,
-the _pageToDF & UnlistWithNA_ functions under the  [Utils.R package](https://github.com/pablobarbera/Rfacebook/blob/master/Rfacebook/R/utils.R)
+I merely studied the structure of the RFacebook source code and tried to adapts some parts of it. 
+The functions that I studied are the [getPage](https://github.com/pablobarbera/RFacebook/blob/master/RFacebook/R/getPage.R) function,
+the _pageToDF & UnlistWithNA_ functions under the  [Utils.R package](https://github.com/pablobarbera/RFacebook/blob/master/RFacebook/R/utils.R)
 
-I strongly recommand to use the function _UnlistWithNA_(unavailable for direct access under the Rfacebook Package) 
-under the [Utils.R package](https://github.com/pablobarbera/Rfacebook/blob/master/Rfacebook/R/utils.R) for parsing of queries not supported by the methods of the Rfacebook. _UnlistWithNa_ function includes pre-made parsing function for many possible fields. 
+I strongly recommand to use the function _UnlistWithNA_(unavailable for direct access under the RFacebook Package) 
+under the [Utils.R package](https://github.com/pablobarbera/RFacebook/blob/master/RFacebook/R/utils.R) for parsing of queries not supported by the methods of the RFacebook. _UnlistWithNa_ function includes pre-made parsing function for many possible fields. 
 Furthermore, the general structure of this function can be adapted to parse JSON formatted information.__
 
 

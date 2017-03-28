@@ -6,15 +6,220 @@ output: html_document:
     toc: true
     toc.depth: 5
 ---
+*****
 
 ##  Scheduling Tasks:
 
 *   [taskScheduleR](https://github.com/bnosac/taskscheduleR)
     +   provides basic functionality to schedule R scripts.
+    +   includes a plugin accessible under the _addins_ at the
+        menu bar.
     +   be sure to first stop the task and then delete it.
+    +   be sure to change the time format to local time format.
+
+*   [windows schtasks.ext](https://msdn.microsoft.com/en-us/library/windows/desktop/bb736357(v=vs.85).aspx)
+    +   comman prompt tool that provides more control. 
+    +   taskScheduleR is based on this tool. 
 
 
 ##  Learning to WebScrape:
 *   [rvest ](https://blog.rstudio.org/2014/11/24/rvest-easy-web-scraping-with-r/)
 *   [rvest CRAN](https://cran.r-project.org/web/packages/rvest/index.html)
 *   [selecting css tags](http://flukeout.github.io/)
+*   [xml2](https://cran.r-project.org/web/packages/xml2/vignettes/modification.html)
+
+
+##  Script Used:
+1:  Set up a csv file for collecting data
+```{r  temp file setup}
+
+    InitializeFile = function(forecast_Hours=24, forecast_Title="temp",
+                   unit="(C)", sep=","){
+        
+        file_Path<-paste(forecast_Title, ".csv", sep="")
+        
+        if(!file.exists(file_Path)){
+            file.create(file_Path)
+            
+            ## making the col names:
+            col_Names <-c("Date",paste(
+                "current ",forecast_Title,unit, sep=""
+            ))
+            for(i in 1:forecast_Hours){
+                    forecast_Name = paste("forcast ",forecast_Title," in ", 
+                    i,"h ",unit,sep="")
+                    col_Names <- append(col_Names,forecast_Name)
+            }
+            
+            ## adding title to the file:
+            titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+                                   col.names = NULL, fix.empty.names = FALSE)
+            write.table(titles, file_Path, sep=sep,
+                        append=TRUE,col.names = FALSE, row.names = FALSE)
+        }
+
+        
+         return(file_Path)
+     }
+   
+
+```
+
+
+2:  getting the data and appending it to the file
+
+
+```{r Web Scrapping}
+    library(rvest)
+    library(xml2)
+
+    file_Path = normalizePath(InitializeFile(forecast_Title = "temperature")) 
+    
+    
+    forecast <- "https://weather.gc.ca/forecast/hourly/on-118_metric_e.html"
+    current_Weather <- "https://weather.gc.ca/city/pages/on-118_metric_e.html"
+    sep <- ","
+    
+    forecast_xml <- read_html(x=forecast)
+    
+    #list of temperature forecast
+    temperature_css <- ".text-center:nth-child(2)"
+    temperature_xml <- rvest::html_nodes(forecast_xml,temperature_css)
+    temperature_Forecast <- lapply(temperature_xml, function(x){
+        rvest::html_text(x)
+    })
+    
+    # Getting current Temperature
+    
+    current_Temp_css <-"div.col-xs-6 p.lead span.wxo-metric-hide"
+    current_Temp <- read_html(current_Weather) %>%
+        rvest::html_nodes(current_Temp_css) %>%
+        rvest::html_text()
+    
+    # Formatting the capatured results
+    temperature_Forecast <- as.numeric(as.vector(
+        temperature_Forecast))
+    current_Temp <- as.numeric(gsub("[^-0-9]+","",
+                current_Temp))
+    time <- Sys.time()
+    data <- append(current_Temp,temperature_Forecast)
+    data <- as.data.frame(as.list(data),stringsAsFactors = FALSE,
+                       col.names = NULL, fix.empty.names = FALSE)
+    data <- cbind(time,data)
+    
+    # writing to the file
+    
+    write.table(data, file = file_Path,append=TRUE,
+                col.names = FALSE, row.names = FALSE,
+                sep=sep)
+
+```
+
+
+3: Trying to directly use taskscheduleR
+
+*   It was observed that when the labtop
+    was unplugged from the power source,
+    the script to collect data was not run.
+
+```{r taskScheduling}
+library(taskscheduleR)
+file_Path = normalizePath(InitializeFile(forecast_Title="temperature1"))
+script_Path = "P:\\University\\WeatherScript.R"
+task_Name= "testing"
+
+taskscheduler_create(taskname = task_Name, rscript=script_Path,
+                     schedule = "MINUTE", startdate=format(Sys.Date(), "%Y-%m-%d"),
+                     modifier = 2)
+ ## modifying task
+library(xml2)
+script_Path = paste("C:\\Windows\\System32\\Tasks\\",task_Name,sep="")
+
+##formating xml parameters
+changed_File = read_xml(x=script_Path, econding="UTF-16")
+xml_Nodes =xml_children(xml_children(changed_File))
+xml_text(xml_Nodes[6])<- "false"
+xml_text(xml_Nodes[7])<- "false"
+
+
+## Stoping old task so a modified version can begin
+taskcheduler_stop(task_Name)
+taskscheduler_delete(task_Name)
+
+
+write_xml(changed_File,script_Path,encoding="UTF-16")
+
+## running the task scheduler with new configured file
+command = paste("schtasks.exe /create /tn",task_Name,
+                "/XML",script_Path)
+system(command,intern=TRUE)
+
+
+
+
+
+##Test 1: unplugged power supply. Remaining active. As adminstrator.
+##          runs correctly as soon as connected to power source
+##          could be in internal setting of schetask.exe.
+
+
+##Test 2: changing the sleep option to never. Does not make a difference.
+##  Resumes immediatly when plugged in.
+
+##  Located the problem. In task scheduler, the task is defaulted
+## start once plugged into AC power and stops as sonn as not connected. 
+##  By unclicking those options under the conditions options, the task
+##  resumes as usual.
+
+
+
+```
+
+*   [xml scripting](https://blogs.technet.microsoft.com/heyscriptingguy/2013/12/14/working-with-task-scheduler-xml/)
+    +   Essentially comes down to modifying a xml file outlining the task.
+    +   Default location: `C:\Windows\System32\Tasks`.
+    +   task name must be unique.
+
+*   [xml2 package](https://cran.r-project.org/web/packages/xml2/vignettes/modification.html)
+
+```{r stoping script}
+   taskcheduler_stop(task_Name)
+taskscheduler_delete(task_Name)
+    
+
+```
+
+
+*****
+
+
+##  Simple Processing of Collected Data
+
+1: Lag Columns
+
+```{r lag columns}
+
+    # Reading in dataframe
+    file_Path = "temperature_Org.csv"
+    data = read.table(file = file_Path, header=TRUE,
+                      sep=",",stringsAsFactors = FALSE)
+    
+    # Lagging each column, starting from 3rd column
+    start = 3
+    lag = 1;
+    for( i in start: length(names(data))){
+        data[,start] = data.table::shift(
+            x= data[,start], n=lag
+        )
+        start = start+1
+        lag= lag+1 
+    }
+    
+    write.table(x=data, file="data.csv", row.names=FALSE,
+                sep=",")
+```
+
+
+2:  Plotting simple Graphs:
+
+```{r}

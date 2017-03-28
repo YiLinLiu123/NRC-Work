@@ -1,0 +1,512 @@
+## string used to form a file
+forcast_Title <- "temp"
+unit <-"(C)"
+file_Name = paste(forcast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forcast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forcast_Name = paste("forcast",forcast_title,"in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forcast_Name)
+}
+## adding title to the file:
+write.csv2(col_Names, file_Name, append=TRUE,
+col.names = FALSE, row.names = FALSE)
+}
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast",forecast_Title,"in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+write.csv2(col_Names, file_Name, append=TRUE,
+col.names = FALSE, row.names = FALSE)
+}
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast",forecast_Title,"in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+write.csv2(as.list(col_Names), file_Name, append=TRUE,
+col.names = FALSE, row.names = FALSE)
+}
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast",forecast_Title,"in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+write.csv2(as.list(col_Names), file_Name, append=TRUE,
+col.names = FALSE, row.names = FALSE)
+}
+?as.data.frame
+titles = as.data.frame(col_Names,stringsAsFactors = FALSE)
+titiles
+titles
+?as.list
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE)
+titles
+?as.data.frame
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL)
+titles
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+titles
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast",forecast_Title,"in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+write.csv2(titles, file_Name, append=TRUE,
+col.names = FALSE, row.names = FALSE)
+}
+?write.csv
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast",forecast_Title,"in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+write.csv(titles, file_Name, append=TRUE,col.names = FALSE, row.names = FALSE)
+}
+?write.table
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast",forecast_Title,"in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+write.table(titles, file_Name, sep=";",
+append=TRUE,col.names = FALSE, row.names = FALSE)
+}
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast ",forecast_Title," in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+write.table(titles, file_Name, sep=";",
+append=TRUE,col.names = FALSE, row.names = FALSE)
+}
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+sep <- ","
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast ",forecast_Title," in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+write.table(titles, file_Name, sep=sep,
+append=TRUE,col.names = FALSE, row.names = FALSE)
+}
+?html_text
+forecast <- "https://weather.gc.ca/forecast/hourly/on-118_metric_e.html"
+current_Weather <- "https://weather.gc.ca/city/pages/on-118_metric_e.html"
+forecast_xml <- read_html(x="https://weather.gc.ca/forecast/hourly/on-118_metric_e.html")
+#list of temperature forecast
+temperature_css <- ".text-center:nth-child(2)"
+temperature_xml <- rvest::html_nodes(testing,temperature_css)
+temperature_Forecast <- lapply(forecast_table, function(x){
+rvest::html_text(x)
+})
+temperature_Forecast
+current_css <-".lead.wxo-metric-hide"
+current_Temp <- read_html(current_Weather) %>%
+rvest::html_node(current_css) %>% html_text()
+current_Temp
+current_Temp <- read_html(current_Weather) %>%
+rvest::html_node(current_css
+current_Temp
+current_Temp <- read_html(current_Weather) %>%
+rvest::html_node(current_css)
+current_Temp
+current_Temp <- read_html(current_Weather)
+current_Temp
+current_css <-".lead.wxo-metric-hide"
+current_Temp <- read_html(current_Weather)  %>%
+html_nodes(current_css)
+current_Temp
+current_Temp <- read_html(current_Weather)  %>%
+html_nodes(current_css)
+current_Temp
+x= html_nodes(current_Temp,current_css)
+current_Temp <- read_html(current_Weather)
+x= html_nodes(current_Temp,current_css)
+x
+current_Temp
+html_text(current_Temp)
+current_Temp$node
+current_Temp$node[1]
+current_Temp$node
+current_css <-"wxo-metric-hide"
+current_Temp <- read_html(current_Weather)
+x= html_nodes(current_Temp,current_css)
+x
+current_css <-"span.wxo-metric-hide"
+current_Temp <- read_html(current_Weather)
+x= html_nodes(current_Temp,current_css)
+x
+current_css <-"p.lead span.wxo-metric-hide"
+current_Temp <- read_html(current_Weather)
+x= html_nodes(current_Temp,current_css)
+x
+temperature_Forecast
+x
+current_css <-"h2 p.lead span.wxo-metric-hide"
+current_Temp <- read_html(current_Weather)
+x= html_nodes(current_Temp,current_css)
+x
+testing <- "h2"
+current_Temp <- read_html(current_Weather)
+x= html_nodes(current_Temp,testing)
+testing
+x
+current_css <-"div.col-xs-6 p.lead span.wxo-metric-hide"
+current_Temp <- read_html(current_Weather)
+x= html_nodes(current_Temp,current_css)
+x
+current_Temp_css <-"div.col-xs-6 p.lead span.wxo-metric-hide"
+current_Temp <- read_html(current_Weather) %>%
+rvest::html_nodes(current_Temp_css) %>%
+rvest::html_text()
+current_Temp
+temperature_Forecast <- as.numeric(as.vector(
+temperature_Forecast))
+temperature_Forecast
+devtools::install_github("jwijffels/RscheduleR", subdir = "RscheduleR")
+install.packages("devtools")
+devtools::install_github("jwijffels/RscheduleR", subdir = "RscheduleR")
+install.packages("rmongodb")
+install_github(repo = "mongosoup/rmongodb")
+library(devtools)
+install_github(repo = "mongosoup/rmongodb")
+install.packages(Rtools)
+text = "-24Csadf%^&*"
+text = gsub("^[-0-9]")
+text2 = gsub("^[-0-9]","",test)
+text2
+text
+text2 = gsub("^[-0-9]","",text)
+text2
+text2 = gsub("^[0-9]","",text)
+text2
+text2 = gsub("^[0-9]+","",text)
+text2
+text
+text2 = gsub("[^-0-9]+","",text)
+text2
+current_Temp <- gsub("[^-0-9]+","",
+current_Temp)
+current_Temp
+current_Temp <- as.numeric(gsub("[^-0-9]+","",
+current_Temp))
+time = system.time()
+system.time()
+Sys.time()
+temperature_Forecast <- as.numeric(as.vector(
+temperature_Forecast))
+current_Temp <- as.numeric(gsub("[^-0-9]+","",
+current_Temp))
+time = Sys.time()
+data = append(time, current_Temp,temperature_Forecast)
+data = append(current_Temp,temperature_Forecast)
+data
+length(data)
+data <- as.data.frame(as.list(data),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+data
+data <- cbind(time,data)
+data
+?cbind
+?write.table()
+write.table(data, file = file_Name,append=TRUE,
+col.names = FALSE, row.names = FALSE,
+sep=sep)
+data <- as.data.frame(as.list(data),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+data <- cbind(time,data)
+install_github(repo = "mongosoup/rmongodb")
+devtools::install_github("jwijffels/RscheduleR", subdir = "RscheduleR")
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+sep <- ","
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forcast_Hours){
+forecast_Name = paste("forcast ",forecast_Title," in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+write.table(titles, file_Name, sep=sep,
+append=TRUE,col.names = FALSE, row.names = FALSE)
+}
+##  a number to indcate the amount of forecast data
+##  to keep
+forecast_Hours <- 24
+## string used to form a file
+forecast_Title <- "temp"
+unit <-"(C)"
+sep <- ","
+file_Name = paste(forecast_Title, ".csv", sep="")
+if(!file.exists(file_Name)){
+file.create(file_Name)
+## making the col names:
+col_Names <-c("Date",paste(
+"current ",forecast_Title,unit, sep=""
+))
+for(i in 1:forecast_Hours){
+forecast_Name = paste("forcast ",forecast_Title," in ",
+i,"h",unit,sep="")
+col_Names <- append(col_Names,forecast_Name)
+}
+## adding title to the file:
+titles = as.data.frame(as.list(col_Names),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+write.table(titles, file_Name, sep=sep,
+append=TRUE,col.names = FALSE, row.names = FALSE)
+}
+library(rvest)
+library(xml2)
+forecast <- "https://weather.gc.ca/forecast/hourly/on-118_metric_e.html"
+current_Weather <- "https://weather.gc.ca/city/pages/on-118_metric_e.html"
+file_Name = "temp.csv"
+sep = ","
+forecast_xml <- read_html(x="https://weather.gc.ca/forecast/hourly/on-118_metric_e.html")
+#list of temperature forecast
+temperature_css <- ".text-center:nth-child(2)"
+temperature_xml <- rvest::html_nodes(testing,temperature_css)
+library(rvest)
+library(xml2)
+forecast <- "https://weather.gc.ca/forecast/hourly/on-118_metric_e.html"
+current_Weather <- "https://weather.gc.ca/city/pages/on-118_metric_e.html"
+file_Name = "temp.csv"
+sep = ","
+forecast_xml <- read_html(x="https://weather.gc.ca/forecast/hourly/on-118_metric_e.html")
+#list of temperature forecast
+temperature_css <- ".text-center:nth-child(2)"
+temperature_xml <- rvest::html_nodes(forecast_xml,temperature_css)
+temperature_Forecast <- lapply(forecast_table, function(x){
+rvest::html_text(x)
+})
+library(rvest)
+library(xml2)
+forecast <- "https://weather.gc.ca/forecast/hourly/on-118_metric_e.html"
+current_Weather <- "https://weather.gc.ca/city/pages/on-118_metric_e.html"
+file_Name = "temp.csv"
+sep = ","
+forecast_xml <- read_html(x="https://weather.gc.ca/forecast/hourly/on-118_metric_e.html")
+#list of temperature forecast
+temperature_css <- ".text-center:nth-child(2)"
+temperature_xml <- rvest::html_nodes(forecast_xml,temperature_css)
+temperature_Forecast <- lapply(temperature_xml, function(x){
+rvest::html_text(x)
+})
+# Getting current Temperature
+current_Temp_css <-"div.col-xs-6 p.lead span.wxo-metric-hide"
+current_Temp <- read_html(current_Weather) %>%
+rvest::html_nodes(current_Temp_css) %>%
+rvest::html_text()
+# Formatting the capatured results
+temperature_Forecast <- as.numeric(as.vector(
+temperature_Forecast))
+current_Temp <- as.numeric(gsub("[^-0-9]+","",
+current_Temp))
+time <- Sys.time()
+data <- append(current_Temp,temperature_Forecast)
+data <- as.data.frame(as.list(data),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+data <- cbind(time,data)
+# writing to the file
+write.table(data, file = file_Name,append=TRUE,
+col.names = FALSE, row.names = FALSE,
+sep=sep)
+devtools::install_github("jwijffels/RscheduleR", subdir = "RscheduleR")
+library(RscheduleR)
+devtools::install_github("bnosac/taskscheduleR")
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+library(rvest)
+library(xml2)
+forecast <- "https://weather.gc.ca/forecast/hourly/on-118_metric_e.html"
+current_Weather <- "https://weather.gc.ca/city/pages/on-118_metric_e.html"
+file_Name = "C:\Users\liuyi\Documents\NRC-Work-master\NRC-Work-master\Weather\temp.csv"
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+library(rvest)
+library(xml2)
+forecast <- "https://weather.gc.ca/forecast/hourly/on-118_metric_e.html"
+current_Weather <- "https://weather.gc.ca/city/pages/on-118_metric_e.html"
+file_Name = "C:\\Users\\liuyi\\Documents\\NRC-Work-master\\NRC-Work-master\\Weather\\temp.csv"
+sep = ","
+forecast_xml <- read_html(x="https://weather.gc.ca/forecast/hourly/on-118_metric_e.html")
+#list of temperature forecast
+temperature_css <- ".text-center:nth-child(2)"
+temperature_xml <- rvest::html_nodes(forecast_xml,temperature_css)
+temperature_Forecast <- lapply(temperature_xml, function(x){
+rvest::html_text(x)
+})
+# Getting current Temperature
+current_Temp_css <-"div.col-xs-6 p.lead span.wxo-metric-hide"
+current_Temp <- read_html(current_Weather) %>%
+rvest::html_nodes(current_Temp_css) %>%
+rvest::html_text()
+# Formatting the capatured results
+temperature_Forecast <- as.numeric(as.vector(
+temperature_Forecast))
+current_Temp <- as.numeric(gsub("[^-0-9]+","",
+current_Temp))
+time <- Sys.time()
+data <- append(current_Temp,temperature_Forecast)
+data <- as.data.frame(as.list(data),stringsAsFactors = FALSE,
+col.names = NULL, fix.empty.names = FALSE)
+data <- cbind(time,data)
+# writing to the file
+write.table(data, file = file_Name,append=TRUE,
+col.names = FALSE, row.names = FALSE,
+sep=sep)
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()
+taskscheduleR:::taskschedulerAddin()

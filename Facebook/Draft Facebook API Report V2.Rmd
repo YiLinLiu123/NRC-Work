@@ -3,10 +3,10 @@ title: "Facebook Draft Report V2"
 author: "paul"
 date: "March 3, 2017"
 output:
-  pdf_document:
+  html_document:
     toc: yes
     toc_depth: '4'
-  html_document:
+  pdf_document:
     toc: yes
     toc_depth: '4'
 ---
@@ -676,7 +676,7 @@ I want to see if it works with user Ids that have been granted permissions to my
 
 ## Description:
 1:  To scrape the facebook API for all web pages that contains a series of keywords. 
-    Up to 300 pages, then graph distribution based on location.
+    Up to 2000 pages, then graph distribution based on location.
 
 
 
