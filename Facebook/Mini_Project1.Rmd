@@ -1,0 +1,68 @@
+---
+title: "MiniProject1"
+author: "paul"
+date: "March 30, 2017"
+output: html_document
+---
+
+
+```{r libraries,message =F, results="hide"}
+    ##Loading Libraries needed for the rest of the report:
+
+    library(jsonlite)
+    library(knitr)
+    library(Rfacebook)
+    knitr::opts_chunk$set(error=T,warning=TRUE)
+
+    rm(list = ls())
+```
+
+
+## Description:
+1:  To scrape the facebook API for all web pages that contains a series of keywords. 
+    Up to 2000 pages, then graph distribution based on location.
+
+
+
+## Code:
+
+```{r message=FALSE, warning=FALSE}
+    rm(list = ls())
+
+    #Loading libraries
+    library(Rfacebook)
+
+
+    # setting up authorization token
+    ## refer to above section for details
+    load("My_OAuth.txt")
+
+
+    keywords = c("flower")
+    
+    ##Note: there might not be the specified number of pages
+    ##that will be returned as the result.
+    webpage= searchPages(keywords, token=token,n=2000)
+    
+    webpage_Location = webpage$country
+    webpage_Location[is.na(webpage_Location)] = "Not Provided"
+    
+    #presenting information:
+    frequency_table = table(webpage_Location)
+    par(cex=0.75)
+    barplot(sort(frequency_table),las=2,main="Webpages that Mention Flowers by Country"
+            ,ylab="Frequency",space=c(0.5))
+    
+    ## Replotting graphs to exclude the top 4 Countries. 
+    frequency_table1= frequency_table
+    for(i in 1:4)
+    {
+        frequency_table1= subset(frequency_table1, 
+                                 frequency_table1 < max(frequency_table1))
+    }
+    barplot(sort(frequency_table1),las=2,main="Webpages that Mention Flowers
+            by Country Excluding Top 4",ylab="Frequency",space=c(0.5))
+    
+
+```
+

@@ -1,0 +1,13 @@
+---
+title: "Google Resources"
+author: "paul"
+date: "March 8, 2017"
+output: html_document:
+        toc: true
+        toc.depth: 4
+---
+
+```{r googleResourcesSetup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+

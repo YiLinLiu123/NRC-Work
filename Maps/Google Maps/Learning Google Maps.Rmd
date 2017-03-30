@@ -1,0 +1,132 @@
+---
+title: "Learning About Google Maps API"
+author: "paul"
+date: "March 6, 2017"
+output: 
+    html_document:
+        toc: true
+        toc_depth: 4
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Potential R-Packages to Use:
+
+*   [DerekYves/placement](https://www.r-bloggers.com/placement-an-r-package-to-access-the-google-maps-api/)
+    +   [DerekYves/placement github](https://github.com/DerekYves/placement)
+    +   This package seems to be able to nicely format the response from the google API.
+    
+*   [RgoogleMaps](https://cran.r-project.org/web/packages/RgoogleMaps/RgoogleMaps.pdf)
+    +   used to extract map and visualize.
+
+*   [ggmap](https://cran.r-project.org/web/packages/ggmap/ggmap.pdf)
+
+
+
+# Google Maps APIs Course:
+*   [google Maps API Course](https://www.udacity.com/course/google-maps-apis--ud864)
+
+# Exploring Tools:
+*   [google api console](https://console.developers.google.com/iam-admin/projects?pli=1)
+
+
+## Terms:
+*_Viewport:_ contains the recommended viewport for displaying the returned result, specified as two latitude, longitude values defining the southwest and northeast corner of the viewport bounding box. Generally the viewport is used to frame a result when displaying it to a user.
+
+* _Bounds:_ stores the bounding box which can fully contain the returned result. Note that these bounds may not match the recommended viewport. (For example, San Francisco includes the Farallon islands, which are technically part of the city, but probably should not be returned in the viewport)
+    +[more information](https://developers.google.com/maps/documentation/geocoding/intro#Results)
+
+
+## Notes:
+*   You can render your own maps (for websites)
+    +   default
+    +   real life 
+    +   hybrid (default + real life)
+    +   Terrian (terrian information)
+*   You can place markers on the map
+    +   coordinate pairs looks like JSON information.
+*   InfoWindows needs to be called/triggered. Won't appear automatically.
+    +   you can add links, images etc.
+*   Styles:
+    +   map features: land, water, roads.
+    +   elements: parameters of features that can be modified.
+    +   stylers: changing colors etc.
+    +   many online styles.
+*   Street view:
+    +   Know what location you are looking at.
+    +   POint of view (heading: west or east) and (pitch: up or below)
+*   Visulization:
+    +   Library allowing you to plot data onto maps. 
+*   Geometry:
+    +   Library for mapping 3D sphereical to 2D 
+    +   [more information](https://classroom.udacity.com/courses/ud864/lessons/8304370457/concepts/3632a49f-9ce4-45aa-bb1d-859ee9fb1df4)
+*   Geocoding:
+    +   client side: ex: find movie theaters near me
+    +   sever side: already have data and client needs not to do much
+    +   Allows address to lat/lng conversation both ways.
+    +   HTTP request
+    +   Returns:
+        +   _address:_ the broken down components of the address: street, city, postal code, country etc __Components usually have more information.__
+        +   _formatted address:_ nicely formatted address
+        +   _geometry:_ lat/lng coordinates, bounds, viewport, location
+        +   _place_id:_ 
+        +   _  types_
+    +   if u specify a road, then you will get the middle of the road for the location return.
+    +   Any requests for geocode, provided an address and a key, you can get the information.
+    +   _geocoder_ instance allows you to take a location and parse it into a geo-coordinate
+*   Elevation API:
+    +   `/elevation/`
+*   Distance Matrix API:
+    +   travel distance for varying mode of travelling.
+    +   `/distancematrix/`
+        +   _key:_ 
+        +   _origins_
+        +   _destination_
+        +   _mode_
+        +   _avoid_: what types of road to avoid
+*   Directions API:
+    +   provides directions to get to destination
+    +   returns several waypoints to outline path
+    +   Parameters:
+        + origin+ destination
+    +   You can specify perferences
+    +   Add waypoints (as a stop)
+        +   via: take u by the place
+        +   optimum true: optimize waypoint order for u
+    +   Like all services, a unique object is required to handle it. Also to display on map (directionsrenderer)
+    +   [specifics](https://classroom.udacity.com/courses/ud864/lessons/8306134879/concepts/c525e1a9-876f-43cd-836e-73f5806824ee)
+*   Roads API:
+    +   takes in questionably GPS points and snaps to the road most likely on
+    +   up to 100 points and roads api return similar points to be on a road. Smoothly follows gemotry road.
+    +   You can get speed limit data for road segments.
+    +   ONLY AVAILIABLE TO PERMIUM ACCOUNTs
+*   Places:
+    +   Search for favorite places.(libraries) Theaters etc.
+    +   Place autocomplete
+    +   searchbox allows users to search for points of interest
+    +   for _place details_, need place id
+    +   [cool stuff](https://classroom.udacity.com/courses/ud864/lessons/8306134879/concepts/365ca608-02b0-438d-b375-da52575bea06)
+    *
+*   Timezone API:(web service)
+    +   date/time stamp + coordinate to return the time zone.
+
+
+#   Other Tutorial Material:
+*   [RgoogleMaps](https://www.dropbox.com/sh/w75l0jqx4ir5a5y/AAAiiv5-rDbM1cm8hlBJBPSAa?dl=0)
+*   [RgoogleMaps Intro](http://mirrors.idg.pl/CRAN/web/packages/RgoogleMaps/vignettes/RgoogleMaps-intro.pdf)
+*   [Youtube Working with Google Maps plotting](https://www.youtube.com/watch?v=qSVwTj60di8)
+*   Ties in very closely with spatial data analayses:
+    +   [Introduction Video](https://www.youtube.com/watch?v=hDy0y-H_HRQ)--- 9:20 for a list of pacakges that could be useful
+    +   Needs to be converted to special data frame (spatial data frame)
+    +   2 types of coordinate reference system:
+        +   Geographic Coordinate System (lat, lng): WGS84
+        +   Cartesian/Projected/Planar Coordinate System (x,y)
+    +   _SP_ package is specially useful 
+
+
+
+
+#   Leaflet:
+*   [Introduction Video](https://www.youtube.com/watch?v=ktWjjAlAKtE)

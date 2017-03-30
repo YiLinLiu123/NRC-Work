@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="Overpass API">
+<note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>
+<meta osm_base="2017-03-28T07:49:02Z"/>
+
+  <node id="3113307294" lat="57.1143431" lon="9.0583751" version="3" timestamp="2015-10-14T18:51:28Z" changeset="34639398" uid="21323" user="AE35">
+    <tag k="name" v="Sylt"/>
+    <tag k="place" v="hamlet"/>
+    <tag k="population" v="7"/>
+  </node>
+  <node id="4062414861" lat="36.4951331" lon="-4.7975012" version="1" timestamp="2016-03-15T22:04:56Z" changeset="37857799" uid="3717603" user="harri4913">
+    <tag k="amenity" v="bar"/>
+    <tag k="name" v="Sylt"/>
+  </node>
+  <relation id="1147134" version="13" timestamp="2014-05-08T13:34:41Z" changeset="22209426" uid="1772211" user="4rch">
+    <member type="way" ref="99857886" role="outer"/>
+    <member type="way" ref="73989091" role="outer"/>
+    <member type="way" ref="74476552" role="outer"/>
+    <member type="way" ref="73989088" role="outer"/>
+    <member type="way" ref="74476549" role="outer"/>
+    <member type="way" ref="99857889" role="outer"/>
+    <tag k="admin_centre:postal_code" v="25980"/>
+    <tag k="admin_level" v="8"/>
+    <tag k="boundary" v="administrative"/>
+    <tag k="de:amtlicher_gemeindeschluessel" v="01054168"/>
+    <tag k="de:regionalschluessel" v="010540168168"/>
+    <tag k="is_in:continent" v="Europe"/>
+    <tag k="is_in:country" v="Bundesrepublik Deutschland"/>
+    <tag k="is_in:region" v="Nordfriesland"/>
+    <tag k="is_in:state" v="Schleswig-Holstein"/>
+    <tag k="name" v="Sylt"/>
+    <tag k="type" v="boundary"/>
+    <tag k="wikidata" v="Q21008"/>
+    <tag k="wikipedia" v="de:Sylt (Gemeinde)"/>
+  </relation>
+  <relation id="1576925" version="11" timestamp="2014-11-29T17:58:37Z" changeset="27116935" uid="1719211" user="poschon">
+    <member type="way" ref="111820519" role="outer"/>
+    <member type="way" ref="75601201" role="outer"/>
+    <member type="way" ref="206879406" role="outer"/>
+    <member type="way" ref="285549837" role="outer"/>
+    <member type="way" ref="269808924" role="outer"/>
+    <member type="way" ref="269808926" role="outer"/>
+    <member type="way" ref="269808914" role="outer"/>
+    <tag k="name" v="Sylt"/>
+    <tag k="name:da" v="Sild"/>
+    <tag k="name:el" v="Συλτ"/>
+    <tag k="place" v="island"/>
+    <tag k="type" v="multipolygon"/>
+    <tag k="wikidata" v="Q3107"/>
+    <tag k="wikipedia" v="de:Sylt"/>
+  </relation>
+
+</osm>

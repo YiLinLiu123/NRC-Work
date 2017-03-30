@@ -6,6 +6,10 @@ output:
     html_document:
     toc: true
     toc.depth: 6
+    
+    pdf_document:
+        toc:true
+        toc.depth: 6
 ---
 
 ```{r Intro setup, include=FALSE}
@@ -38,33 +42,33 @@ knitr::opts_chunk$set(echo = TRUE)
 *   Twitter goes beyond _OAuth_ for security purposes, twitter 
     server will negotiate a cipher upon establishing connection. 
     [TLS Information](https://dev.twitter.com/overview/api/tls)
-    +   This report likely uses pre-made pacakges and will not delve 
+    +   This report likely uses pre-made packages and will not delve 
     into the specifics for security. 
 
-*   Specific Twitter endpoints support pagination. To request for cursored results,
-    add `&cursor=-1` to the request. If then endpoint/node support cursoring, 
+*   Specific Twitter endpoints support pagination. To request for cursor results,
+    add `&cursor=-1` to the request. If then endpoint/node support cursors, 
     the API will default `cursor` to `-1`. The response value for cursor can 
     be used to navigate. 
-    +   [Cursoring](https://dev.twitter.com/overview/api/cursoring)
+    +   [Cursors](https://dev.twitter.com/overview/api/cursoring)
     
     
 *****
 
 ### REST API:
-*   Only takes [Application-Only Authentication ](https://dev.twitter.com/oauth/application-only)(requests made on behalf of the 
-    application). 
+*   Only takes [Application-Only Authentication ](https://dev.twitter.com/oauth/application-only)
+    (requests made on behalf of the application). 
 *   Request format:
     +   `https://api.twitter.com/1.1/{endpoints}/{fields}.json?q={query}`
-*   Rate limited by 15 minute windows, each endpoint/requets have varying limitations. 
-    Limitations are a cucumlative sum. For more information refer to [REST Rate Limit](https://dev.twitter.com/rest/public/rate-limiting)
+*   Rate limited by 15 minute windows, each endpoint/request has varying limitations. 
+    Limitation is a cumulative sum. For more information refer to [REST Rate Limit](https://dev.twitter.com/rest/public/rate-limiting)
     +   [Rate Limit Table](https://dev.twitter.com/rest/public/rate-limits)
     +   GET requests can be made on the behalf of application or user account.
     +   HTTP headers are available to request for rate limit information. 
-*   Working with Timelines:
-    +   Since timelines are changing in real time, twitter addes parameters 
-        to avoid redundant information retrival. 
+*   Working with Timelines (like Home page on Facebook):
+    +   Since timelines are changing in real time, twitter adds parameters 
+        to avoid redundant information retrieval. 
         +   _max_Id_: specifies the to retrieve posts up to and including the max_Id. 
-        This will return 1 redundant request.To avoid this, add 1 to the ID of the post 
+        This will return 1 redundant request. To avoid this, add 1 to the ID of the post 
         (doesn't matter if the post exists or not).
         +   _since_Id_: extract posts after an id. 
         +   [Details on Working with Timelines](https://dev.twitter.com/rest/public/timelines)
@@ -76,6 +80,12 @@ knitr::opts_chunk$set(echo = TRUE)
 *   Essentially the search engine of twitter and will return 
     information from public feed that matches search string. 
 *   This is part of the REST API.
+*   Provides powerful query formats that can make very interesting
+    queries such as:
+    +   politics filters: `politics filter:safe`
+    +   containing media: `puppy filter:media`
+    +   attitude: `flight:(`
+    +   hashtags: `#haiku`
 *   Example Request:'https://api.twitter.com/1.1/search/tweets.json?q=%40twitterapi'
 *   [Search API](https://dev.twitter.com/rest/public/search)
 
@@ -85,22 +95,24 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Streaming API:
 *   [Twitter Stream API](https://dev.twitter.com/streaming/overview)
-*   This stream provides access to new and updating public tweets data.
-*   Includes two useful types: _Public_ and _User_ stream api. 
+*   This stream provides access to newly updated public tweets data.
+*   Includes two useful types: _Public_ and _User_ stream API. 
     +   [Public Stream](https://dev.twitter.com/streaming/public): Live stream 
         of public posts. _GET_ for shorter URL requests while _POST_ for longer
         URLs.
     +   [User Stream](https://dev.twitter.com/streaming/userstreams)
-        used to extract a person's view of twitter: direct messages,replies etc.
-*   General process is to establish a connection to the stream api with a request
-    and save the data into a database for future use. 
+        used to extract a person's view of twitter: direct messages, replies,
+        following status, etc.
+*   General process is to establish a connection to the stream API with a request
+    and save the data into a database for future use. The connection is
+    sustained unless error occurs or the user disconnects.
 *   Does not have normal rate limit caps, however connections will be closed if:
     +   attempting to establish too many connections. 
     +   suddenly stops reading data. 
     +   reads data at a slow pace such that the queue is filled. 
-*   For more details regarding stalls, reconnecting etc, refer to 
+*   For more details regarding stalls, reconnecting, etc. Refer to 
     [Connecting to Stream API](https://dev.twitter.com/streaming/overview/connecting)
-*   Each JSON return will be seperated by "\r\n"
+*   Each JSON return will be separated by `\r\n`
 *   Missing fields will be indicated by a "-1", use REST API to retrieve information.
 *   [Stream Message Types](https://dev.twitter.com/streaming/overview/messages-types)
     +   will contain blank messages (to sustain connection), 

@@ -130,19 +130,20 @@ task_Name= "testing"
 
 taskscheduler_create(taskname = task_Name, rscript=script_Path,
                      schedule = "MINUTE", startdate=format(Sys.Date(), "%Y-%m-%d"),
-                     modifier = 2)
+                     modifier = 5)
  ## modifying task
 library(xml2)
 script_Path = paste("C:\\Windows\\System32\\Tasks\\",task_Name,sep="")
 
 ##formating xml parameters
+## Name search does not seem to be working.
 changed_File = read_xml(x=script_Path, econding="UTF-16")
 xml_Nodes =xml_children(xml_children(changed_File))
 xml_text(xml_Nodes[6])<- "false"
 xml_text(xml_Nodes[7])<- "false"
 
 
-## Stoping old task so a modified version can begin
+## Stoping old task so a modified version can begin.
 taskcheduler_stop(task_Name)
 taskscheduler_delete(task_Name)
 
@@ -183,8 +184,8 @@ system(command,intern=TRUE)
 *   [xml2 package](https://cran.r-project.org/web/packages/xml2/vignettes/modification.html)
 
 ```{r stoping script}
-   taskcheduler_stop(task_Name)
-taskscheduler_delete(task_Name)
+    taskcheduler_stop(task_Name)
+    taskscheduler_delete(task_Name)
     
 
 ```
@@ -199,27 +200,52 @@ taskscheduler_delete(task_Name)
 
 ```{r lag columns}
 
+    library(dplyr)
+
     # Reading in dataframe
-    file_Path = "temperature_Org.csv"
+    file_Path = "temperature-Copy.csv"
     data = read.table(file = file_Path, header=TRUE,
                       sep=",",stringsAsFactors = FALSE)
     
+    
+    # Data was collected every half hour,Seperate into
+    # 2 pieces: one data_frame for the first half hour
+    # and another for the second half hour
+    
+    length=dim(data)[1]
+    first = data[seq(from=1,to=length,by=2),]
+    second = data[seq(from=2,to=length,by=2),]
+    
+    
+    
     # Lagging each column, starting from 3rd column
-    start = 3
-    lag = 1;
-    for( i in start: length(names(data))){
-        data[,start] = data.table::shift(
-            x= data[,start], n=lag
-        )
-        start = start+1
-        lag= lag+1 
+    # made into a quick function.
+    savingLagData = function(data,start_Col=3, lag=1, lag_Increment=0,file_Path){
+    
+        for( i in start_Col: length(names(data))){
+            data[,start_Col] = data.table::shift(
+                x= data[,start_Col], n=lag
+            )
+            start_Col = start_Col+1
+            lag =lag+lag_Increment
+        }
+        
+        write.table(x=data, file=file_Path, row.names=FALSE,
+                    sep=",")
     }
     
-    write.table(x=data, file="data.csv", row.names=FALSE,
-                sep=",")
+    
+    ##storing the two formated data tables:
+    
+    savingLagData(data = first, file_Path="first.csv",lag_Increment = 1)
+    savingLagData(data = second, file_Path="second.csv",lag_Increment = 1)
+   
 ```
 
 
 2:  Plotting simple Graphs:
 
-```{r}
+```{r completeData}
+
+
+```

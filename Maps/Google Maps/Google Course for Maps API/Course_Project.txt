@@ -1,0 +1,295 @@
+<! DOCTYPE html>
+
+	<html>
+	
+	
+		<head>
+	
+	
+			<style>
+				html,
+				
+				body{
+				
+					font-family: Arial, sans-serif;
+					height: 100%
+					maring: 5px;
+					padding: 0;
+				}
+			
+				#map{
+					height: 100%
+				}
+				
+				.options-box{
+					background: #fff;
+					border: 1px solid #999;
+					border-radius: 3px;
+					height: 50%
+					line-height: 35px;
+					padding: 10px 10px 30px 10px;
+					text-alight: left;
+					width: 340px;
+				
+				}
+				
+				#pano{
+					width: 200px;
+					height: 200px;
+				}
+				
+				#toggle-drawing{
+					width: 27%;
+					position: relative;
+					margin-left:10px;
+				}
+			</style>
+			
+			
+		</head>
+		
+		<body>
+			
+			<div class = "container">
+			
+				<div class = "options-box">
+					<!-- Adding buttons to allow users to turn on/off listings-->
+					<div>
+						<input id='show-listings' type="button" value="Show Listings">
+						<input id='hide-listings' type="button" value="Hide Listings">
+						<hr>
+						<span class="text"> Draw A Shape to search within in for homes!</span>
+						<input id="toggle-drawing" type="button" value="Drawing Tools">
+					</div>
+				
+				</div>
+			
+				<div id="map"></div>
+			</div>
+			
+	<script>
+		  var map;
+		  // Create a new blank array for all the listing markers.
+		  var markers = [];
+		  
+		  //global polygon variable
+		  var polygon = null;
+		  
+		  //Initialization Function
+		  function initMap() {
+			// Constructor creates a new map - only center and zoom are required.
+			map = new google.maps.Map(document.getElementById('map'), {
+			  center: {lat: 40.7413549, lng: -73.9980244},
+			  zoom: 13
+			});
+			
+			// These are the real estate listings that will be shown to the user.
+			// Normally we'd have these in a database instead.
+			var locations = [
+			  {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
+			  {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
+			  {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
+			  {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
+			  {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
+			  {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
+			];
+			
+			
+			var largeInfowindow = new google.maps.InfoWindow();
+			
+			
+			 // Initialize the drawing manager.
+			var drawingManager = new google.maps.drawing.DrawingManager({
+			  drawingMode: google.maps.drawing.OverlayType.POLYGON,
+			  drawingControl: true,
+			  drawingControlOptions: {
+				position: google.maps.ControlPosition.TOP_LEFT,
+				drawingModes: [
+				  google.maps.drawing.OverlayType.POLYGON
+				]
+			  }
+			});
+			
+			
+						
+			// The following group uses the location array to 
+			// create an array of markers on initialize.
+			for (var i = 0; i < locations.length; i++) {
+			  // Get the position from the location array.
+			  var position = locations[i].location;
+			  var title = locations[i].title;
+			  // Create a marker per location, and put into markers array.
+			  var marker = new google.maps.Marker({
+				position: position,
+				title: title,
+				animation: google.maps.Animation.DROP,
+				id: i
+			  });
+			  
+			  // Push the marker to our array of markers.
+			  markers.push(marker);
+			  
+			  // Create an onclick event to open an infowindow at each marker.
+			  marker.addListener('click', function() {
+				populateInfoWindow(this, largeInfowindow);
+			  });
+			  
+			}
+			
+			//adding button listeners
+			document.getElementById('show-listings').addEventListener('click',
+			showListings);
+			document.getElementById('hide-listings').addEventListener('click',
+			hideListings);
+			
+			document.getElementById('toggle-drawing').addEventListener('click', function() {
+				toggleDrawing(drawingManager);
+            });	
+		  
+		
+			  // Add an event listener so that the polygon is captured,  call the
+			// searchWithinPolygon function. This will show the markers in the polygon,
+			// and hide any outside of it.
+			drawingManager.addListener('overlaycomplete', function(event) {
+			  // First, check if there is an existing polygon.
+			  // If there is, get rid of it and remove the markers
+			  if (polygon) {
+				polygon.setMap(null);
+				hideListings(markers);
+			  }
+			  // Switching the drawing mode to the HAND (i.e., no longer drawing).
+			  drawingManager.setDrawingMode(null);
+			  // Creating a new editable polygon from the overlay.
+			  polygon = event.overlay;
+			  polygon.setEditable(true);
+			  // Searching within the polygon.
+			  searchWithinPolygon();
+			  // Make sure the search is re-done if the poly is changed.
+			  polygon.getPath().addListener('set_at', searchWithinPolygon);
+			  polygon.getPath().addListener('insert_at', searchWithinPolygon);
+			});
+			
+			
+			
+			
+		  }
+		  
+		  // This shows and hides (respectively) the drawing options.
+		function toggleDrawing(drawingManager) {
+			if (drawingManager.map) {
+			  drawingManager.setMap(null);
+			  // In case the user drew anything, get rid of the polygon
+			  if(polygon){
+				polygon.setMap(null);
+			  }
+			} else {
+			  drawingManager.setMap(map);
+			}
+       }
+		  
+		  
+	// This function will loop through the markers array and display them all.
+		  function showListings() {
+			var bounds = new google.maps.LatLngBounds();
+			// Extend the boundaries of the map for each marker and display the marker
+			for (var i = 0; i < markers.length; i++) {
+			  markers[i].setMap(map);
+			  bounds.extend(markers[i].position);
+			}
+			map.fitBounds(bounds);
+		  }
+		  
+		  //HideListings function: loop through and hide the infowindow:
+		  function hideListings(){
+		  
+			for(var i=0; i < markers.length; i++){
+				markers[i].setMap(null);
+			
+			}
+		  
+		  }
+		  
+		  	  
+		  // This function populates the infowindow when the marker is clicked. We'll only allow
+		  // one infowindow which will open at the marker that is clicked, and populate based
+		  // on that markers position.
+		function populateInfoWindow(marker, infowindow) {
+			// Check to make sure the infowindow is not already opened on this marker.
+			if (infowindow.marker != marker) {
+			  // Clear the infowindow content to give the streetview time to load.
+			  infowindow.setContent('');
+			  infowindow.marker = marker;
+			  // Make sure the marker property is cleared if the infowindow is closed.
+			  infowindow.addListener('closeclick', function() {
+				infowindow.marker = null;
+			  });
+			  var streetViewService = new google.maps.StreetViewService();
+			  var radius = 50;
+			  // In case the status is OK, which means the pano was found, compute the
+			  // position of the streetview image, then calculate the heading, then get a
+			  // panorama from that and set the options
+			  function getStreetView(data, status) {
+				if (status == google.maps.StreetViewStatus.OK) {
+				  var nearStreetViewLocation = data.location.latLng;
+				  var heading = google.maps.geometry.spherical.computeHeading(
+					nearStreetViewLocation, marker.position);
+					infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+					var panoramaOptions = {
+					  position: nearStreetViewLocation,
+					  pov: {
+						heading: heading,
+						pitch: 30
+					  }
+					};
+				  var panorama = new google.maps.StreetViewPanorama(
+					document.getElementById('pano'), panoramaOptions);
+				} else {
+				  infowindow.setContent('<div>' + marker.title + '</div>' +
+					'<div>No Street View Found</div>');
+				}
+			  }
+			  // Use streetview service to get the closest streetview image within
+			  // 50 meters of the markers position
+			  //
+			  streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+			  // Open the infowindow on the correct marker.
+			  infowindow.open(map, marker);
+			}
+		  }
+
+	// This function hides all markers outside the polygon,
+      // and shows only the ones within it. This is so that the
+      // user can specify an exact area of search.
+      function searchWithinPolygon() {
+        for (var i = 0; i < markers.length; i++) {
+          if (google.maps.geometry.poly.containsLocation(markers[i].position, polygon)) {
+            markers[i].setMap(map);
+          } else {
+            markers[i].setMap(null);
+          }
+        }
+      }
+		  
+		  
+		  
+		  
+    </script>
+				
+				
+		
+		
+		
+		
+			<!-- loading API-->
+			<!-- the endpoint is "https:maps.googleapis.come", "v=3" is version 3
+				 Call back allows you to call functions after map is loaded-->
+			
+			<script async defer
+				src="https://maps.googleapis.com/maps/api/js?libraries=drawing,geometry&key=AIzaSyBGTs-gZCbyP8n0Hvw_VZ76Z6YrST1DNa8
+				&v=3&callback=initMap">
+			</script>
+		
+		
+		</body>
+		
+	</html>

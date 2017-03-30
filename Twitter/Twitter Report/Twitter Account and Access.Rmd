@@ -5,6 +5,10 @@ date: "March 14, 2017"
 output: html_document:
         toc:true
         toc.depth: 6
+        
+        pdf_document:
+        toc:true
+        toc.depth: 6
 ---
 
 ```{r AAA setup, include=FALSE}

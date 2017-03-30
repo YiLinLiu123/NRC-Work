@@ -1,0 +1,57 @@
+---
+title: "Overall Summary"
+author: "paul"
+date: "March 30, 2017"
+output: 
+    pdf_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+#   Summary:
+
+*****
+
+##  Facebook:
+*   ___Advantages:___
+    +   Easy to retrieve data from facebook API using 
+        the functions provided by the __Rfacebook__. 
+    +   Easy to access public data of facebook through its [__search API__](https://developers.facebook.com/docs/graph-API/using-graph-API#search).
+        Part of the functionality is covered by the _Rfacebook_ package through the _searchGroup &
+        searchPages_ function.
+    +   Long lived tokens created through registering an facebook application
+        does not expire.
+    +   Discussions about a post can be easily tracked through extracting
+        comments and replies to those comments.
+    +   The [graph API Explorer](https://developers.facebook.com/tools/explorer/) tool is useful for testing API 
+        calls to understand structure as well as exploring possible fields and edges.
+    +   The __Utils.R__ package within _Rfacebook_ provides example frameworks to parse 
+        the response JSON nested list into an organized data frame.
+    +   To use custom API requests, use the _CallAPI_ function in _Rfacebook_ 
+        with the request URL to retrieve response.
+
+*****
+
+*   ___Disadvantages:___
+    +   The facebook API documentation does not provide specific information regarding [__Rate         Limit__](https://developers.facebook.com/docs/graph-API/advanced/rate-limiting), 
+    it specifies that the limit `differs depending on request`.
+    +   facebook API V2.0 and above place heavy restrictions 
+        on accessing personal information. Details
+        such as profile information, user timeline etc. are not 
+        generally publicly available due to privacy settings.
+        It is __not recommended__ to scrape the facebook API to search for user related
+        information.
+    +   To retrieve information regarding nodes, the Id of the node
+        is required. This makes tracking objects/searching for
+        specific nodes very difficult
+        since there is no easy way to obtain the id for specific
+        objects of interest (pages, users, comments, etc.)
+    +   It was observed that many pages, posts and comments
+        does not include _location_ information as part of its content.
+        
+        
+*****
+
+
+##  Facebook Detailed Report
+[Facebook Report](.\Facebook\FacebookReportPDF.pdf)
