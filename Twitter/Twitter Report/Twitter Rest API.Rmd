@@ -19,7 +19,7 @@ output:
 ### Tools and Packages:
 *   [Apigee Twitter API Console](https://apigee.com/console/twitter)
     +   Useful interface to test out queries to the API.
-*   [twitteR](https://cran.r-project.org/web/packages/twitteR/twitteR.pdf)
+*   [twitteR](https://cran.r-project.org/web/packages/twitteR/index.html)
 *   [twitteR Vignette](http://geoffjentry.hexdump.org/twitteR.pdf)
     +   __Highly Recommended to Read__
 
@@ -266,6 +266,9 @@ __GOAL: To test out the _twitteR_ package's ability to
 *****
 
 ### REST API Example 2: Random Exploration 
+
+*   The code for testing is not shown,
+refer to markdown documents for the code.
 
 ```{r REST Example2:}
 

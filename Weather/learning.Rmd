@@ -1,0 +1,253 @@
+---
+title: "Learning ggplot2"
+author: "Yi Lin Liu"
+date: "March 31, 2017"
+output: 
+    html_document:
+    toc: yes
+    toc.depth: '6'
+---
+
+# Onine Course for ggplot2:
+*   [course link](http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html)
+
+```{r setup}
+
+    rm(list=ls())
+    
+    folder_Path = "C:\\Users\\liuyi\\Downloads\\Rgraphics"
+
+
+
+    .First <- function() {
+      options(width=70)
+      options(useFancyQuotes=FALSE)
+      require(ascii)
+      require(xtable)
+      require(ggplot2)
+      require(scales)
+      require(reshape2)
+      require(plyr)
+      theme_set(theme_bw())
+      png <<- function(res=96, width=500, height=300, ...) grDevices::png(res=res, width=width, height=height, ...)
+    }
+    
+```
+
+
+
+
+##  Intro: 
+
+```{r sample Housing Data}
+    
+    library(ggplot2)
+
+    ## loading and inspecting data
+    housing_Path = paste(folder_Path, "\\dataSets\\landdata-states.csv",sep="")
+    housing <- read.csv(housing_Path)
+    head(housing)
+    
+    
+    ##  plotting simple histogram using ggplot
+    
+    ##  ggplot operates using layers
+    ggplot(housing, aes(x = Home.Value)) +
+         geom_histogram(color="red")
+    
+    
+    ##  ggplot dots 
+    ggplot(subset(housing, State %in% c("MA", "TX")),
+       aes(x=Date,
+           y=Home.Value,
+           color=State))+
+     geom_point()
+    
+    
+    ##  Point plots
+    hp2001Q1 <- subset(housing, Date == 2001.25) 
+    ggplot(hp2001Q1,
+           aes(y = Structure.Cost, x = Land.Value)) +
+      geom_point()
+
+    ##  Predications
+    hp2001Q1$pred.SC <- predict(lm(Structure.Cost ~ log(Land.Value), data = hp2001Q1))
+
+    p1 <- ggplot(hp2001Q1, aes(x = log(Land.Value), y = Structure.Cost))
+    
+    ##  plots home value based on the structure cost and log of land value
+    p1 + geom_point(aes(color = Home.Value)) +
+      geom_line(aes(y = pred.SC))
+    
+    
+    ##  Smoother
+    p1 +
+  geom_point(aes(color = Home.Value)) +
+  geom_smooth(method="lm")
+    
+    
+    
+    ##  Text Label
+    p1 + 
+  geom_text(aes(label=State), size = 3)
+    
+    
+    ##  other labels
+    ## install.packages("ggrepel") 
+library("ggrepel")
+p1 + 
+  geom_point() + 
+  geom_text_repel(aes(label=State), size = 3)
+```
+
+
+## Exercise 1:
+
+```{r exercise 1}
+
+    economist <- paste(folder_Path, "\\dataSets\\EconomistData.csv",sep="")
+    economist_Data = read.csv(economist)
+    
+    e1 <- ggplot(data = economist_Data,aes(x=CPI,y=HDI))
+       e1 <- e1+geom_point(aes(color= Region,size=HDI))
+       
+
+```
+
+
+
+
+##  Statistical Transformations:
+*   for graphs, the y,x points might need to transform.
+
+
+```{r example Statistical}
+
+    p2 <- ggplot(housing, aes(x = Home.Value))
+    p2 + geom_histogram()
+
+    ##  Changing binwidth
+    ##  Having to first specify the stat which is used
+    ##  and then change binwidth
+    p2 + geom_histogram(stat = "bin", binwidth=4000)
+
+    
+
+```
+
+
+##  Exercise 2:
+
+```{r Exercise 2}
+
+    e2 <- e1+ geom_smooth(method=lm)
+    e2_2 <- e1+geom_line(stat="smooth",method="lm")
+    print(e2_2)
+
+    
+```
+
+
+
+
+
+##  Scale:
+
+
+```{r Scale Example}
+    p3 <- ggplot(housing,
+                 aes(x = State,
+                     y = Home.Price.Index)) + 
+            theme(legend.position="top",
+                  axis.text=element_text(size = 6))
+    (p4 <- p3 + geom_point(aes(color = Date),
+                           alpha = 0.5,
+                           size = 1.5,
+                           position = position_jitter(width = 0.25, height = 0)))
+
+    ##  Modifying scale:
+    
+    p4 + scale_x_discrete(name="State Abbreviation") +
+  scale_color_continuous(name="",
+                         breaks = c(1976, 1994, 2013),
+                         labels = c("'76", "'94", "'13"))
+    
+    
+    p4 +
+  scale_x_discrete(name="State Abbreviation") +
+  scale_color_continuous(name="",
+                         breaks = c(1976, 1994, 2013),
+                         labels = c("'76", "'94", "'13"),
+                         low = "blue", high = "red")
+
+
+```
+
+
+
+
+
+##  Exercise 3:
+
+```{r Exercise 3}
+
+    e1
+
+    e3 <- e1+scale_y_continuous(name="Human Development Index")+
+        scale_color_manual(values=rainbow(n=6))
+    
+    ##default color pallettes: grDevices
+      
+
+```
+
+
+
+##  Faceting: 
+
+
+```{r Faceting Examples}
+
+    ## Hard to read each line
+    p5 <- ggplot(housing, aes(x = Date, y = Home.Value))
+    p5 + geom_line(aes(color = State))
+
+    
+    
+    ## Facetting
+    (p5 <- p5 + geom_line() +
+   facet_wrap(~State, ncol = 10))
+
+```
+
+
+
+
+```{r}
+
+    library(tidyr)
+housing.byyear <- aggregate(cbind(Home.Value, Land.Value) ~ Date, data = housing, mean)
+home.land.byyear <- gather(housing.byyear,
+                           value = "value",
+                           key = "type",
+                           Home.Value, Land.Value)
+ggplot(home.land.byyear,
+       aes(x=Date,
+           y=value,
+           color=type)) +
+  geom_line()
+```
+
+
+
+
+
+
+
+##  Final Challenge:
+
+```{r final }
+
+    
+
+```

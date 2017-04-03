@@ -13,6 +13,10 @@ output:
 *****
 
 ##  Facebook:
+*   [Facebook API](https://developers.facebook.com/docs/graph-api)
+
+***** 
+
 *   ___Advantages:___
     +   Easy to retrieve data from facebook API using 
         the functions provided by the __Rfacebook__. 
@@ -53,5 +57,55 @@ output:
     
 ***** 
 
-##  Facebook Detailed Report
+##  Facebook Report
 [Facebook Report](.\Facebook\FacebookReport.html)
+
+
+    
+
+*****
+
+##  Twitter:
+*   [Twitter API](https://dev.twitter.com/overview/api)
+
+*****
+
+*   __Advantages:__
+    +   The packages provide easy access to the API.
+    +   __It is recommended to retrieve information
+    using the Twitter API compared to Facebook API.__
+    This is because most information posted on twitter
+    is public (tweets, users, etc).
+    +   The search API for Twitter supports more powerful
+    queries for searching public twitter content. 
+    +   The [twitteR Package](https://cran.r-project.org/web/packages/twitteR/index.html) provide easy access to the Twitter REST API and 
+    handles the sorting of retrieved data through
+    class wrappers that provide convenient functions to access
+    information. Tweets are part of the _status_ class for example.
+    Read the documentation for useful details. 
+    +   TwitteR package retrieves majority of information that is of interest,
+    if not supported by the twitteR, any arbitrary HTTP request
+    can be made to the API to retrieve information.
+    +   Twitter provides a live stream API which allows the retrieval 
+    of the new updated information on tweeter. This is a unique feature
+    and can be used for real-time tracking for events of interest. 
+    +   [StreamR](https://github.com/pablobarbera/streamR) provides easy access and convenient use of the stream API
+    connecting, saving, parsing of data is all handled. 
+
+*****
+
+*   __Disadvantages:__
+    +   Location information is available but often users can fill 
+    whatever it desired, thus not most accurate. 
+    +   The token produced by twitteR is cached internally and not
+    provide easy access to the token for use outside of twitteR functions.
+    +   Due to nature of twitter, it is hard to track how users
+    react to tweets posted by other users. This is because the replies is not
+    directly connected to the post. 
+
+
+    
+*****
+
+## Twitter Report:
+[Twitter Report](.\Twitter\Twitter Report\TwitterReport.html)

@@ -3,10 +3,12 @@ title: "Twitter Report"
 author: "paul"
 date: "March 14, 2017"
 output:
-  pdf_document: default
-  html_document: null
-  toc: yes
-  toc.depth: 6
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+  html_document:
+    toc: yes
+    toc_depth: '4'
 ---
 
 ```{r setup, include=FALSE}

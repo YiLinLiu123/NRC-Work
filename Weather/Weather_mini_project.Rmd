@@ -2,9 +2,10 @@
 title: "Weather_Mini_Project"
 author: "paul"
 date: "March 23, 2017"
-output: html_document:
-    toc: true
-    toc.depth: 5
+output: 
+    html_document:
+    toc: yes
+    toc.depth: '5'
 ---
 *****
 
@@ -69,7 +70,8 @@ output: html_document:
 2:  getting the data and appending it to the file
 
 
-```{r Web Scrapping}
+```{r Web Scrapping, eval=FALSE}
+
     library(rvest)
     library(xml2)
 
@@ -243,9 +245,144 @@ system(command,intern=TRUE)
 ```
 
 
-2:  Plotting simple Graphs:
+2:  Getting Complete Data:
 
-```{r completeData}
+```{r completeData, message = FALSE}
+    rm(list = ls())
+
+    library(dplyr)
+
+    ##  Select All Full Length Data:
+
+    ##  number indicating how many rows to skip
+    skip= 25
+    
+    file_Name = "first.csv"
+    ## For simplicity, just the first half hour data will 
+    ## be analyazed. 
+
+    data = read.table(file = file_Name, header=TRUE,
+                      sep=",", stringsAsFactors = FALSE)
+    
+    data = data[skip:dim(data)[1],]
+    write.table(x=data,file="data.csv",row.names = FALSE,
+                col.names = TRUE,sep=",")
+    
+
+```
 
 
+
+3:  Learning about ggplot2:
+
+*   [ggplot2](http://ggplot2.org/)
+*   [ggplot2 cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+*   [Interesting Course On ggplot2](http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html)
+
+
+
+4:  Making Data Tables:
+
+```{r data table}
+
+    ##  Changing the column names:
+    col_Names = c("Date","current")
+    for(i in 3:length(names(data))){
+        col_Names = append(col_Names, paste("For",i-2,"h",sep=""))
+    }
+    colnames(data) = col_Names
+    
+    ##  Getting Formated Data:
+    library(dplyr)
+    
+    ##  Max and Min predictions
+    max = apply(select(data,-(Date)),1,function(x){ max(x)} )
+    min = apply(select(data,-(Date)),1,function(x){ min(x)} )
+
+    
+    formated = data %>%
+        mutate(maxPredict = max) %>%
+        mutate(minPredict = min) %>%
+    ##  Error Bars
+        mutate(erUp = pmax(0,(maxPredict-current))) %>%
+        mutate(erDown=pmin(0,(minPredict-current)))
+    
+    
+    ## frequencies:
+    
+    arbConstant = 0.1 
+    arbConstant2 = 0.2 ## Used to offset the 
+    ## boundaries for the cut function such that the actual 
+    ## temperature is not included. Since only whole numbers, 
+    ##  a decimal to tenth place is sufficient
+    
+    current=grep("current", names(formated))-1 ## subtract 1 because 
+    ## date will be discarded later.
+    
+    max = grep("maxPredict", names(formated))-1
+    min = grep("minPredict", names(formated))-1
+    for1h = grep("For1h", names(formated))-1
+    for24h = grep("For24h", names(formated))-1
+    
+    
+    ##  Special Attention needs to be given because
+    ##  lower bound is not included, but upper is.
+    erUpFreq = apply(formated, 1, function(x){
+        x = as.numeric(x[2:length(x)])
+        table(cut(x[for1h:for24h],breaks=
+             c(x[current]+arbConstant,
+               max(x[max],x[current]) )))
+    })
+    
+    
+    erDownFreq = apply(formated, 1, function(x){
+        x = as.numeric(x[2:length(x)])
+        min = min(x[min], x[current])-arbConstant2
+       table= table(cut(x[for1h:for24h],
+            breaks = c(min, x[current]-arbConstant)))
+    })
+    
+    finished = formated %>% 
+        mutate(erUpFreq = erUpFreq) %>%
+        mutate(erDownFreq = erDownFreq) %>%
+        select(-c(For1h:For24h))
+    
+    write.table(x=finished, file = "finished.csv", 
+                col.names = TRUE,row.names = FALSE,
+                sep=",")
+
+```
+
+
+
+
+5:  Plotting Graphs
+```{r Plotting Graphs}
+
+    rm(list = ls())
+    library(ggplot2)
+    
+    table = read.table(file="finished.csv", header = TRUE,
+                     sep= ",", stringsAsFactors = FALSE)
+    
+    sizeFactor = 20
+    size = table$erUpFreq
+    size2 = table$erDownFreq
+    
+    plot = ggplot(data=table, aes(x=strptime(table$Date,format="%Y-%m-%d %H:%M:%S"),
+            y=table$current) ) + geom_point(color="red",size=2.5)+
+        scale_x_datetime() + 
+        ##  titles and things 
+        xlab("Time")+ylab("Temp in C")+
+        ggtitle("Temperature over Time for Ottawa")+
+        ##  Error Bar
+        geom_errorbar(aes(ymin=table$current,
+                          ymax = table$maxPredict),size=table$erUpFreq/sizeFactor,
+                      color = "blue")+
+            geom_errorbar(aes(ymin=table$minPredict,
+                          ymax = table$current), size=table$erDownFreq/sizeFactor,
+                          color="blue")+
+        ##  Trend Lines
+        geom_smooth()
+    
 ```

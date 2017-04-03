@@ -18,6 +18,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 *****
 
+### Summary of streamR:
+*   provides easy access to the twitter stream
+    API.
+*   Handles connection, parsing, disconnecting,
+    reconnecting, backing off and 
+    writing to a file all in the background
 
 ### IMPORTANT NOTE:
 *   __Make sure that the twitter application has "obb" specified
@@ -25,17 +31,17 @@ in the call back URL, this will take the user to the authorization
 page to extract the pin to set up twitter handshake.__
 
 
-*   __It is recommanded to store the RAW JSON response into a file
+*   __It is recommended to store the RAW JSON/XML response into a file
     and then process it later on to reduce possible delay for
     streams.__
 
 *   __ The streaming functions provided by streamR only stores
-    complete tweets and disregardes deletion, updates, incomplete 
+    complete tweets and disregards deletion, updates, incomplete 
     posts etc.__
 
 *   __User stream returns only data for the authenticated user 
     for this session. Which is the twitter test account for this
-    report.Not much information due to the nature of the account
+    report. Not much information due to the nature of the account
     being a test account.__
 
 
@@ -70,11 +76,11 @@ page to extract the pin to set up twitter handshake.__
 
 
 
-    #   Set up Token, only needs to be run once, The token will 
-    #   be saved to a file for future use. 
+    ##   Set up Token, only needs to be run once, The token will 
+    ##   be saved to a file for future use. 
 
     ##  Code for setting up handshake, commented out because token is saved
-    ## into a file
+    ##  into a file
 
     # requestURL <- "https://api.twitter.com/oauth/request_token"
     # accessURL <- "https://api.twitter.com/oauth/access_token"
@@ -92,12 +98,14 @@ page to extract the pin to set up twitter handshake.__
 
 ```{r Stream Exapmle 1: Saving and Loading Token}
 
+    ##  The token is stored and read as an R object
+
     if(!file.exists("stream Token")){
         file.create("stream Token")
         saveRDS(object = my_oauth, file="stream Token")
        
     }
-     
+    
     token = readRDS("stream Token")
     
 ```
@@ -117,7 +125,7 @@ page to extract the pin to set up twitter handshake.__
         track="CNN", tweets=10, oauth=token)
     }
      
-    ## reading in saved file, converted to a data frame.
+    ## reading in saved file, convert it to a data frame.
     ## where each column is a field and each row is a tweet.
     tweets_DB = parseTweets(tweets = "tweets_CNN.json")
     names(tweets_DB)
@@ -137,7 +145,9 @@ page to extract the pin to set up twitter handshake.__
 ### Stream API Example 2: UserStream
 
 ```{r Stream Example 2}
-    
+    ##  Not much information is provided beacuse
+    ##  not many activites of the test account. 
+
     if(!file.exists("user stream.json")){
         file.create("user stream.json")
         userStream(file.name="user stream.json",
