@@ -1,6 +1,6 @@
 ---
 title: "Overall Summary"
-author: "paul"
+author: "YiLin Liu"
 date: "March 30, 2017"
 output: 
     pdf_document:
@@ -10,15 +10,15 @@ output:
 
 
 ##   Goal:
-The goal is to look into how to access APIs for various data sources:
-Facebook, twitter, Instagram/Flickr and weather purely through the usage 
+The goal is to look into how to access APIs of various data sources
+(Facebook, twitter, Instagram/Flickr and weather) purely through the usage 
 of R.
 
 
 *****
 
 ##  Facebook:
-*   ___Advantages:___
+*   __Advantages:__
     +   Easy to retrieve data from facebook API using 
         the functions provided by the __Rfacebook__. 
     +   Easy to access public data of facebook through its [__search API__](https://developers.facebook.com/docs/graph-API/using-graph-API#search).
@@ -37,7 +37,7 @@ of R.
 
 *****
 
-*   ___Disadvantages:___
+*   __Disadvantages:__
     +   The facebook API documentation does not provide specific information regarding [__Rate         Limit__](https://developers.facebook.com/docs/graph-API/advanced/rate-limiting), 
     it specifies that the limit `differs depending on request`.
     +   facebook API V2.0 and above place heavy restrictions 
@@ -65,7 +65,7 @@ of R.
 *****
 
 ##  Twitter:
-*   [Twitter API](https://dev.twitter.com/overview/api)
+[Twitter API](https://dev.twitter.com/overview/api)
 
 *****
 
