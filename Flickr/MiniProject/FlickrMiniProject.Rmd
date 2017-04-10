@@ -1,0 +1,206 @@
+
+---
+
+
+##  Goal:
+__  Search for Canada day 2015 near parliment through the twitter
+    and flickr API.__
+    
+
+
+##  Twitter API:
+*   [twitteR documentation](https://cran.r-project.org/web/packages/twitteR/twitteR.pdf)
+*   [search API Twitter](https://dev.twitter.com/rest/public/search)
+```{r Twitter setup1, warning=F}
+
+    library(twitteR)
+    library(httr)
+
+    consumer_Key_T <- "oQ3PqERg75kPtgBcgOLaFShSC"
+    consumer_Secret_T <- "d4cxaKc1Dt3ugagruUNPtWzvmqGHx8WvwYAQ8MywUqTIVTTj9O"
+    access_Token_T <- "833674399224061952-tL4gGOyGUrz84IbVlkkAmQzqUPahL1N"
+    access_Secret_T <- "qkNmkD7TU5uZtIENW3r5K20wkqfbL6w37xyXLwelYBZg6"
+    
+    
+    ##  Intially, the function asks the user to cache the credentials and 
+    ##  will be used for another session.
+    setup_twitter_oauth(consumer_Key_T,consumer_Secret_T,access_Token_T,access_Secret_T)
+    
+    
+    ##  Finding Lat and Lng for Canadian Parliment
+    ##  can be done through google API, for the sake of time. 
+    ##  The lat lng was found on the internet
+    
+   lat <- 45.4236
+    lng <- -75.7009
+    search_Radius <- "3km"
+   
+
+```
+
+
+1:  Searching Public Twitter API:
+
+*   Since the Twitter Search API does not allow
+    searches for tweets older than a week. This 
+    can not be done through the offical Twitter API.
+
+*   Instead there seems to be libraries for other
+    languages that tries to solve this problem.
+    [Old Tweets](https://github.com/Jefferson-Henrique/GetOldTweets-python)
+
+
+
+##  Flickr
+
+```{r Flickr Setup, warning=F, message = F}
+
+    rm(list = ls())
+    library(httr)
+    library(jsonlite)
+    library(xml2)
+    library(rvest)
+    library(XML)
+
+    app_Key <- "08adb0273ae63e5c07c249f5a621e7cb"
+    endpoint <- "https://api.flickr.com/services/rest"
+    
+```
+
+
+
+1:  Getting Photo Search Data
+
+*   Notes about the public search:
+    +   The search using the `woeid` which outlines the area of parliment hill
+        returns more results that merely using the place_id.(pictures of streets
+        around parliment hill were also shown using `woeid`).
+    
+    +   It took some experimentation but generally, using
+        `tags` to search is more effective than `text`.
+
+
+*   Returned response is saved under
+    `photo.xml`.
+
+
+```{r photo search}
+    
+    min_date <- as.POSIXct("2015-07-01")
+    max_date <- as.POSIXct("2015-08-01")
+    lng <- -75.7009
+    lat <- 45.4236
+    
+    ## finding placeId for Parliment hill
+    place_args=c(method="flickr.places.findByLatLon",
+                 api_key = app_Key, 
+                 lat=lat,
+                 lon=lng)
+    place_Request <- paste(endpoint,
+        paste(names(place_args), place_args,sep="=",collapse="&"),
+        sep="?")
+    raw_Place <- GET(place_Request)
+    
+    ##Getting the place id:
+    placeid <- xml2::read_xml(raw_Place$content) %>%
+        xml_node("places place") %>%
+        xml_attr("place_id")
+    
+    woeid <- xml2::read_xml(raw_Place$content) %>%
+        xml_node("places place") %>%
+        xml_attr("woeid")
+    
+    
+    
+    
+    ##  Arguments for Search Request
+    args <- c(method="flickr.photos.search",
+              api_key=app_Key,
+            text = URLencode("Canada Day 2015 Parliament Hill"),
+            tags = URLencode("Canada Day 2015, Parliament Hill, happy Canada Day"),
+            woeid = woeid,
+            min_taken_date = min_date,
+            max_taken_Date = max_date)
+    
+    ## Search data
+    search_Request <- paste(endpoint,
+        paste(names(args), args,sep="=",collapse="&"),
+        sep="?")
+    
+    raw <- GET(search_Request)
+    xml <- read_xml(rawToChar(raw$content))
+    
+    ## saving search requests
+    write_xml(xml,"photos.xml")
+```
+
+
+
+2:  Getting Photo URLs:
+
+*   To form a photo url, refer to
+    [URL](https://www.flickr.com/services/api/misc.urls.html)
+
+*   Photo URL saved under `photoURL.txt`.
+
+```{r}
+    
+    ##  Going to make a list of the URLs of the photos 
+    ##  https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
+    
+    ## Get everything into a data frame
+    
+    attrs <- xml %>% xml_node("photos") %>%
+        xml_nodes("photo") %>%
+        xml_attrs()
+    
+    
+    URLs <- lapply(attrs, function(x){
+        x <- unlist(x)
+        url <- paste("https://farm",
+                     x["farm"],".staticflickr.com/",
+                     x["server"],"/",x["id"],
+                     "_",x["secret"],".jpg",
+                     sep="")
+    })
+    
+    write.table(URLs,"photoUrls.txt",
+                col.names=F,row.names=F,
+                sep="\n")
+```
+
+
+
+
+3:  Getting information about photos:
+
+*   saved under `info.txt`.
+
+```{r}
+    
+    ##  Getting information, might not have
+    ##  permissions
+    for(i in 1: length(attrs)){
+        
+        x<- unlist(attrs[i])
+        info_args <- c(method="flickr.photos.getInfo",
+              api_key=app_Key,photo_id = x[["id"]],
+              secret = x[["secret"]])
+        
+        info_Req <- paste(endpoint, 
+        paste(names(info_args),info_args,sep="=",collapse="&"),
+        sep="?")
+        
+        rawInfo <-GET(info_Req)
+        info <- rawToChar(rawInfo$content)
+        
+        
+        ##  Appending xml Files seems to be a issue
+         write.table(info,file="info.txt",append=T,
+                    sep="\n",col.names=F,row.names=F)
+    }
+    
+    
+    
+
+```

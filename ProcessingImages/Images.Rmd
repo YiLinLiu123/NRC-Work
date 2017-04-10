@@ -1,0 +1,129 @@
+---
+title: "ProcessingImages"
+author: "paul"
+date: "March 21, 2017"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    toc: yes
+    toc_depth: 3
+---
+
+*****
+
+# Libraries:
+
+*   [exif library](https://cran.r-project.org/web/packages/exif/index.html)
+    +   Required lots of extra installations, due to not
+    being on CRAN yet. 
+    +   `devtools::install_github("ironholds/exif")`
+    +   Install "Rcpp" package is required.
+    +   Only returns a fraction of potential metadata.
+
+```{r ImageLibraries}
+
+    library(exif)
+
+```
+
+
+```{r trying To Process Images}
+
+    animal= read_exif("./TestPictures/animal1.jpg")
+    lake = read_exif("./TestPictures/lake.jpg")
+    # tiger = read_exif("./Test Pictures/tiger.jpg")
+    
+```
+
+
+
+*****
+
+#   exifTool:
+
+*   Another tool is [exifTool](http://www.sno.phy.queensu.ca/~phil/exiftool/)
+    +   provides runnable application for windows.
+    +   orginally a PERL library.
+    +   [exiftool Instructions](http://ninedegreesbelow.com/photography/exiftool-commands.html).
+    
+    
+*   To use it, change the file name to `exiftool.exe`. 
+    This allows the command prompt to access its functionalities.
+    
+*   [FAQ](http://www.sno.phy.queensu.ca/~phil/exiftool/faq.html).
+
+*   Note that in order to use the exiftool, the current directory needs
+    to be where the application is at in the command prompt.
+
+*   command used to parse the meta data into JSON format:
+    +   `-j` specifies that the output is in json format
+    +   `-r` recusiviely go through all image files in the directory 
+        `TestPictures`
+    +   `exiftool -r -j TestPictures\> image.json`
+
+*   Supports various other output formats: php, html, csv etc...
+    Refer to [exif documentations](https://cran.r-project.org/web/packages/exif/index.html) for more details. 
+
+*   The metadata is extracted under `images.json` file. 
+    
+
+*****
+
+Reading in JSON formated data:
+```{r Selecting tech within R}
+
+    library(rjson)
+    list = fromJSON(file="image.json")
+
+    ## Looking at one image, specifically the
+    ##  file name and photography technology used.
+    tech = lapply(list, function(x){
+                            x$Technology
+                        }
+                    )
+    file = lapply(list,function(x){
+                x$FileName
+    })
+    
+    data = cbind(file = as.vector(file),
+                      tech= as.vector(tech))
+    data
+    
+```
+
+*****
+
+Another method to do this would to select the 
+information of interest (file name and technology used) using exif and output it
+to a file. 
+
+![Command Prompt Command](./commandLinePrompt.jpg)
+
+*  `-r` indicates to loop through all image files in 
+    the _TestPictures_ directory.
+*   `-csv` specifies that the output is to be comma separated.
+*   `-fileName`,`-technology`, specifies the desired parameters
+*   `>tech.text` specifies the output file.
+
+
+Readig in the MetaData:
+
+```{r Exif Selected Data}
+    
+    data = read.table("tech.txt", header = TRUE, sep=",")
+    data
+
+```
+
+
+
+
+
+
+
+
+
+
+

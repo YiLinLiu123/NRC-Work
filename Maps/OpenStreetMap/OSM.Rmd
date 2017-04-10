@@ -1,0 +1,116 @@
+---
+title: "Open Street Map"
+author: "YiLin Liu"
+date: "March 28, 2017"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc.depth: 5
+---
+
+*****
+
+##  Websites Visited:
+*   [Open Street Maps Wiki](http://wiki.openstreetmap.org/wiki/Comparision_Google_services_-_OSM)
+*   [Open Street Wiki](http://wiki.openstreetmap.org/wiki/Main_Page)
+*   [Open Street Database Access](http://wiki.openstreetmap.org/wiki/Databases_and_data_access_APIs)
+
+
+*****
+
+##  Testing Accounts:
+
+*   MapQuest:
+    +   _Username:_ NRC-API-Testing
+    +   _Email address:_ nrc.api.testing@gmail.com
+    +   _First Name:_ NRC
+    +   _Last Name:_ Testing
+    +   _Company:_ NRC
+    +   _Password:_ NRCTesting123
+    
+
+*****
+
+##  Quick Comparison Between Google and OSM (Overpass):
+
+*   Google Maps API offers multiple services oriented to replicate
+    the features of google maps. The calculations such as routing, 
+    height features are unique and is not available directly through
+    OSM database.
+
+*   Google is a centralized collection of user features that 
+    can be accessed by the user. 
+
+*   Open Street Map itself is a database full of raw coordinate points
+    which is used to render custom maps. This data of geographical coordinates
+    is unavailable from the google Maps API. Refer to the `sampleDownload.osm` for a sample of data
+    that is available on OSM(open as txt file). __For analyses purposes, use the google maps 
+    api.__
+
+*   __Note that since OSM is based on contributions from the general public, 
+    the data it has is not as up to date as the google maps API.__
+    
+    
+*   From initial readings on the OSM overpass api reveals that
+    it supports a flexible and powerful query language which gives
+    much more control to extract specific collection of points.
+        +   EX: to get all roads 
+        that start with _k_ in the general location of a bounding box 
+        and all the points along this road that is a shop.
+
+*   OSM community supports development and has support for many features
+    made available via other 3rd party services. 
+    +   [3D building modelling](http://wiki.openstreetmap.org/wiki/3D#Exporting)
+    +   [Routing](http://wiki.openstreetmap.org/wiki/Routing)
+        +   [Map Features](http://wiki.openstreetmap.org/wiki/Map_Features)
+        +   [OSM Route Tags](http://wiki.openstreetmap.org/wiki/OSM_tags_for_routing)
+        +   [Open Source Routing Machine](http://project-osrm.org/)
+            +   Provides an API for routing information.
+    
+    
+*****
+
+##  API/Data base Acess:
+*   Weekly update of all raw data for the entire planent
+    at [Planet.osm](http://wiki.openstreetmap.org/wiki/Planet.osm)
+
+
+*   [Overpass API](http://wiki.openstreetmap.org/wiki/Overpass_API)
+    +   more optimized for extraction of OSM data. READ ONLY.
+    +   [Overpass Language Guide](http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide)
+        +   Please read for the query structure.
+    +   [Overpass R Package](https://github.com/hrbrmstr/overpass)
+    +   [Geocoding Services OSM Package](https://github.com/hrbrmstr/nominatim)
+        +   translating from nodes to lat/lng and meta information and vice versa.
+
+*   For interest [Database Schema](http://wiki.openstreetmap.org/wiki/Databases_and_data_access_APIs)
+    +   [Data Table Schema](http://wiki.openstreetmap.org/wiki/Rails_port/Database_schema)
+
+*****
+
+##  Data Extraction of OSM DataBase:
+__GOAL: Explore the basics of what the query language 
+    of the [Overpass API](http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide). 
+    Overpass API is focused on reading the existing data. For developers
+    who like to modify the existing data, use the [OSM API](http://wiki.openstreetmap.org/wiki/API).__
+    
+    
+    
+*   __Did not look further into trying to use the following packages,
+    because there is no direct relevance to data analysis.__
+
+*   [Overpass R Package](https://github.com/hrbrmstr/overpass)
+    +   provides functionality to access the Overpass API
+        directly through R.
+    +   [Overpass Query Tester](http://overpass-turbo.eu/)
+
+*   [OSM Nominatim R](https://github.com/hrbrmstr/nominatim)
+    +   provides geocoding services for lat/lng to data structures
+        by name in OSM and vice versa.
+    +   [nominatim online](https://nominatim.openstreetmap.org/)
+    +   [nominatim api](http://wiki.openstreetmap.org/wiki/Nominatim)
+    
+
+

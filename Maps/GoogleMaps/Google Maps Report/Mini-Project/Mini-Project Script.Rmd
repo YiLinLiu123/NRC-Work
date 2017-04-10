@@ -1,0 +1,459 @@
+---
+title: "Google Maps Mini-Project"
+author: "paul"
+date: "March 22, 2017"
+output: 
+    html_document:
+    toc: true
+    toc.depth: 5
+---
+
+*****
+
+###  Description:
+*   Extract 100 origin/destination city pairs. Where
+    the origin are random cities in Alberta and
+    the destination are cities outside of Alberta
+    but inside Canada.
+    +   To ensure reproducibility, the randomly 
+        selected origin/destination pairs are stored
+        under the csv file "progress.csv".
+        
+*   Store the addresses for origin/destination pairs
+    along with their lat/long as well as route distance,
+    time, average speed and straight line distance into
+    a csv file.
+
+*   Plot the origin/destination pairs with their route 
+    onto a map.
+
+
+*****
+
+
+### Setting up List of Cities
+
+*   [List of cities](http://www.canada-city.ca/all-cities-in-canada.php) copied into a text
+    document named `list of cities`,
+    needs reformatting to extract __city name__ and __province__.
+
+```{r Setting up List of Cities For Extraction}
+    ## Sample city raw format: 1: 100 Mile House, British Columbia 
+
+    raw_Citys = read.table("List of Cities.txt",header = TRUE, sep ="\n")
+
+    ## getting rid of numbers:
+    
+    raw_Citys = lapply(raw_Citys, function(x){
+        gsub(pattern = "[0-9]+:", "",x)
+    })
+    
+    raw_Citys = unlist(raw_Citys)
+    
+    
+    ## Separating into city and province
+    citys = list()
+    province = list()
+    for(i in 1: length(raw_Citys)){
+        separated = unlist( strsplit(raw_Citys[[i]],",") )
+        citys[[i]] = gsub(" ","",separated[1])
+        province[[i]] = gsub(" ","",separated[2])
+        
+    }
+    
+    raw_Citys_DF = data.frame(city=unlist(citys),
+                    province=unlist(province))
+
+    rm(list = setdiff(ls(),c("raw_Citys_DF")))
+```
+
+
+*****
+
+### Getting the orgin and destination cities randomly:
+
+*   Randomly select origin and destination pairs.
+
+*   The origin/destination pairs are stored under 
+    "progress.csv". 
+
+```{r orgin and destination}
+    library(dplyr)
+
+
+    ab_Citys = dplyr::filter(raw_Citys_DF, province=="Alberta")
+    
+    ## Selecting origin and dest citys
+    origin_Citys = dplyr::sample_n(ab_Citys,100)
+    dest_Citys = dplyr::sample_n(dplyr::filter(raw_Citys_DF,province != "Alberta"), 
+                                 size=100)
+    
+    ## renaming variables 
+    colnames(origin_Citys) = c("orig_city", "orig_province")
+    colnames(dest_Citys) = c("dest_city","dest_province")
+    
+    ## formatting to out_DF and clearing memory
+    out_DF = cbind(origin_Citys,dest_Citys)
+    
+    rm(list = setdiff(ls(),c("out_DF")))
+    
+    
+    ## write the current out_DF to a file 
+    ## to remove the random elements 
+    # 
+    # if(!file.exists("progress.txt")){
+    #     file.create("progress.txt")
+    # }
+    # 
+     # write.table(out_DF, file="progress.txt",sep=",",row.names=FALSE)
+
+```
+
+
+*****
+
+### Getting Direction information
+
+
+```{r google credentials}
+    api_Key = "AIzaSyBGTs-gZCbyP8n0Hvw_VZ76Z6YrST1DNa8"
+    host = "https://maps.googleapis.com/maps/api"
+
+```
+
+
+*   A function that uses the google maps API
+    to find lat/lng for the cities.
+
+```{r function for lat and lng}
+
+## takes lists containing: (orig_City, orig_Province,
+##  dest_city,dest_provice) and a api_Key
+##  assume that the lists are matching and same length
+
+## return a data frame containing lat,lng, route information
+
+    lat_Lng = function(orig_city,orig_province,
+                       dest_city,dest_province,
+                        api_Key){
+        
+        ##libraries needed
+        require(jsonlite)
+        require(httr)
+        
+        
+        ## some google request information
+        host = "https://maps.googleapis.com/maps/api"
+        service = "/directions/json"
+        
+        
+        ## lists to fill for a data frame
+        orig_lat = list()
+        orig_lng = list()
+        orig_address = list()
+        dest_lat = list()
+        dest_lng = list()
+        dest_address = list()
+        polyline = list()
+        time_text = list()
+        time_value = list()
+        distance_text = list()
+        distance_value = list()
+        
+        
+        ##looping through list and get the lat/lng
+        for( i in 1:length(orig_city)){
+            
+            ## Getting names of city and province
+            origin = paste(orig_city[[i]],orig_province[[i]],sep=",")
+            origin = gsub(" ", "+",origin)
+            dest = paste(dest_city[[i]],dest_province[[i]],sep=",")
+            dest = gsub(" ", "+", dest)
+            
+            ##formatting api request
+            directions_Request = paste(host, service,"?origin=",origin,
+                               "&destination=",dest,
+                               "&key=",api_Key,sep ="")
+            
+            ## getting nested response list
+            raw = GET(directions_Request)
+            
+            directions_Response = jsonlite::fromJSON(
+                content(raw,"text")
+            )
+            
+            ##  Just to check if response is ok
+            if(directions_Response$status != "Ok")
+                warnings("Request not successful")
+            
+            
+            
+            ##geting lat and lng for origin and destination
+            
+            route_info = directions_Response$routes$legs[[1]]
+            
+            start_df = route_info[["start_location"]]
+            ## a bit truncated
+            orig_lat[[i]] = start_df$lat
+            orig_lng[[i]] = start_df$lng
+            orig_address[[i]] = route_info$start_address
+            
+            end_df = route_info[["end_location"]]
+            dest_lat[[i]] = end_df$lat
+            dest_lng[[i]]= end_df$lng
+            dest_address[[i]] = route_info$end_address
+            
+            
+            ##getting time, distance info
+            time_value[[i]] = route_info$duration$value
+            time_text[[i]] = route_info$duration$text
+            distance_text[[i]] = route_info$distance$text
+            distance_value[[i]] = route_info$distance$value
+            
+            ##route for map:
+            polyline[[i]] = directions_Response$routes$overview_polyline[["points"]]
+        }
+        
+        
+        ##making the data frame
+        
+        df = data.frame(orig_address = unlist(orig_address),
+                orig_lat =unlist(orig_lat),
+                orig_lng = unlist(orig_lng),
+                dest_address = unlist(dest_address),
+                dest_lat = unlist(dest_lat),
+                dest_lng = unlist(dest_lng),
+                time_text = unlist(time_text),
+                time_value = unlist(time_value),
+                distance_text = unlist(distance_text),
+                distance_value = unlist(distance_value),
+                polyline = unlist(polyline)
+            
+        )
+        return(df)
+        
+    }    
+```
+
+
+
+*   Using the above function to get the data. The data frame
+    is saved under "progress2.csv".
+
+```{r testing functions}
+
+    # progress_DF = read.table("progress.txt", header=TRUE,sep=",")
+    # test_DF = progress_DF[1:100,]
+    # 
+    # test= lat_Lng(test_DF$orig_city, 
+    #               test_DF$orig_province,
+    #               test_DF$dest_city,
+    #               test_DF$dest_province,api_Key = api_Key)
+    # 
+    # if(!file.exists("progress2.csv"))
+    #     file.create("progress2.csv")
+    # 
+    # ##  Some city/destination pairs are unreachable via car only.
+    # ##  Thus total orig/destination pairs is less than 100.
+    # 
+    # test_out = dplyr::select(test, -polyline)
+    # write.table(test,"progess2.csv",sep=",",row.names = FALSE)
+
+```
+
+
+*****
+
+
+### Calculating Straight Line Distance in km:
+
+*   Internet recommended to use [geosphere](https://cran.r-project.org/web/packages/geosphere/index.html) package.
+```{r, message = F, warning=F}
+    rm(list = ls())
+    require(geosphere)
+    progress_DF = read.table("progess2.csv", header=TRUE,sep=",", stringsAsFactors = FALSE)
+    
+    ## calculating the straight line distance 
+    ## for each origin/dest pair
+    straight_Dis = list()
+    for( i in 1:dim(progress_DF)[1]){
+        p1 = as.numeric( c(progress_DF$orig_lng[[i]],progress_DF$orig_lat[[i]]) )
+        p2 = as.numeric( c(progress_DF$dest_lng[[i]],progress_DF$dest_lat[[i]]) )
+        
+        straight_Dis[[i]] = geosphere::distVincentyEllipsoid(p1,p2)/1000
+    }
+    
+    progress_DF = cbind(progress_DF, straight_dis = unlist(straight_Dis))
+    
+
+```
+
+
+
+*****
+
+
+### Getting output Data:
+*   Saved under "final.csv"
+
+```{r organizing output Data}
+    require(dplyr)
+    progress_DF = progress_DF %>% mutate(distance_value
+        = distance_value/1000) %>%
+        mutate( avg_speed = distance_value/time_value*3600) 
+    
+    out_DF = progress_DF %>%
+        select(-c(polyline,time_value,distance_text))
+    
+    write.csv(out_DF,"final.csv",
+        col.names = TRUE, row.names = FALSE)
+        
+
+```
+
+
+
+*****
+
+
+### Decoding polylines:
+*   Decoding Polyline Function copied from
+    [here](http://s4rdd.blogspot.com/2012/12/google-maps-api-decoding-polylines-for.html)
+
+*   [More info on polylines](https://developers.google.com/maps/documentation/utilities/polylinealgorithm)
+
+```{r}
+# Custom decode function
+# Taken from http://s4rdd.blogspot.com
+# /2012/12/google-maps-api-decoding-polylines-for.html
+
+decodeLine <- function(encoded){
+  require(bitops)
+
+  vlen <- nchar(encoded)
+  vindex <- 0
+  varray <- NULL
+  vlat <- 0
+  vlng <- 0
+
+  while(vindex < vlen){
+    vb <- NULL
+    vshift <- 0
+    vresult <- 0
+    repeat{
+      if(vindex + 1 <= vlen){
+        vindex <- vindex + 1
+        vb <- as.integer(charToRaw(substr(encoded, vindex, vindex))) - 63  
+      }
+
+      vresult <- bitOr(vresult, bitShiftL(bitAnd(vb, 31), vshift))
+      vshift <- vshift + 5
+      if(vb < 32) break
+    }
+
+    dlat <- ifelse(
+      bitAnd(vresult, 1)
+      , -(bitShiftR(vresult, 1)+1)
+      , bitShiftR(vresult, 1)
+    )
+    vlat <- vlat + dlat
+
+    vshift <- 0
+    vresult <- 0
+    repeat{
+      if(vindex + 1 <= vlen) {
+        vindex <- vindex+1
+        vb <- as.integer(charToRaw(substr(encoded, vindex, vindex))) - 63        
+      }
+
+      vresult <- bitOr(vresult, bitShiftL(bitAnd(vb, 31), vshift))
+      vshift <- vshift + 5
+      if(vb < 32) break
+    }
+
+    dlng <- ifelse(
+      bitAnd(vresult, 1)
+      , -(bitShiftR(vresult, 1)+1)
+      , bitShiftR(vresult, 1)
+    )
+    vlng <- vlng + dlng
+
+    varray <- rbind(varray, c(vlat * 1e-5, vlng * 1e-5))
+  }
+  coords <- data.frame(varray)
+  names(coords) <- c("lat", "lon")
+  coords
+}
+
+
+```
+
+
+
+*****
+
+
+### Setting up Basic Map
+
+```{r basic map, message = F, warning=F}
+    library(leaflet)
+    library(htmltools)
+    
+    ##calculating max/min lat and lng for the bounding box.
+    lat = append(progress_DF$orig_lat, progress_DF$dest_lat)
+    min_Lat = min(lat)
+    max_Lat = max(lat)
+   
+    lng = append(progress_DF$dest_lng, progress_DF$orig_lng)
+    min_Lng = min(lng)
+    max_Lng = max(lng)
+
+
+    #   Making Icons
+    orig = makeAwesomeIcon(markerColor="red", iconColor="yellow")
+    
+    # adding popup labels
+    popup = function(address){
+        list = lapply( address, function(x){
+            split = unlist( strsplit(x, ",") )
+            city = paste("city:", split[1])
+            province = paste("province: ", split[2])
+            country = paste("country: ", split[3])
+            out = paste(city, province, country, sep = "<br/>")
+        })
+        
+        return( as.character(list) )
+    }
+  
+    
+   
+    ##  loading basic map. 
+    map = leaflet() %>%
+        addProviderTiles(provider="OpenStreetMap.Mapnik") %>%
+        fitBounds(max_Lng,max_Lat,min_Lng,max_Lat) %>%
+    ##  adding markers
+        addAwesomeMarkers(lng=progress_DF$orig_lng,
+                   lat=progress_DF$orig_lat,
+                   icon=orig,
+                   popup = popup(progress_DF$orig_address)) %>%
+        addMarkers(lng=progress_DF$dest_lng,
+                   lat=progress_DF$dest_lat) %>%
+     ##  Adding legend: 
+        addLegend(position = "topright", 
+            labels = c("origin","destination"),
+            color = c("Red","Blue"), layerId = "legends")
+    ## adding Polyline
+      
+    for(i in 1: length(progress_DF$polyline)){
+        df = decodeLine(as.character(progress_DF$polyline[[i]]))
+        
+        map = map %>%
+            addPolylines(lng=df$lon,lat=df$lat, color = "yellow")
+    }
+    
+   
+    
+    
+    map
+    
+```

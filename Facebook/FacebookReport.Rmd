@@ -1,6 +1,6 @@
 ---
 title: "Facebook Report"
-author: "paul"
+author: "YiLin Liu"
 date: "March 3, 2017"
 output:
   html_document:

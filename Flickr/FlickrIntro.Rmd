@@ -1,0 +1,140 @@
+---
+title: "FlickrIntro"
+author: "Yi Lin Liu"
+date: "April 4, 2017"
+output: 
+    html_document:
+    toc: yes
+    toc.depth: '6'
+---
+
+*****
+
+##  Basics of Flickr:
+*   [Guide to use Flickr](https://www.cnet.com/news/newbies-guide-to-flickr/)
+
+*   [Guide to API](http://kylerush.net/blog/flickr-api/)
+
+*****
+
+##  Learning API:
+
+*   [Flickr API](https://www.flickr.com/services/api/)
+    +   __NOTE: not supported by Flickr, so might not
+            be stable.__
+    +   All uses of the API must abide the [community guidelines](https://www.flickr.com/help/guidelines/)
+
+*   Results can be cached for up to 24 hours to 
+    reduce API load. 
+
+*   Flickr has its own shortened URL. [Shortened URL](https://www.flickr.com/groups/api/discuss/72157616713786392)
+
+*   To perform requests, a calling convention is needed, 
+    send a request to its endpoint specifying the 
+    requried parameters (method,api_key) and other arguments, 
+    a formatted response will be recieved.
+    +   Endpoint: `https://api.flickr.com/services`
+
+*   All requests/data are expected to be UTF-8 enconded.
+
+*   Multiple response formats are provided: xml, json, REST
+
+*   Oauth is used for authentication. 
+
+*   __Many methods for the API does not seem
+    to require a token.__
+*   [URLs](https://www.flickr.com/services/api/misc.urls.html)
+    +   the urls are not returned, instead the parameters required
+        to form the urls are provided in the response. Please
+        consult the documentation
+        
+
+
+*****
+
+##  Rate Limit:
+*   Staying under aggregate 3600 requests per hour per key 
+    will be allowed. 
+
+*****
+
+##  Obtaining Authorization: 
+*   [API Key](https://www.flickr.com/services/apps/create/)
+    +   click on _Request an API Key_ under "Get your API Key"
+    +   select non-commercial. 
+    +   An call back URL must be specified.
+
+*   [Generating Key](https://www.flickr.com/services/api/auth.oauth.html)
+    +   all the listed URLs are available on this website.
+
+*   The token does not seem to have an expiration date.
+    
+*   __FOR THE FOLLOWING TO WORK, when R opens the popup, 
+    change `permission=read` to `perms=read` in the URL.
+    The permissions must be specified or the authentication
+    page will show `permission set not recognized` error.__
+
+    ![Correct Auth Page](./Pictures/correctAuth.jpg)
+
+```{r Flickr Oauth Token, message=FALSE}
+    rm(list = ls())
+
+    library(httr)
+
+    # ##  Retrieved from API Documentation + Generated Key
+    # app_Key <- "08adb0273ae63e5c07c249f5a621e7cb"
+    # app_Secret <- "89e0a70bfb48e7f4"
+    # request_URL <- "https://www.flickr.com/services/oauth/request_token"
+    # auth_URL <- "https://www.flickr.com/services/oauth/authorize"
+    # access_URL <-"https://www.flickr.com/services/oauth/access_token"
+    # 
+    # token.endpoints <- oauth_endpoint(request= request_URL, authorize = auth_URL,
+    #                                   access = access_URL)
+    # token.app <- oauth_app("Testing API",key=app_Key, secret = app_Secret )
+    # token <- oauth1.0_token(token.endpoints, token.app,permission='read',cache=F)
+    # 
+    # 
+    # ##  Saving Token:
+    # saveRDS(token,file="token.R")
+
+
+```
+
+
+*****
+
+##  API Methods of Interest:
+
+*   [flickr.contacts.getListRecentlyUploaded](https://www.flickr.com/services/api/flickr.contacts.getListRecentlyUploaded.html): retrieves a list of contacts(friends) 
+    for a user who have recently posted as well as number of photos. 
+
+*   [flickr.photos.search](https://www.flickr.com/services/api/flickr.photos.search.html):
+    The public search method that returns a list of photos matching
+    the tags specified.
+
+*   [flickr.photos.getExif](https://www.flickr.com/services/api/flickr.photos.getExif.html):
+    This method returns the EXIT/TIFF/GPS tags associated with the photo.
+
+*   More photo methods:
+    +   [popular photos](https://www.flickr.com/services/api/flickr.photos.getPopular.html)
+    +   [recent photos](https://www.flickr.com/services/api/flickr.photos.getRecent.html)
+    +   [contact public photos](https://www.flickr.com/services/api/flickr.photos.getContactsPublicPhotos.html)
+    +   [comments to a photo](https://www.flickr.com/services/api/flickr.photos.comments.getList.html)
+    +   [location for photos](https://www.flickr.com/services/api/flickr.photos.geo.getLocation.html)
+
+*   The listed methods mainly focuses on dealing with 
+    photos. For methods that allows the exploration of friendship (contacts),
+    finiding users, please refer to the [Flickr API Documentation](https://www.flickr.com/services/api/)
+    
+    
+*****
+
+##  Test Account:
+
+![Registration](./Pictures/Registration.jpg)
+
+
+*****
+
+![App Key and Secret](./Pictures/Key.jpg)
+

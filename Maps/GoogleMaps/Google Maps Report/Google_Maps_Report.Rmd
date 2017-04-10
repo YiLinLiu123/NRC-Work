@@ -1,0 +1,41 @@
+---
+title: "Google Maps Report"
+author: "paul"
+date: "March 8, 2017"
+output:
+  html_document:
+    toc: yes
+    toc.depth: 4
+---
+
+```{r mainSetup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+#   Data Extraction from Google Maps API:
+
+*****
+
+```{r child="Google Data.Rmd"}
+
+```
+
+
+*****  
+
+#   Visualizing:
+```{r child="Google Visualizing.Rmd"}
+
+```
+
+
+
+*****
+
+#  Mini-Project: Plotting Origin,Destination Pairs
+
+```{r child = "./Mini-Project/Mini-Project Script.Rmd"}
+
+```

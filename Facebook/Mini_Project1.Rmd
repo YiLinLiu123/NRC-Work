@@ -1,6 +1,6 @@
 ---
 title: "MiniProject1"
-author: "paul"
+author: "YiLin Liu"
 date: "March 30, 2017"
 output: html_document
 ---

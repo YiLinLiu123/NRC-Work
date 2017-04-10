@@ -2,26 +2,26 @@
 title: "Weather_Mini_Project"
 author: "paul"
 date: "March 23, 2017"
-output: 
-    html_document:
-    toc: yes
-    toc.depth: '5'
+output:
+  html_document: null
+  pdf_document: default
+  toc: yes
+  toc.depth: '5'
 ---
+
+
 *****
 
-##  Scheduling Tasks:
+##  Description:
 
-*   [taskScheduleR](https://github.com/bnosac/taskscheduleR)
-    +   provides basic functionality to schedule R scripts.
-    +   includes a plugin accessible under the _addins_ at the
-        menu bar.
-    +   be sure to first stop the task and then delete it.
-    +   be sure to change the time format to local time format.
+This weather analysis is to scrape the Environment Canada website 
+for the hourly updated weather and 24 hour forecast using an automated script. 
 
-*   [windows schtasks.ext](https://msdn.microsoft.com/en-us/library/windows/desktop/bb736357(v=vs.85).aspx)
-    +   comman prompt tool that provides more control. 
-    +   taskScheduleR is based on this tool. 
+The overall purpose is to be introduced to web scraping as well as basic
+data exploration.
 
+
+*****
 
 ##  Learning to WebScrape:
 *   [rvest ](https://blog.rstudio.org/2014/11/24/rvest-easy-web-scraping-with-r/)
@@ -30,8 +30,18 @@ output:
 *   [xml2](https://cran.r-project.org/web/packages/xml2/vignettes/modification.html)
 
 
-##  Script Used:
-1:  Set up a csv file for collecting data
+*****
+
+##  Automated Script:
+
+__ Script for scraping the web is a R file combining step 1 and step 2.
+    It is saved in the same folder as this report, under `WeatherScript.R`.__
+    
+    
+1:  Set up a csv file for collecting data, made into a function.
+    Which initializes the file and returns the file path
+    (Saved under working directory).
+
 ```{r  temp file setup}
 
     InitializeFile = function(forecast_Hours=24, forecast_Title="temp",
@@ -42,7 +52,7 @@ output:
         if(!file.exists(file_Path)){
             file.create(file_Path)
             
-            ## making the col names:
+            ## making the column names:
             col_Names <-c("Date",paste(
                 "current ",forecast_Title,unit, sep=""
             ))
@@ -67,10 +77,14 @@ output:
 ```
 
 
-2:  getting the data and appending it to the file
+*****
 
 
-```{r Web Scrapping, eval=FALSE}
+2:  getting the data and appending it to the file:
+*   The file is named `temperature.csv`
+
+
+```{r Web scraping, eval=FALSE,message=F}
 
     library(rvest)
     library(xml2)
@@ -98,7 +112,7 @@ output:
         rvest::html_nodes(current_Temp_css) %>%
         rvest::html_text()
     
-    # Formatting the capatured results
+    # Formatting the captured results
     temperature_Forecast <- as.numeric(as.vector(
         temperature_Forecast))
     current_Temp <- as.numeric(gsub("[^-0-9]+","",
@@ -118,22 +132,60 @@ output:
 ```
 
 
+*****
+
+##  Scheduling Tasks:
+
+*   [taskScheduleR](https://github.com/bnosac/taskscheduleR)
+    +   provides basic functionality to schedule R scripts.
+    +   includes a plugin accessible under the _addins_ at the
+        menu bar.
+    +   be sure to first stop the task and then delete it.
+    +   be sure to change the time format to local time format on the computer.
+
+*   [windows schtasks.ext](https://msdn.microsoft.com/en-us/library/windows/desktop/bb736357(v=vs.85).aspx)
+    +   command prompt tool that provides more control. 
+    +   taskScheduleR is based on this tool. 
+    
+
+*   [ scripting](https://blogs.technet.microsoft.com/heyscriptingguy/2013/12/14/working-with-task-scheduler-xml/)
+    +   Essentially comes down to modifying a xml file outlining the task.
+    +   Default location: `C:\Windows\System32\Tasks`.
+    +   task name must be unique.
+
+*   [xml2 package](https://cran.r-project.org/web/packages/xml2/vignettes/modification.html)
+
+
+
+*****
+
 3: Trying to directly use taskscheduleR
 
-*   It was observed that when the labtop
+*   It was observed that when the laptop
     was unplugged from the power source,
     the script to collect data was not run.
+    The solution is to modify the 
+    `StopIfGoingOnBatteries` and 
+    `DisallowStartIfOnBatteries` parameters
+    in the script file from the initial setting
+    `true` to `false`. The default location
+    for the windows task scheduler files is
+    `C:\Windows\System32\Tasks`
 
 ```{r taskScheduling}
+
+
 library(taskscheduleR)
 file_Path = normalizePath(InitializeFile(forecast_Title="temperature1"))
-script_Path = "P:\\University\\WeatherScript.R"
+script_Path = ".\\WeatherScript.R"
 task_Name= "testing"
 
+##  MAKE SURE THAT THE DATE FORMAT IS CHANGED TO LOCAL COMPUTER FORMAT
 taskscheduler_create(taskname = task_Name, rscript=script_Path,
-                     schedule = "MINUTE", startdate=format(Sys.Date(), "%Y-%m-%d"),
-                     modifier = 5)
- ## modifying task
+                     schedule = "MINUTE", startdate=format(Sys.Date(), "%d/%m/%Y"),
+                     modifier = 2)
+
+## modifying task file
 library(xml2)
 script_Path = paste("C:\\Windows\\System32\\Tasks\\",task_Name,sep="")
 
@@ -160,30 +212,9 @@ system(command,intern=TRUE)
 
 
 
-
-##Test 1: unplugged power supply. Remaining active. As adminstrator.
-##          runs correctly as soon as connected to power source
-##          could be in internal setting of schetask.exe.
-
-
-##Test 2: changing the sleep option to never. Does not make a difference.
-##  Resumes immediatly when plugged in.
-
-##  Located the problem. In task scheduler, the task is defaulted
-## start once plugged into AC power and stops as sonn as not connected. 
-##  By unclicking those options under the conditions options, the task
-##  resumes as usual.
-
-
-
 ```
 
-*   [xml scripting](https://blogs.technet.microsoft.com/heyscriptingguy/2013/12/14/working-with-task-scheduler-xml/)
-    +   Essentially comes down to modifying a xml file outlining the task.
-    +   Default location: `C:\Windows\System32\Tasks`.
-    +   task name must be unique.
 
-*   [xml2 package](https://cran.r-project.org/web/packages/xml2/vignettes/modification.html)
 
 ```{r stoping script}
     taskcheduler_stop(task_Name)
@@ -196,16 +227,30 @@ system(command,intern=TRUE)
 *****
 
 
-##  Simple Processing of Collected Data
+##  Simple Processing of Collected Data:
 
-1: Lag Columns
+__Produce a simple graph to visualize the data.__
+
+1: Lag Columns:
+*   The raw collected data is stored under `oneDay.csv`. Which
+    contains the collected temperature and forecast data for 
+    a single day. This will be used to test best processing
+    and plotting of raw data.
+
+
+*   The desired data would contain the current temperature followed
+    by the current temperature that was predicted 1 hour ago, 2 hours ago..,
+    24 hours ago in the same row. Essentially, lag the forecast1hour column 
+    by 1, forecast2hour column by 2... forecast24hour column by 24. This 
+    will introduce NA values as place holders.
 
 ```{r lag columns}
 
+    rm(list = ls())
     library(dplyr)
 
     # Reading in dataframe
-    file_Path = "temperature-Copy.csv"
+    file_Path = "oneDay.csv"
     data = read.table(file = file_Path, header=TRUE,
                       sep=",",stringsAsFactors = FALSE)
     
@@ -222,9 +267,9 @@ system(command,intern=TRUE)
     
     # Lagging each column, starting from 3rd column
     # made into a quick function.
-    savingLagData = function(data,start_Col=3, lag=1, lag_Increment=0,file_Path){
+    LagData = function(data,start_Col=3, lag=1, lag_Increment=1){
     
-        for( i in start_Col: length(names(data))){
+        for( i in start_Col: length(colnames(data))){
             data[,start_Col] = data.table::shift(
                 x= data[,start_Col], n=lag
             )
@@ -232,41 +277,33 @@ system(command,intern=TRUE)
             lag =lag+lag_Increment
         }
         
-        write.table(x=data, file=file_Path, row.names=FALSE,
-                    sep=",")
+        return(data)
     }
     
+    ##  Took the data for the first half hours and lag the data
+    lagged = LagData(data=first, lag_Increment = 1)
     
-    ##storing the two formated data tables:
-    
-    savingLagData(data = first, file_Path="first.csv",lag_Increment = 1)
-    savingLagData(data = second, file_Path="second.csv",lag_Increment = 1)
    
 ```
 
 
-2:  Getting Complete Data:
+2:  Getting Complete Data (Removing rows containing NA):
 
 ```{r completeData, message = FALSE}
-    rm(list = ls())
 
     library(dplyr)
 
-    ##  Select All Full Length Data:
+    ##  Select All Full Length Data (exclude the first 24 hours):
 
     ##  number indicating how many rows to skip
     skip= 25
     
-    file_Name = "first.csv"
     ## For simplicity, just the first half hour data will 
     ## be analyazed. 
 
-    data = read.table(file = file_Name, header=TRUE,
-                      sep=",", stringsAsFactors = FALSE)
     
-    data = data[skip:dim(data)[1],]
-    write.table(x=data,file="data.csv",row.names = FALSE,
-                col.names = TRUE,sep=",")
+    data = lagged%>%
+        filter(!is.na(forcast.temperature.in.24h..C.))
     
 
 ```
@@ -281,7 +318,22 @@ system(command,intern=TRUE)
 
 
 
-4:  Making Data Tables:
+4:  Making Organized Data Tables:
+
+*   The organized data table should contain the following in each row:
+    +   _Date:_ the time and day of the collected temperature.
+    +   _current:_ the actual temperature at that date.
+    +   _for1h,for2h,...,for24h:_ The forecasted temperature for the current
+        temperature 1 hour ago, 2 hours ago,... 24hours ago.
+    +   _maxPredict:_ Maximum temperature predicted.
+    +   _minPredict:_ Minimum temperature predicted.
+    +   _erUp:_ The difference between maxPredict and current.
+    +   _erDown:_ The difference between minPredict and current.
+    +   _erUpFreq:_ The number of predications that lies above the current temperature.
+    +   _erDownFreq:_ The number of predications that lies below the current temperature.
+    
+*   The organized data is saved under `finished.csv`.
+
 
 ```{r data table}
 
@@ -292,7 +344,7 @@ system(command,intern=TRUE)
     }
     colnames(data) = col_Names
     
-    ##  Getting Formated Data:
+    ##  Getting Formatted Data:
     library(dplyr)
     
     ##  Max and Min predictions
@@ -308,7 +360,8 @@ system(command,intern=TRUE)
         mutate(erDown=pmin(0,(minPredict-current)))
     
     
-    ## frequencies:
+    ## frequencies count for how many predictions lay above
+    ##  or below the actual temeperature
     
     arbConstant = 0.1 
     arbConstant2 = 0.2 ## Used to offset the 
@@ -316,8 +369,8 @@ system(command,intern=TRUE)
     ## temperature is not included. Since only whole numbers, 
     ##  a decimal to tenth place is sufficient
     
-    current=grep("current", names(formated))-1 ## subtract 1 because 
-    ## date will be discarded later.
+    current=grep("current", names(formated))-1 ## subtract 1 from the index 
+    ##because date will be discarded later.
     
     max = grep("maxPredict", names(formated))-1
     min = grep("minPredict", names(formated))-1
@@ -326,7 +379,8 @@ system(command,intern=TRUE)
     
     
     ##  Special Attention needs to be given because
-    ##  lower bound is not included, but upper is.
+    ##  lower bound is not included, but upper is for
+    ##  the cut function.
     erUpFreq = apply(formated, 1, function(x){
         x = as.numeric(x[2:length(x)])
         table(cut(x[for1h:for24h],breaks=
@@ -342,10 +396,11 @@ system(command,intern=TRUE)
             breaks = c(min, x[current]-arbConstant)))
     })
     
+    ## Saving finished data
+    
     finished = formated %>% 
         mutate(erUpFreq = erUpFreq) %>%
-        mutate(erDownFreq = erDownFreq) %>%
-        select(-c(For1h:For24h))
+        mutate(erDownFreq = erDownFreq)
     
     write.table(x=finished, file = "finished.csv", 
                 col.names = TRUE,row.names = FALSE,
@@ -356,10 +411,12 @@ system(command,intern=TRUE)
 
 
 
-5:  Plotting Graphs
-```{r Plotting Graphs}
+5:  Plotting Graph:
 
-    rm(list = ls())
+*   Basic time vs temperature series.
+
+```{r Plotting Graphs 24 hours}
+
     library(ggplot2)
     
     table = read.table(file="finished.csv", header = TRUE,
@@ -377,12 +434,12 @@ system(command,intern=TRUE)
         ggtitle("Temperature over Time for Ottawa")+
         ##  Error Bar
         geom_errorbar(aes(ymin=table$current,
-                          ymax = table$maxPredict),size=table$erUpFreq/sizeFactor,
+                          ymax = table$maxPredict),
                       color = "blue")+
             geom_errorbar(aes(ymin=table$minPredict,
-                          ymax = table$current), size=table$erDownFreq/sizeFactor,
-                          color="blue")+
-        ##  Trend Lines
-        geom_smooth()
+                          ymax = table$current),
+                          color="blue")
+    
+    plot
     
 ```

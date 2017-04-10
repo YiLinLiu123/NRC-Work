@@ -8,7 +8,12 @@ output:
     toc_depth: '4'
 ---
 
-#   Summary:
+
+##   Goal:
+The goal is to look into how to access APIs for various data sources:
+Facebook, twitter, Instagram/Flickr and weather purely through the usage 
+of R.
+
 
 *****
 
@@ -55,3 +60,160 @@ output:
 
 ##  Facebook Detailed Report
 [Facebook Report](.\Facebook\FacebookReportPDF.pdf)
+
+
+*****
+
+##  Twitter:
+*   [Twitter API](https://dev.twitter.com/overview/api)
+
+*****
+
+*   __Advantages:__
+    +   The packages provide easy access to the API.
+    +   __It is recommended to retrieve _RECENT_ information
+    using the Twitter API compared to Facebook API.__
+    This is because most information posted on twitter
+    is public (tweets, users, etc).
+    +   The search API for Twitter supports more powerful
+    queries for searching public twitter content. 
+    +   The [twitteR Package](https://cran.r-project.org/web/packages/twitteR/index.html) provide easy access to the Twitter REST API and 
+    handles the sorting of retrieved data through
+    class wrappers that provide convenient functions to access
+    information. Tweets are part of the _status_ class for example.
+    Read the documentation for useful details. 
+    +   TwitteR package retrieves majority of information that is of interest,
+    if not supported by the twitteR, any arbitrary HTTP request
+    can be made to the API to retrieve information.
+    +   Twitter provides a live stream API which allows the retrieval 
+    of the new updated information on tweeter. This is a unique feature
+    and can be used for real-time tracking for events of interest. 
+    +   [StreamR](https://github.com/pablobarbera/streamR) provides easy access and convenient use of the stream API
+    connecting, saving, parsing of data is all handled. 
+
+*****
+
+*   __Disadvantages:__
+    +   Location information is available but often users can fill 
+    whatever it desired, thus not most accurate. 
+    +   The token produced by twitteR is cached internally and not
+    provide easy access to the token for use outside of twitteR functions.
+    +   Due to nature of twitter, it is hard to track how users
+    react to tweets posted by other users. This is because the replies is not
+    directly connected to the post. 
+    +   __It is not possible to public search for old tweets (older than a week)
+        through the official twitter API.__
+
+    
+*****
+
+## Twitter Report:
+[Twitter Report](.\Twitter\TwitterReport\TwitterReport.pdf)
+
+
+
+*****
+
+##  Google Maps API:
+
+[Google Maps API](https://developers.google.com/maps/web-services/)
+
+*****
+
+*   __Advantages:__
+    +   Provides many services including directions between origin and destination,
+        geocoding services, matching points to near roads, elevation, etc.
+    +   Documentation is clear and very easily understood.
+    +   Use basic __HTTP request__ with simple format, making it easy to use.
+
+*   __Disadvantages:__
+    +   limited free requests per day. The free
+        limit is enough for investigation purposes. If used to process
+        large amounts of data, a fee will need to be payed.
+        
+
+*****
+
+##  Google Maps Report:
+[Google Maps Report](.\Maps\Google Maps\GoogleMapsReport\Google_Maps_Report.html)
+
+
+*****
+
+##  Quick Word on OpenStreetMap(OSM):
+
+[Open Street Map Wiki](http://wiki.openstreetmap.org/wiki/Main_Page)
+
+[Preliminary Report on OSM](.\Maps\OpenStreetMap\OSM.pdf)
+
+
+
+*****
+
+##  Weather Web Data:
+
+An basic script was made to scrape the Environment Canada Ottawa website
+for hourly updated temperature and 24 hour forecast.
+The collected data was then explored by making several graphs.
+
+*   [Weather Web Scraping](.\Weather\Weather_mini_project.pdf)
+
+*   [Data Exploration](.\Weather\FurtherAnalysis.pdf)
+
+
+*****
+
+##  Instagram:
+
+*   From initial searching, the Instagram API is not publicly available.
+    In order to access the API, an Instagram approved application (only applications
+    that promote sharing through Instagram can be approved). Since the API
+    is not available, not further search into Instagram was done.
+    [Instagram Permissions Review](https://www.instagram.com/developer/review/).
+    
+
+*****
+
+##  Image Metadata:
+
+*   As part of the search into processing images through Instagram, 
+    a command prompt tool for windows called [exifTool](http://www.sno.phy.queensu.ca/~phil/exiftool/),
+    which allows the extraction of images metadata.
+
+*   [Image Metadata Brief Report](.\ProcessingImages\Images.pdf)
+
+
+*****
+
+##  Flickr:
+
+*   Flicker is a photo sharing website which allows people to host 
+    their photos online.
+
+*   [Flickr API](https://www.flickr.com/services/api/)
+
+*   __The API is not maintained or supported by Flickr.__
+
+****
+
+*   __Advantages:__
+    +   Allows public access with relative ease.
+    +   Many methods does not require OAuth 1.0 token.
+    +   Photos usually contain meta data.
+    +   Photo tags provide an easy way to adjust search query.
+    
+
+*   __Disadvantages:__
+    +   Does not have massive amounts of data available
+        like twitter. This is because many photos are 
+        not public.
+    +   Limited requests.
+    
+
+*****
+
+[Flickr Report](.\Flicker\FlickrMaster.pdf)
+
+
+
+
