@@ -73,7 +73,7 @@ is produced by exploring the APIs, the packages provided in R and relevance to p
 
 All APIs explored relies on sending an __HTTP GET request__ with a OAuth token to
 access the API data. The response recieved is typically in JSON or XML format. The
-GET and OAuth token is generated based on the package [httr](https://cran.r-project.org/web/packages/httr/index.html), while [jsonlite](https://cran.r-project.org/web/packages/jsonlite/index.htm)
+GET and OAuth token is generated based on the package [httr](https://cran.r-project.org/web/packages/httr/index.html), while [jsonlite](https://cran.r-project.org/web/packages/jsonlite/index.html)
 and [xml2](https://cran.r-project.org/web/packages/xml2/index.html) packages can used to parse JSON and XML responses respectively.
 Note, jsonlite and xml2 does not support the parsing of multiple responses at once. 
 
@@ -98,7 +98,7 @@ with links to a more detailed report of the work that has been done on each API.
     +   Easy to retrieve data from facebook API using 
         the functions provided by the __Rfacebook__. 
         
-    +   Easy to access public data of facebook through its [__search API__](https://developers.facebook.com/docs/graph-API/using-graph-API#search).
+    +   Easy to access public data of facebook through its __search API__.
         Part of the functionality is covered by the _Rfacebook_ package through the _searchGroup &
         searchPages_ function.
         
@@ -112,7 +112,7 @@ with links to a more detailed report of the work that has been done on each API.
 *****
 
 *   __Disadvantages:__
-    +   The facebook API documentation does not provide specific information regarding [__Rate         Limit__](https://developers.facebook.com/docs/graph-API/advanced/rate-limiting), 
+    +   The facebook API documentation does not provide specific information regarding __Rate Limit__, 
     it specifies that the limit `differs depending on request`.
     
     +   Facebook API V2.0 and above place heavy restrictions 

@@ -1,6 +1,0 @@
----
-title: "HeatMap"
-author: "Yi Lin Liu"
-date: "April 10, 2017"
-output: html_document
----

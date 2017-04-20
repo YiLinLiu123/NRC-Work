@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Summary of streamR:
 *   provides easy access to the twitter stream
     API.
+    
 *   Handles connection, parsing, disconnecting,
     reconnecting, backing off and 
     writing to a file all in the background
@@ -35,7 +36,7 @@ page to extract the pin to set up twitter handshake.__
     and then process it later on to reduce possible delay for
     streams.__
 
-*   __ The streaming functions provided by streamR only stores
+*   __The streaming functions provided by streamR only stores
     complete tweets and disregards deletion, updates, incomplete 
     posts etc.__
 

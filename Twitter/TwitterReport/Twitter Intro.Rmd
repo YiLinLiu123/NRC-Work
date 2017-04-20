@@ -44,7 +44,7 @@ knitr::opts_chunk$set(echo = TRUE)
 *   Specific Twitter endpoints support pagination. To request for cursor results,
     add `&cursor=-1` to the request. If then endpoint/node support cursors, 
     the API will default `cursor` to `-1`. The response value for cursor can 
-    be used to navigate. 
+    be used to navigate for more responses. 
     +   [Cursors](https://dev.twitter.com/overview/api/cursoring)
 
 

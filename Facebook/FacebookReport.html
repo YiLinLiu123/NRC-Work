@@ -130,7 +130,6 @@ $(document).ready(function () {
 <li><a href="#pagination">Pagination:</a></li>
 <li><a href="#rate-limit">Rate Limit:</a></li>
 </ul></li>
-<li><a href="#further-information">Further Information:</a></li>
 <li><a href="#other-facebook-api">Other Facebook API:</a></li>
 <li><a href="#rfacebook-package">Rfacebook Package:</a><ul>
 <li><a href="#summary-of-findings-for-rfacebook">Summary of Findings For Rfacebook:</a></li>
@@ -211,7 +210,6 @@ $(document).ready(function () {
 <ul>
 <li>If the provided paging request call returns <em>NULL</em>, the end/very beginning of the data is reached.</li>
 </ul></li>
-<li><p><a href="https://developers.facebook.com/docs/graph-API/using-graph-API">Pagination</a></p></li>
 </ul>
 <hr />
 </div>
@@ -225,16 +223,6 @@ $(document).ready(function () {
 </ul>
 <hr />
 </div>
-</div>
-<div id="further-information" class="section level1">
-<h1>Further Information:</h1>
-<ul>
-<li><a href="https://developers.facebook.com/docs/graph-API/overview">facebook API Overview</a></li>
-<li><a href="https://developers.facebook.com/docs/graph-API/using-graph-API">facebook API Request Information</a></li>
-<li><a href="https://developers.facebook.com/docs/graph-API/advanced/rate-limiting">facebook API Rate Limit</a></li>
-<li><a href="https://developers.facebook.com/docs/">facebook API Documentations</a></li>
-</ul>
-<hr />
 </div>
 <div id="other-facebook-api" class="section level1">
 <h1>Other Facebook API:</h1>
@@ -427,7 +415,6 @@ load(&quot;My_OAuth.txt&quot;)
 <div id="callapi-function" class="section level2">
 <h2><em>callAPI</em> Function:</h2>
 <ul>
-<li><strong>CHECKED</strong></li>
 <li><p>The “callAPI” function retrieves response for any valid facebook API requests.</p></li>
 <li><p>The main benefit is that the user can pass in any arbitrary API request. ex: <code>https://graph.facebook.com/me?fields=birthday,age_range</code> and pass in the token generated from <em>fbOAuth</em> token. The users will have to parse the returned nested list.</p></li>
 <li><p>Most facebook nodes needs to be referenced via its object id for the expected response.</p></li>
@@ -435,9 +422,6 @@ load(&quot;My_OAuth.txt&quot;)
 </ul>
 <div id="example-of-using-callapi-to-extract-test-user-data" class="section level3">
 <h3>Example of using callAPI (to extract test user data):</h3>
-<ul>
-<li><strong>Checked</strong></li>
-</ul>
 <pre class="r"><code>    load(&quot;My_OAuth.txt&quot;)
     ##  Extracting test user personnal information
     my_Data = callAPI(&quot;https://graph.facebook.com/me&quot;, token)
@@ -481,9 +465,6 @@ load(&quot;My_OAuth.txt&quot;)
 </div>
 <div id="exploring-getpagegetpostgetcommentreplies" class="section level2">
 <h2>Exploring <em>getPage,getPost,getCommentReplies</em>:</h2>
-<ul>
-<li><strong>CHECKED</strong></li>
-</ul>
 <p><strong><em>GOAL: To extract information regarding comments on a public facebook webpage</em></strong></p>
 <pre><code>1:  Starting with getting the post_Ids (mainly post Ids) using _getPage_</code></pre>
 <pre class="r"><code>    require(Rfacebook)
@@ -553,8 +534,7 @@ load(&quot;My_OAuth.txt&quot;)
 <div id="exploring-searchgroup-getgroup-functions" class="section level2">
 <h2>Exploring <em>searchGroup &amp; getGroup</em> functions:</h2>
 <ul>
-<li><p><strong>CHECKED</strong></p></li>
-<li><p><strong><em>GOAL: To extract information regarding a public facebook group: <a href="https://www.facebook.com/groups/couponboutique2/">couponboutique</a> using the getGroup function</em></strong></p></li>
+<li><strong><em>GOAL: To extract information regarding a public facebook group: <a href="https://www.facebook.com/groups/couponboutique2/">couponboutique</a> using the getGroup function</em></strong></li>
 </ul>
 <p>1: Suppose the ID is not known, or not certain. <em>searchGroup()</em> can be used to extract the group_Id:</p>
 <pre class="r"><code>    load(&quot;My_OAuth.txt&quot;)
@@ -635,15 +615,6 @@ load(&quot;My_OAuth.txt&quot;)
 <li><a href="https://developers.facebook.com/docs/graph-api/using-graph-api">Search Documentation</a></li>
 <li><strong>This API provides the same functionality as facebook’s Search Bar.</strong></li>
 <li>Query example: <code>https:graph.facebook.com/search?q={string to search for}&amp;type={type name}&amp;{fields of type}</code></li>
-<li>Allows:
-<ul>
-<li><a href="https://developers.facebook.com/docs/graph-api/reference/user/">users</a></li>
-<li><a href="https://developers.facebook.com/docs/graph-API/reference/page/">page</a></li>
-<li><a href="https://developers.facebook.com/docs/graph-API/reference/place-topic/">place-topic</a></li>
-<li><a href="https://developers.facebook.com/docs/graph-API/reference/event/">event</a></li>
-<li><a href="https://developers.facebook.com/docs/graph-API/reference/v2.8/group/">group</a></li>
-<li><a href="https://developers.facebook.com/docs/graph-API/reference/place/">places</a></li>
-</ul></li>
 </ul>
 <hr />
 <div id="mini-projects" class="section level2">

@@ -77,7 +77,6 @@ facebook divides the data using several pagination techniques
     +   If the provided paging request call returns _NULL_, the end/very beginning
         of the data is reached.
         
-*   [Pagination](https://developers.facebook.com/docs/graph-API/using-graph-API)
 
  
 ******  
@@ -96,14 +95,6 @@ facebook divides the data using several pagination techniques
 and it is located under the dashboard of the application. [Test Application](https://developers.facebook.com/apps/). 
 The user would need to be logged in.
 
-
-******
-
-# Further Information:
-*   [facebook API Overview](https://developers.facebook.com/docs/graph-API/overview)
-*   [facebook API Request Information](https://developers.facebook.com/docs/graph-API/using-graph-API)
-*   [facebook API Rate Limit](https://developers.facebook.com/docs/graph-API/advanced/rate-limiting)
-*   [facebook API Documentations](https://developers.facebook.com/docs/)
 
 *****
 
@@ -282,7 +273,6 @@ ___GOAL: To try and explore what the facebook API offer regarding extracting loc
 
 ******
 ## _callAPI_ Function:
-*   __CHECKED__
 *   The "callAPI" function retrieves 
     response for any valid facebook API requests.
 
@@ -301,7 +291,7 @@ ___GOAL: To try and explore what the facebook API offer regarding extracting loc
     the test application) were returned.
 
 ###   Example of using callAPI (to extract test user data):
-*   __Checked__
+
 ```{r}    
 
     load("My_OAuth.txt")
@@ -404,7 +394,7 @@ ___GOAL: To try and explore what the facebook API offer regarding extracting loc
 ******
 
 ## Exploring _getPage,getPost,getCommentReplies_:
-*   __CHECKED__
+
 
  ___GOAL: To extract information regarding comments on a public facebook webpage___
 
@@ -491,7 +481,7 @@ ___GOAL: To try and explore what the facebook API offer regarding extracting loc
 ******
 
 ## Exploring _searchGroup & getGroup_ functions:
-*   __CHECKED__
+
 
 * ___GOAL: To extract information regarding a public facebook group: 
 [couponboutique](https://www.facebook.com/groups/couponboutique2/) 
@@ -572,14 +562,7 @@ a user or a page's likes given the id.___
 *   [Search Documentation](https://developers.facebook.com/docs/graph-api/using-graph-api)
 *   __This API provides the same functionality as facebook's Search Bar.__
 *   Query example: `https:graph.facebook.com/search?q={string to search for}&type={type name}&{fields of type}`
-*   Allows:
-    +   [users](https://developers.facebook.com/docs/graph-api/reference/user/)
-    +   [page](https://developers.facebook.com/docs/graph-API/reference/page/)
-    +   [place-topic](https://developers.facebook.com/docs/graph-API/reference/place-topic/)
-    +   [event](https://developers.facebook.com/docs/graph-API/reference/event/)
-    +   [group](https://developers.facebook.com/docs/graph-API/reference/v2.8/group/)
-    +   [places](https://developers.facebook.com/docs/graph-API/reference/place/)
-    
+
 
 ******
 
