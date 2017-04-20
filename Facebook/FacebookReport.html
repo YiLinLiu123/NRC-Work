@@ -131,6 +131,7 @@ $(document).ready(function () {
 <li><a href="#rate-limit">Rate Limit:</a></li>
 </ul></li>
 <li><a href="#further-information">Further Information:</a></li>
+<li><a href="#other-facebook-api">Other Facebook API:</a></li>
 <li><a href="#rfacebook-package">Rfacebook Package:</a><ul>
 <li><a href="#summary-of-findings-for-rfacebook">Summary of Findings For Rfacebook:</a></li>
 <li><a href="#list-of-deprecated-functions">List of Deprecated Functions:</a></li>
@@ -163,10 +164,7 @@ $(document).ready(function () {
 <hr />
 <div id="structure" class="section level3">
 <h3>Structure:</h3>
-<p>The facebook API is in the form of a <em>graph</em>:</p>
-<ul>
-<li><strong>CHECKED</strong></li>
-</ul>
+<p>The facebook Graph API (API used to access general facebook data) is in the form of a <em>graph</em>:</p>
 <table>
 <thead>
 <tr class="header">
@@ -194,39 +192,36 @@ $(document).ready(function () {
 <div id="request-format" class="section level3">
 <h3>Request Format:</h3>
 <ul>
-<li>The <em>API request</em> is in the format of a standard HTTP request. Methods like <strong>GET,POST, DELETE, etc.</strong> can be used to retrieve and modify information of facebook nodes through the API granted the correct access token is provided.</li>
+<li><p>The <em>API request</em> is in the format of a standard HTTP request. Methods like <strong>GET,POST, DELETE, etc.</strong> can be used to retrieve and modify information of facebook nodes through the API granted the correct access token is provided.</p></li>
 <li>Format of a request:<br />
 <code>GET graph.facebook.com /{node-id}/{edge-name}?fields = {first-level fields}{Second-level fields}</code>.
 <ul>
 <li>The levels of the fields form a pipeline where the fields of the first level fields can be accessed as the second level fields.</li>
 </ul></li>
 <li><p>An OAuth access token is required to access any information, Rfacebook provides functionalities to handle tokens.</p></li>
-<li><p><strong>CHECKED</strong></p></li>
 </ul>
 <hr />
 </div>
 <div id="pagination" class="section level3">
 <h3>Pagination:</h3>
 <ul>
-<li>To manage the amount of information returned per API Call, facebook divides the data using several pagination techniques (Cursors-based, Time-based and Offset-based).</li>
-<li>Most commonly used and the only ones encountered during this report are the curosr based paginations.</li>
-<li>The information for pagination provides a <em>next</em> token which is a HTTP GET request for the next page of data and a <em>previous</em> token which is a HTTP GET request for the previous page of data.
+<li><p>To manage the amount of information returned per API Call, facebook divides the data using several pagination techniques (Cursors-based, Time-based and Offset-based).</p></li>
+<li><p>Most commonly used and the only ones encountered during this report are the curosr based paginations.</p></li>
+<li><p>The information for pagination provides a <em>next</em> token which is a HTTP GET request for the next page of data and a <em>previous</em> token which is a HTTP GET request for the previous page of data.</p>
 <ul>
 <li>If the provided paging request call returns <em>NULL</em>, the end/very beginning of the data is reached.</li>
 </ul></li>
-<li><a href="https://developers.facebook.com/docs/graph-API/using-graph-API">Pagination</a></li>
-<li><strong>CHECKED</strong></li>
+<li><p><a href="https://developers.facebook.com/docs/graph-API/using-graph-API">Pagination</a></p></li>
 </ul>
 <hr />
 </div>
 <div id="rate-limit" class="section level3">
 <h3>Rate Limit:</h3>
 <ul>
-<li>The type of rate limit dealt with mainly in this report is <strong>Application-Level Rate Limiting</strong>. Only the application access key was used. <a href="https://developers.facebook.com/docs/facebook-login/access-tokens">Access Tokens</a></li>
-<li>The facebook API states that the limit for the application is <strong>200 calls per hour per user in aggregate.</strong></li>
-<li>However not all API calls are subjected to the rate limit.</li>
-<li>There is a tool that monitors the application’s API calls and it is located under the dashboard of the application. <a href="https://developers.facebook.com/apps/">Test Application</a>. The user would need to be logged in.</li>
-<li><strong>CHECKED</strong></li>
+<li><p>The type of rate limit dealt with mainly in this report is <strong>Application-Level Rate Limiting</strong>. Only the application access key was used. <a href="https://developers.facebook.com/docs/facebook-login/access-tokens">Access Tokens</a></p></li>
+<li><p>The facebook API states that the limit for the application is <strong>200 calls per hour per user in aggregate.</strong> This however means if more users uses the application, the rate limit cap increases.</p></li>
+<li><p>However not all API calls are subjected to the rate limit.</p></li>
+<li><p>There is a tool that monitors the application’s API calls and it is located under the dashboard of the application. <a href="https://developers.facebook.com/apps/">Test Application</a>. The user would need to be logged in.</p></li>
 </ul>
 <hr />
 </div>
@@ -238,7 +233,15 @@ $(document).ready(function () {
 <li><a href="https://developers.facebook.com/docs/graph-API/using-graph-API">facebook API Request Information</a></li>
 <li><a href="https://developers.facebook.com/docs/graph-API/advanced/rate-limiting">facebook API Rate Limit</a></li>
 <li><a href="https://developers.facebook.com/docs/">facebook API Documentations</a></li>
-<li><strong>CHECKED</strong></li>
+</ul>
+<hr />
+</div>
+<div id="other-facebook-api" class="section level1">
+<h1>Other Facebook API:</h1>
+<ul>
+<li><p>There is <strong>not</strong> a paid Facebook Graph API.</p></li>
+<li><p>For commercial purposes, Facebook has another API called <a href="https://developers.facebook.com/docs/marketing-apis/">Marketing API</a> which is used to manage ad campaigns.</p></li>
+<li><p>Another advertisment based API is the <a href="https://developers.facebook.com/docs/atlas-apis">atlas API</a>. From a basic google search. <a href="https://www.quora.com/What-is-Facebooks-Atlas-exactly">This page</a> says that the atlas API uses identity of each user to target advertisment.</p></li>
 </ul>
 <hr />
 </div>
@@ -246,14 +249,10 @@ $(document).ready(function () {
 <h1>Rfacebook Package:</h1>
 <ul>
 <li><a href="https://cran.r-project.org/web/packages/Rfacebook/index.html">Rfacebook</a></li>
-<li><strong>CHECKED</strong></li>
 </ul>
 <hr />
 <div id="summary-of-findings-for-rfacebook" class="section level2">
 <h2>Summary of Findings For Rfacebook:</h2>
-<ul>
-<li><strong>CHECKED</strong></li>
-</ul>
 <table>
 <thead>
 <tr class="header">
@@ -284,9 +283,6 @@ $(document).ready(function () {
 </div>
 <div id="list-of-deprecated-functions" class="section level2">
 <h2>List of Deprecated Functions:</h2>
-<ul>
-<li><strong>CHECKED</strong></li>
-</ul>
 <table>
 <thead>
 <tr class="header">
@@ -347,7 +343,6 @@ $(document).ready(function () {
 <div id="creating-token" class="section level2">
 <h2>Creating token:</h2>
 <ul>
-<li><p><strong>CHECKED</strong></p></li>
 <li>Normally, a temporary access token normally has a 2-hour expiration time. A long-lived token (OAuth token) can be used for longer access. The following outlines how to obtain a long-lived token:
 <ul>
 <li>__The <em>fbOAuth</em> function documentation in <a href="https://cran.r-project.org/web/packages/Rfacebook/Rfacebook.pdf">Rfacebook</a> outlines the steps.</li>
@@ -518,8 +513,19 @@ load(&quot;My_OAuth.txt&quot;)
     ## getPost function
     post_Information = lapply(post_Ids,getPost,n=100,token=token)
     
-    names(post_Information[[2]])</code></pre>
+    test &lt;- post_Information[[2]]
+    
+    names(test)</code></pre>
 <pre><code>## [1] &quot;post&quot;     &quot;likes&quot;    &quot;comments&quot;</code></pre>
+<pre class="r"><code>    names(test$post)</code></pre>
+<pre><code>##  [1] &quot;from_id&quot;        &quot;from_name&quot;      &quot;message&quot;        &quot;created_time&quot;  
+##  [5] &quot;type&quot;           &quot;link&quot;           &quot;id&quot;             &quot;likes_count&quot;   
+##  [9] &quot;comments_count&quot; &quot;shares_count&quot;</code></pre>
+<pre class="r"><code>    names(test$likes)</code></pre>
+<pre><code>## [1] &quot;from_name&quot; &quot;from_id&quot;</code></pre>
+<pre class="r"><code>    names(test$comments)</code></pre>
+<pre><code>## [1] &quot;from_id&quot;        &quot;from_name&quot;      &quot;message&quot;        &quot;created_time&quot;  
+## [5] &quot;likes_count&quot;    &quot;comments_count&quot; &quot;id&quot;</code></pre>
 <p>3: Using the <em>getcommentReplies</em> to further investigate each reply to a comment.</p>
 <pre class="r"><code>    ## Extracting comment_ids
 
@@ -533,12 +539,15 @@ load(&quot;My_OAuth.txt&quot;)
     single_Comment_Reply = getCommentReplies(comments_Id[[1]],token=token)
     names(single_Comment_Reply)</code></pre>
 <pre><code>## [1] &quot;comment&quot; &quot;replies&quot;</code></pre>
+<pre class="r"><code>    names(single_Comment_Reply$replies)</code></pre>
+<pre><code>## [1] &quot;from_id&quot;      &quot;from_name&quot;    &quot;message&quot;      &quot;created_time&quot;
+## [5] &quot;likes_count&quot;  &quot;id&quot;</code></pre>
 <pre class="r"><code>    ##Now for all of the comment Ids via lapply.
     
     comment_Replies = lapply(comments_Id, function(x) getCommentReplies(x,token = token))
     
     length(comment_Replies)</code></pre>
-<pre><code>## [1] 100</code></pre>
+<pre><code>## [1] 46</code></pre>
 <hr />
 </div>
 <div id="exploring-searchgroup-getgroup-functions" class="section level2">
@@ -608,7 +617,6 @@ load(&quot;My_OAuth.txt&quot;)
 ## [10] &quot;country&quot;             &quot;latitude&quot;            &quot;longitude&quot;          
 ## [13] &quot;name&quot;                &quot;talking_about_count&quot; &quot;username&quot;           
 ## [16] &quot;website&quot;</code></pre>
-<pre class="r"><code>   rm(list = setdiff(ls(),c(&quot;folder_Path&quot;,&quot;token&quot;,&quot;FbObjectId&quot;) ))</code></pre>
 <hr />
 </div>
 <div id="trying-getlikes" class="section level2">

@@ -125,7 +125,10 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#goal">Goal:</a></li>
+<li><a href="#objective">Objective:</a></li>
+<li><a href="#summary">Summary:</a></li>
+<li><a href="#details">Details:</a><ul>
+<li><a href="#overview">Overview:</a></li>
 <li><a href="#facebook">Facebook:</a></li>
 <li><a href="#facebook-report">Facebook Report</a></li>
 <li><a href="#twitter">Twitter:</a></li>
@@ -135,30 +138,53 @@ $(document).ready(function () {
 <li><a href="#quick-word-on-openstreetmaposm">Quick Word on OpenStreetMap(OSM):</a></li>
 <li><a href="#weather-web-data">Weather Web Data:</a></li>
 <li><a href="#instagram">Instagram:</a></li>
-<li><a href="#image-metadata">Image Metadata:</a></li>
 <li><a href="#flickr">Flickr:</a></li>
+<li><a href="#others">Others:</a></li>
+</ul></li>
 </ul>
 </div>
 
-<div id="goal" class="section level2">
-<h2>Goal:</h2>
-<p>The goal is to look into how to access APIs of various data sources (Facebook, twitter, Instagram/Flickr and weather) purely through the usage of R.</p>
+<hr />
+<div id="objective" class="section level1">
+<h1>Objective:</h1>
+<p>To explore various APIs (facebook, google maps, twitter, flickr and weather data) through R and explore their usefulness to a data scientist.</p>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary:</h1>
+<p>An API is a set of protocols, tools and routines used for software building. APIs specify how components should interact with each other. In regards to this report. An API specifies the protocol used to extract data from the various data sources. The data sources investigated includes facebook, google maps, twitter flickr and weather data. A ranking from the most useful to least useful for data scientists is produced by exploring the APIs, the packages provided in R and relevance to potential projects.</p>
+<ol style="list-style-type: decimal">
+<li><p>Based on the capabilities of google maps API as well as the usefulness to current projects, google maps API is ranked first. The API provides route information between 2 points, geocoding services for points, elevation and more. Given that one of the current projects at DAC involves optimizing routing for ambulances in Ottawa, the accurate routing information as well as traffic modeling that the google maps directions API provides is of essential importance. Another potential project at DAC aims to predict the next calls for a delivery service based in USA. The ability of the google maps geocoding API to standardize differently formatted addresses as well as providing specific geocoding information is useful for future analysis of data.</p></li>
+<li><p>Twitter API ranks 2nd due to the majority of data being publicly available. Users as well as tweets are typically publicly available through the API. This means that sentiment analysis can be performed on existing tweets returned by the search API. New tweets and updates can be monitored using the stream API and potentially stored in a database for long term usage. Friendship data is publicly available through searching for users which can lead to social network analysis. A major downfall with the twitter API is that the search API only returns tweets from up till 1 week ago, however there is no time limit to tweets searched via timelines of users.</p></li>
+<li><p>Flickr API ranks 3rd due to the details of the data. Flickr is an photo hosting/sharing website meant for professionals. The data (photos) are not readily available for public access due to privacy settings, but the public search API offers fine control in terms of locating the desired response. The metadata for the photos are typically available which is what differentiates Flickr from many other data sources where the metadata is stripped to conserve space.</p></li>
+<li><p>The weakest API is the facebook API. The facebook API provides massive amounts of data via the ability to search for public groups, pages, posts, comments and replies to comments. The downfall is that user information is unavailable with the new API unless the proper permissions have been obtained, meaning it would be hard to categorize and investigate the data.</p></li>
+<li><p>The exploration for weather data was done through web scrapping and not through an official API. It was shown that parsing HTML source code is possible through R and be analysed. The framework can be useful for future web scrapping needs.</p></li>
+</ol>
+<hr />
+</div>
+<div id="details" class="section level1">
+<h1>Details:</h1>
+<hr />
+<div id="overview" class="section level2">
+<h2>Overview:</h2>
+<p>All APIs explored relies on sending an <strong>HTTP GET request</strong> with a OAuth token to access the API data. The response recieved is typically in JSON or XML format. The GET and OAuth token is generated based on the package <a href="https://cran.r-project.org/web/packages/httr/index.html">httr</a>, while <a href="https://cran.r-project.org/web/packages/jsonlite/index.htm">jsonlite</a> and <a href="https://cran.r-project.org/web/packages/xml2/index.html">xml2</a> packages can used to parse JSON and XML responses respectively. Note, jsonlite and xml2 does not support the parsing of multiple responses at once.</p>
+<p>In order to obtain an OAuth token for a particular API, an application for the API needs to be created. To do so, a test account and a test app has been made for each API. The details are within the report for each API.</p>
+<p>The following includes a brief summary of the advantages and disadvantages of each APIs, with links to a more detailed report of the work that has been done on each API.</p>
 <hr />
 </div>
 <div id="facebook" class="section level2">
 <h2>Facebook:</h2>
-<p><a href="https://developers.facebook.com/docs/graph-api">Facebook API</a></p>
+<ul>
+<li><p><a href="https://developers.facebook.com/docs/graph-api">Facebook API</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/Rfacebook/index.html">Rfacebook</a></p></li>
+</ul>
 <hr />
 <ul>
 <li><strong>Advantages:</strong>
 <ul>
 <li><p>Easy to retrieve data from facebook API using the functions provided by the <strong>Rfacebook</strong>.</p></li>
 <li><p>Easy to access public data of facebook through its <a href="https://developers.facebook.com/docs/graph-API/using-graph-API#search"><strong>search API</strong></a>. Part of the functionality is covered by the <em>Rfacebook</em> package through the <em>searchGroup &amp; searchPages</em> function.</p></li>
-<li><p>Long lived tokens created through registering an facebook application does not expire.</p></li>
 <li><p>Discussions about a post can be easily tracked through extracting comments and replies to those comments.</p></li>
 <li><p>The <a href="https://developers.facebook.com/tools/explorer/">graph API Explorer</a> tool is useful for testing API calls to understand structure as well as exploring possible fields and edges.</p></li>
-<li><p>The <strong>Utils.R</strong> package within <em>Rfacebook</em> provides example frameworks to parse the response JSON nested list into an organized data frame.</p></li>
-<li><p>To use custom API requests, use the <em>CallAPI</em> function in <em>Rfacebook</em> with the request URL to retrieve response.</p></li>
 </ul></li>
 </ul>
 <hr />
@@ -166,9 +192,10 @@ $(document).ready(function () {
 <li><strong>Disadvantages:</strong>
 <ul>
 <li><p>The facebook API documentation does not provide specific information regarding <a href="https://developers.facebook.com/docs/graph-API/advanced/rate-limiting"><strong>Rate Limit</strong></a>, it specifies that the limit <code>differs depending on request</code>.</p></li>
-<li><p>facebook API V2.0 and above place heavy restrictions on accessing personal information. Details such as profile information, user timeline etc. are not generally publicly available due to privacy settings. It is <strong>not recommended</strong> to scrape the facebook API to search for user related information.</p></li>
+<li><p>Facebook API V2.0 and above place heavy restrictions on accessing personal information. Details such as profile information, user timeline etc. are not generally publicly available due to privacy settings. It is <strong>not recommended</strong> to scrape the facebook API to search for user related information. This means given an user Id, the only parameters accessible would likely be the user name and no more.</p></li>
 <li><p>To retrieve information regarding nodes, the Id of the node is required. This makes tracking objects/searching for specific nodes very difficult since there is no easy way to obtain the id for specific objects of interest (pages, users, comments, etc.).</p></li>
 <li><p>It was observed that many pages, posts and comments does not include <em>location</em> information as part of its content.</p></li>
+<li><p>Custom HTTP requests need to be sent for information not supported by the package.</p></li>
 </ul></li>
 </ul>
 <hr />
@@ -180,28 +207,37 @@ $(document).ready(function () {
 </div>
 <div id="twitter" class="section level2">
 <h2>Twitter:</h2>
-<p><a href="https://dev.twitter.com/overview/api">Twitter API</a></p>
+<ul>
+<li><p><a href="https://dev.twitter.com/rest/public">REST API</a></p></li>
+<li><p><a href="https://dev.twitter.com/streaming/overview">Stream API</a></p></li>
+<li><p><a href="https://dev.twitter.com/rest/public/search">Search API</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/twitteR/index.html">twitteR Package</a></p></li>
+<li><p><a href="https://github.com/pablobarbera/streamR">streamR Package</a></p></li>
+</ul>
 <hr />
 <ul>
-<li><strong>Advantages:</strong>
+<li><p><strong>Advantages:</strong></p>
 <ul>
-<li><p>The packages available provide easy access to the API.</p></li>
-<li><p><strong>It is recommended to retrieve <em>RECENT</em> information using the Twitter API compared to Facebook API.</strong> This is because most information posted on twitter is public (tweets, users, etc).</p></li>
-<li><p>The search API for Twitter supports more powerful queries for searching public twitter content.</p></li>
-<li><p>The <a href="https://cran.r-project.org/web/packages/twitteR/index.html">twitteR Package</a> provide easy access to the Twitter REST API and handles the sorting of retrieved data through class wrappers that provide convenient functions to access information. Read the documentation for the package for more details.</p></li>
-<li><p>TwitteR package retrieves majority of information that is of interest, if not supported by the twitteR, any arbitrary HTTP request can be made to the API to retrieve information.</p></li>
-<li><p>Twitter provides a live stream API which allows the retrieval of the new updated information on tweeter. This is a unique feature and can be used for real-time tracking for events of interest.</p></li>
-<li><p><a href="https://github.com/pablobarbera/streamR">StreamR</a> provides easy access and convenient use of the stream API connecting, saving, parsing of data is all handled.</p></li>
+<li><p>Most information posted on twitter is public (tweets, users, etc) and can be accessed through the <strong>REST API</strong>.</p></li>
+<li><p>The <strong>search API</strong> for Twitter supports more powerful queries for searching public twitter content.</p></li>
+<li><p>It is possbile to extract the tweets posted any public user.</p></li>
+<li><p>The <strong>twitteR Package</strong> provide easy access to the Twitter REST API and handles the sorting of retrieved data through class wrappers that provide convenient functions to access information. Read the documentation for the package for more details.</p></li>
+<li><p><strong>TwitteR package</strong> retrieves majority of information that is of interest, if not supported by the twitteR, any arbitrary HTTP request can be made to the API to retrieve information.</p></li>
+<li><p>TwitteR establishes connection to data base if requested, which can save searched data easily.</p></li>
+<li><p>Twitter provides a live <strong>stream API</strong> which allows the retrieval of the new updated information on tweeter. This is a unique feature and can be used for real-time tracking for events of interest.</p></li>
+<li><p><strong>StreamR Package</strong> provides easy access and convenient use of the <strong>stream API</strong>. Tasks such as connecting to the API, reconnecting and saving to File is all handled.</p></li>
 </ul></li>
 </ul>
 <hr />
 <ul>
 <li><strong>Disadvantages:</strong>
 <ul>
-<li><p>Location information is available but often users can fill whatever it desired, thus not most accurate.</p></li>
-<li><p>The token produced by twitteR is cached internally and not provide easy access to the token for use outside of twitteR functions.</p></li>
-<li><p>Due to nature of twitter, it is hard to track how users react to tweets posted by other users. This is because the replies is not directly connected to the post.</p></li>
-<li><p><strong>It is not possible to public search for old tweets (older than a week) through the official twitter API.</strong></p></li>
+<li><p>Location information is available but often users can fill whatever it desired, thus not most reliable.</p></li>
+<li><p>The token produced by <strong>twitteR</strong> is cached internally and does not provide easy access to the token for use outside of <strong>twitteR</strong> functions.</p></li>
+<li><p>Due to the nature of twitter, it is hard to track how users react to tweets posted by other users. This is because the replies are not directly connected to the post.</p></li>
+<li><p>Can not access the feed of other users if application has not been granted access, ie what tweets appear on their account.</p></li>
+<li><p><strong>It is not possible to public search for old tweets (older than a week) through the official twitter search API.</strong> For access to historical search data, a 3rd party service needs to be paid for. <a href="https://gnip.com/sources/twitter/">Gnip</a> seems to provide that service.</p></li>
+<li><p><strong>TwitteR Package</strong> does not support the extraction of <strong>entities</strong> information within a tweet, (ie: media url, hashtags and urls). This is because the responses for entities varies depending on the specific tweet. In order to extract this information, an HTTP request needs to be send and the response needs to be manually parsed.</p></li>
 </ul></li>
 </ul>
 <hr />
@@ -218,26 +254,29 @@ $(document).ready(function () {
 <ul>
 <li><strong>Advantages:</strong>
 <ul>
-<li>Provides many services including directions between origin and destination, geocoding services, matching points to near roads, elevation, etc.</li>
-<li>Documentation is clear and very easily understood.</li>
-<li>Use basic <strong>HTTP request</strong> with simple format, making it easy to use.</li>
+<li><p>Provides many services including directions between origin and destination, geocoding services, matching points to near roads, elevation, etc.</p></li>
+<li><p>Documentation is clear and easily understood.</p></li>
+<li><p>Use basic <strong>HTTP request</strong> with simple format, making it easy to use.</p></li>
 </ul></li>
 <li><strong>Disadvantages:</strong>
 <ul>
-<li>limited free requests per day. The free limit is enough for investigation purposes. If used to process large amounts of data, a fee will need to be payed.</li>
+<li><p>limited free requests per day. The free limit is enough for investigation purposes. If used to process large amounts of data, a fee will need to be payed.</p></li>
+<li><p>Returns all possible data in a single response and does not support sending requests to extract only information of interest within the response.</p></li>
 </ul></li>
 </ul>
 <hr />
 </div>
 <div id="google-maps-report" class="section level2">
 <h2>Google Maps Report:</h2>
-<p><a href=".\Maps\Google%20Maps\GoogleMapsReport\Google_Maps_Report.html">Google Maps Report</a></p>
+<p><a href=".\Maps\GoogleMaps\GoogleMapsReport\Google_Maps_Report.html">Google Maps Report</a></p>
 <hr />
 </div>
 <div id="quick-word-on-openstreetmaposm" class="section level2">
 <h2>Quick Word on OpenStreetMap(OSM):</h2>
-<p><a href="http://wiki.openstreetmap.org/wiki/Main_Page">Open Street Map Wiki</a></p>
-<p><a href=".\Maps\OpenStreetMap\OSM.html">Preliminary Report on OSM</a></p>
+<ul>
+<li><p><a href="http://wiki.openstreetmap.org/wiki/Main_Page">Open Street Map Wiki</a></p></li>
+<li><p><a href=".\Maps\OpenStreetMap\OSM.html">Preliminary Report on OSM</a></p></li>
+</ul>
 <hr />
 </div>
 <div id="weather-web-data" class="section level2">
@@ -256,14 +295,6 @@ $(document).ready(function () {
 </ul>
 <hr />
 </div>
-<div id="image-metadata" class="section level2">
-<h2>Image Metadata:</h2>
-<ul>
-<li><p>As part of the search into processing images through Instagram, a command prompt tool for windows called <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/">exifTool</a>, which allows the extraction of images metadata.</p></li>
-<li><p><a href=".\ProcessingImages\Images.html">Image Metadata Brief Report</a></p></li>
-</ul>
-<hr />
-</div>
 <div id="flickr" class="section level2">
 <h2>Flickr:</h2>
 <ul>
@@ -275,19 +306,30 @@ $(document).ready(function () {
 <ul>
 <li><strong>Advantages:</strong>
 <ul>
-<li>Allows public access with relative ease.</li>
-<li>Many methods does not require OAuth 1.0 token.</li>
-<li>Photos usually contain meta data.</li>
-<li>Photo tags provide an easy way to adjust search query.</li>
+<li><p>Allows public access with relative ease.</p></li>
+<li><p>Many methods does not require OAuth 1.0 token.</p></li>
+<li><p>Photos usually contain meta data.</p></li>
+<li><p>Photo tags provide an easy way to adjust search query.</p></li>
 </ul></li>
 <li><strong>Disadvantages:</strong>
 <ul>
-<li>Does not have massive amounts of data available like twitter. This is because many photos are not public.</li>
-<li>Limited requests.</li>
+<li><p>Does not have massive amounts of data available like twitter. This is because many photos are not public.</p></li>
+<li><p>Limited requests.</p></li>
 </ul></li>
 </ul>
 <hr />
-<p><a href=".\Flicker\FlickrMaster.html">Flickr Report</a></p>
+<ul>
+<li><a href=".\Flickr\FlickrMaster.html">Flickr Report</a></li>
+</ul>
+<hr />
+</div>
+<div id="others" class="section level2">
+<h2>Others:</h2>
+<ul>
+<li><p><a href=".\ProcessingImages\Images.html">Exif Tool Exploration:</a> This is a windows application based on the Exif PERL library which allows the extraction of metadata for images.</p></li>
+<li><p><a href=".\ProphetPackageExploration\Exploring_Prophet.html">Prophet Package Exploration:</a> This is a facebook package that is used to predict trends for time series data, which accounts for yearly variations and seasonal variations.</p></li>
+</ul>
+</div>
 </div>
 
 

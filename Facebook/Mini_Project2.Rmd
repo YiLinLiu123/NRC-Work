@@ -2,7 +2,9 @@
 title: "MiniProject2"
 author: "YiLin Liu"
 date: "March 30, 2017"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 ***** 
 
@@ -98,6 +100,7 @@ the _pageToDF & UnlistWithNA_ functions under the  [Utils.R package](https://git
 
 ### Parsing and Processing information.
 
+Organizing the data into a data frame: 
 
 ```{r}
     num_Posts = 500
@@ -186,6 +189,9 @@ the _pageToDF & UnlistWithNA_ functions under the  [Utils.R package](https://git
    
 ```
 
+
+Manual Paging to extract more response:
+
 ```{r}
     ## Continuing on with Data Processing: 
     ## The query information is organized into a data frame.
@@ -237,6 +243,7 @@ the _pageToDF & UnlistWithNA_ functions under the  [Utils.R package](https://git
     final_Out = list(query_DF, raw_Data_Paging$paging)
 ```
   
+  frequency table: 
 
 ```{r}
 
@@ -245,7 +252,11 @@ the _pageToDF & UnlistWithNA_ functions under the  [Utils.R package](https://git
     location = query_DF$country
     freq= table(location)
     freq=sort(freq)
+    
+    
+    freq
     print(freq[length(freq)])
+    
 
 ```
 

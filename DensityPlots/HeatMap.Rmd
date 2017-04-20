@@ -1,0 +1,135 @@
+---
+title: "HeatMap"
+author: "YiLin Liu"
+date: "April 11, 2017"
+output: 
+    html_document:
+    toc: true
+    toc_depth: 6
+---
+
+##  Learning How To:
+
+*   Main library: [rmaps](http://rmaps.github.io/).
+
+*   `rmaps` is a R wrapper to interface between
+    some popular Javascript packages and R. The packages
+    mentioned are:
+    +   [Crosslet](http://sztanko.github.io/crosslet/)
+    +   [dataMaps](http://datamaps.github.io/)
+    +   [leaflet](http://leafletjs.com/)
+
+*   The heat map will be an overlay on top of a leaflet 
+    interactive heat map.
+    
+*   An example is provided on [heatmap blog](http://rmaps.github.io/blog/posts/leaflet-heat-maps/index.html)
+    +   uses the [leaflet.heat plugin](https://github.com/Leaflet/Leaflet.heat)
+
+
+##  Following the [Example](http://rmaps.github.io/blog/posts/leaflet-heat-maps/index.html):
+
+*   The data produced from the `Get Data` script is used with 
+    this example. 
+    
+1: libraries
+
+```{r, warning=F, message = F}
+
+# require(devtools)
+# install_github('ramnathv/rCharts@dev')
+# install_github('ramnathv/rMaps')
+```
+
+
+2: Example:
+
+*   Set up basic Map:
+
+
+```{r load map}
+    rm(list = ls())
+    library(rMaps)
+    library(rCharts)
+  ## using the produced data for cities
+    dataPath <- ".\\Deliverables\\dataComplete.csv"
+    dataSet <- read.table(dataPath, header=T, sep=",")
+    
+
+    L2 <- Leaflet$new()
+    L2$setView(c(median(dataSet$lat),  median(dataSet$lng)), 6)
+    L2$tileLayer(provider = "OpenStreetMap.Mapnik")
+    L2
+
+```
+
+
+*   Data:
+    +   obtained form crime data form ggmap package.
+    
+```{r}
+    # install.packages('ggmap')
+    library(ggmap)
+     library(rCharts)
+     library(plyr)
+
+    
+    scaleFactor <-1
+       
+    ## the first step is to divide up the crime data (ddply) by
+    ##  lat, long and the produce a different data frame via "summarise"
+    ##  that contains the lat,lng and count (scaled version of freq).
+     dataSet_dat = ddply(dataSet, .(lat, lng), summarise, count = freq*scaleFactor)
+     head(dataSet_dat,n=3)
+    
+    ## produces JSON like nested list(array of objects), 
+    ## json: specifies if data is already in json.
+     
+    dataSet_dat = rCharts::toJSONArray2(na.omit(dataSet_dat), json = F, names = F)
+    head(dataSet_dat,n=2 )
+    
+    ##  showing the json styled dataSet.
+    cat(rjson::toJSON(dataSet_dat[1:2]))
+```
+
+
+
+*   plotting the maps:
+    *   Requires decent understanding of JavaScript. The author is
+        not familar with javascript. 
+    
+    *   The author has not been able to locate the documentation
+        for the methods used below.
+        [classes R](http://adv-r.had.co.nz/OO-essentials.html)
+        tutorial of `RC` object system is useful.
+        
+    *   Did not find a way to access source code or documentation
+        to the methods used.
+```{r}
+
+# Add leaflet-heat plugin. Thanks to Vladimir Agafonkin
+L2$addAssets(jshead = c(
+  "http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"
+))
+
+# Add javascript to modify underlying chart
+L2$setTemplate(afterScript = sprintf("
+<script>
+  var addressPoints = %s
+  var heat = L.heatLayer(addressPoints).addTo(map)           
+</script>
+", rjson::toJSON(dataSet_dat)
+))
+
+L2
+
+library(pryr)
+otype(L2)
+
+```
+
+
+
+##  R Kernel Density Functions:
+[R evaluation of Kernel Package ](http://vita.had.co.nz/papers/density-estimation.pdf)
+
+[Kernel Introduction](https://people.cs.pitt.edu/~milos/courses/cs3750-Fall2007/lectures/class-kernels.pdf)

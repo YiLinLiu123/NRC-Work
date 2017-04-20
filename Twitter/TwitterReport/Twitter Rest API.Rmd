@@ -130,13 +130,6 @@ __GOAL: To test out the _twitteR_ package's ability to
     saveRDS(token,"tokenTest")
     test_Token = readRDS("tokenTest")
     
-    ## token and test_Token are the same object.
-    
-    ## loading cached token from twitteR package:
-    ##  It failed, likely because of the output format.
-    ##  The file size is 0KB
-   # oauth_content <- readRDS('.httr-oauth')
-
     
 ```
 
@@ -286,9 +279,13 @@ refer to markdown documents for the code.
 ```
 
 
-1:  Friendships and Users
+1:  Friendships, Users and timeline
 *   __The _lookupUsers_ and _friendships_ function
     behaves as specified by the documentation.__
+
+*   __ The _userTimelines_ function allows the extraction
+    of tweets made by ___ANY PUBLIC___ user, which is
+    very powerful.__
 
 ```{r REST Example2: Users And Information, echo=FALSE,eval=FALSE}
 
@@ -299,7 +296,9 @@ refer to markdown documents for the code.
 
     ## object "users" automatically returned
     users = lookupUsers(users= screen_Name)
-
+    users
+    
+    
     # examining friendship data
     friendships = lapply(users, function(x)
     {
@@ -310,6 +309,14 @@ refer to markdown documents for the code.
     test_User = users[[2]]
     
     friends = test_User$getFriends()
+ 
+    
+    # test user's timeline 
+    # tweets made by the test user
+    userTimeline(users[[3]],n=3)
+    
+    
+
     
 ```
 
@@ -502,5 +509,66 @@ __GOAL: Test to see how many tweets can twitter return.__
 
 ```
 
+
+
+*****
+
+### Example 4: Extracting Entities information:
+
+__Goal:__ to extract [entities]() information for a single tweet from
+the search API.
+    +   a tweet containing CNN will be searched.
+
+
+
+```{r Rest example 4}
+
+    rm(list = ls())
+
+    ##  libraries
+    library(httr)
+    library(jsonlite)
+
+    ##  Getting Token (produced earlier):
+     test_Token <- readRDS("tokenTest")
+     
+    ##  Making the HTTP request URL 
+     endpoint <- "https://api.twitter.com/1.1/search/tweets.json"
+     args <- c(q = "CNN", count = "1", result_type = "mixed")
+     request <- paste( endpoint, paste(names(args),args,collapse = "&", sep = "="),
+         sep = "?",collapse = "")
+     
+     
+     ## Getting raw Response
+     raw <- GET(request, config=(token=test_Token))
+     
+     if(raw$status_code!= 200){
+         warning("Request not successful")
+     }
+     
+     response <-fromJSON(rawToChar(raw$content))
+     names(response)
+     
+     
+     ##metadata for tweet
+     meta <- response$statuses$metadata
+     
+     ## metadata for search query
+     query_Meta <- response$search_metadata
+     
+     ## Entities information
+     entities <- response$statuses$entities
+     
+     
+     ## Expanded URL:
+     url <- unlist(entities$urls)
+     expanded_Url <- url["expanded_url"]
+     
+      expanded_Url
+     
+    
+
+
+```
 
 

@@ -209,6 +209,7 @@ $(document).ready(function () {
 </div>
 <div id="parsing-and-processing-information." class="section level3">
 <h3>Parsing and Processing information.</h3>
+<p>Organizing the data into a data frame:</p>
 <pre class="r"><code>    num_Posts = 500
     post_Limit = 100
     
@@ -289,6 +290,7 @@ $(document).ready(function () {
         
         return(df)
     }</code></pre>
+<p>Manual Paging to extract more response:</p>
 <pre class="r"><code>    ## Continuing on with Data Processing: 
     ## The query information is organized into a data frame.
     
@@ -334,12 +336,39 @@ $(document).ready(function () {
 <pre class="r"><code>    # Now the matrix is organized, time to get it into the final output format.
     
     final_Out = list(query_DF, raw_Data_Paging$paging)</code></pre>
+<p>frequency table:</p>
 <pre class="r"><code>    #finding most visited location:
 
     location = query_DF$country
     freq= table(location)
     freq=sort(freq)
-    print(freq[length(freq)])</code></pre>
+    
+    
+    freq</code></pre>
+<pre><code>## location
+##                Argentina                   Bhutan Central African Republic 
+##                        1                        1                        1 
+##                    China                  Croatia                  Germany 
+##                        1                        1                        1 
+##                  Iceland                  Ireland                   Israel 
+##                        1                        1                        1 
+##                  Lebanon                    Nepal                     Peru 
+##                        1                        1                        1 
+##                 Portugal                    Samoa                 Thailand 
+##                        1                        1                        1 
+##                  Austria                   Brazil                    Japan 
+##                        2                        2                        2 
+##     United Arab Emirates                 Zimbabwe                Indonesia 
+##                        2                        2                        3 
+##              Netherlands                 Pakistan                Australia 
+##                        3                        3                        4 
+##              Switzerland                   Greece              Philippines 
+##                        4                        5                        6 
+##                   Canada                    Italy            United States 
+##                        7                        8                       18 
+##                    India 
+##                       32</code></pre>
+<pre class="r"><code>    print(freq[length(freq)])</code></pre>
 <pre><code>## India 
 ##    32</code></pre>
 </div>

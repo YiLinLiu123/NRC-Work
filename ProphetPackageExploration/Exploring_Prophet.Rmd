@@ -1,0 +1,345 @@
+---
+title: "Prophet_Exploration"
+author: "paul"
+date: "March 6, 2017"
+output:
+  html_document:
+    toc: yes
+    toc.depth: 4
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#   References:
+*   [github Source Code](https://github.com/facebookincubator/prophet)
+*   [Quick Start In R](https://facebookincubator.github.io/prophet/docs/quick_start.html#r-api)
+*   [Wikipediatrend Vignette](https://cran.r-project.org/web/packages/wikipediatrend/vignettes/using-wikipediatrend.html)
+    +   used to scrape data from wikipedia pages.
+*   [Prophet Function Documentation](https://cran.r-project.org/web/packages/prophet/prophet.pdf)
+
+
+#   Notes about this Package:
+*   This package is used to forcast data and is used by facebook to account for seasonal 
+    and holiday affects on the data. 
+*   Backend is implemented in [Stan](http://mc-stan.org/)
+*   Always take a data frame with 2 columns: 
+    +   _ds:_ a date/datetime column indicating time.
+    +   _y:_ a column for the data to be forcasted. __Must be Numeric Values__
+        +   At least a year worth of data.
+    +   Other data like holidays, carry capacity.
+*   Returns a model object that can be processed using _predict_ and _plot_.
+*   The _predict_ function defaults to predicting a linear trend. When trying to log transform the _y_ column, 
+    special attention needs to be taken to modify values of _0_.
+    
+
+
+#General Steps:
+1:  Use _prophet_ function to fit the historic data. 
+2:  Use _make_future_dataframe_ function to make dataframe with future dates for forecasting.
+3:  Forcast using _predict_ function with both the historic and future data as parameters. 
+4:  Call _plot_ to plot the forcast (the historic data and the forecast)
+
+
+#   Working Through Tutorial Online: 
+*   ___Goal: Forecasting the time series of daily page views for the Wikipedia page for [Peyton Manning](https://en.wikipedia.org/wiki/Peyton_Manning).____
+
+```{r libraries, include=F}
+    #Libraries:
+    rm(list = ls())
+    library(prophet);
+    library(dplyr);
+    library(wikipediatrend);
+
+```
+
+
+```{r ScrapingData, echo = F}
+## Have been commented out becasue the file is already saved in the local folder
+
+    # ## Scraping the data of the wikipedia page for 
+      ## 2 years from 2008-01-10 to 2016-01-10.
+    # raw_Data =wikipediatrend:: wp_trend(page="Peyton_Manning"
+    # ,from = "2010-01-10", to="2015-01-10")
+    # 
+    # #saving the data desired for futher processing.
+    # if(!file.exists("PeytonManningData.csv"))
+    # {
+    #     file.create("PeytonManningData.csv")
+    # }
+    #write.table(raw_Data,file="PeytonManningData.csv",sep=",")
+```
+
+
+*   Reading Data:
+
+
+```{r reading Data,results="hide"}
+
+    ## Due to limited understanding of statics, all zeros are removed from the data set. 
+
+    df = read.csv("./PeytonManningData.csv")%>% select(date:count)%>% 
+    filter(count>0)%>%mutate(count=log(count))
+    
+    ##Beware, The names of the data frame column needs to be ds and y.
+    colnames(df)= c("ds","y")
+
+```
+
+
+* __Fitting Prediction:__
+
+
+```{r fitting & Predicting data}
+    
+    m=prophet(df)
+    names(m)
+```
+
+*   _growth:_ the growth model that is used to make the forecast.
+    linear or logistic options are available. 
+    
+*   _changepoints:_ which time values are changepoints.
+
+*   _n.changepoints:_ total number of changepoints.
+
+*   _yearly.seasonality:_ Boolean indicating if yearly seasonality is included.
+
+*   _weekly.seasonality:_ Boolean indicating if weekly seasonality is included.
+
+*   _holidays:_ a dataframe indicating holidays.
+
+*   _seasonality.prior.scale:_ adjusting effect of seasonality prior.
+    Higher scale setting, tend to increase the effect.
+
+*   _changepoint.prior.scale:_ adjusting effect of changepoint prior.
+    Higher scale setting, tend to increase the effect (increase
+    is to increase flexibility of rate changes and allow more changepoints
+    to be used.)
+
+*   _holidays.prior.scale:_ adjusting effect of holidays prior.
+    Higher scale setting, tend to increase the effect.
+
+*   _mcmc.samples:_ Whether or not to perform
+    the full bayesian inference with specified
+    sample amount.
+
+*   _interval.width:_ adjusting uncertainty intervals.
+    refer to help. 
+
+*   _uncertainty.samples:_ Number of simulated draws used to estimate uncertainty intervals
+
+*   _start:_ start date of historical data. 
+
+*   _end:_ end date of historical data.
+
+*   _y.scale:_ maximum scaled y value.
+
+*   _stan.fit:_ not too sure what this is.
+
+*   _params:_ seems to be prediction parameters.
+
+*   _history:_ historical/training data.
+    +   contains input data (ds,y,cap).
+    +   also contains scaled time, scaled y and scaled caps.
+    
+
+```{r fitting & Predicting data 2}
+    
+    ## produce a data frame specifying future dates to predict
+    future <- make_future_dataframe(m, periods = 365)
+    tail(future)
+```
+
+
+*    __Constructing future plot:__
+```{r forecast}
+
+    forecast <- predict(m, future)
+    
+    #yhat contains the predicated information.
+    tail(forecast[c('ds', 'yhat', 'yhat_lower', 'yhat_upper')])
+    
+    plot(m,forecast)
+
+```
+
+```{r generic Plot}
+    
+    
+    ## more detailed plot outlining where the data is broken down 
+    ## into: trend, weekly seasonality, and yearly seasonality
+
+    prophet_plot_components(m, forecast)
+```
+
+
+
+
+
+# Comparing To Actual Data:
+```{r Comparison, results="hide"}
+
+    ## Last 365 data point of forecast. The date for these data is needed 
+    ## to request the corresponding information from wikipedia
+    predicted_Data = tail(forecast[c("ds","yhat","yhat_lower","yhat_upper")],n=365)
+    start_Date = tail(forecast[["ds"]],n=365)[[1]]
+    end_Date = tail(forecast[["ds"]],n=365)[[365]]
+    
+    # data = wikipediatrend:: wp_trend(page="Peyton_Manning",
+    # from = start_Date, to=end_Date)
+    # ##writing data:
+    #  if(!file.exists("actualData.csv"))
+    #  {
+    #      file.create("actualData.csv")
+    #  }
+    # write.table(data, "./actualData.csv",sep=",")
+    
+    actual_Data = read.csv("./actualData.csv") %>% select(date:count)%>%
+        filter(count>0)%>%mutate(count=log(count))
+    
+```
+   
+```{r Graphs} 
+    # plot(x=actual_Data[["date"]], y=actual_Data[["count"]],xlab="date",
+    # ylab="log of visit count",col="blue",main = "Prophet Trained Forcast 
+    # vs Actual Data",type="l")
+    Hmisc::errbar(x=predicted_Data[["ds"]],y=predicted_Data[["yhat"]],
+                  yplus=predicted_Data[["yhat_upper"]],yminus = predicted_Data[["yhat_lower"]],
+                  lwd=0.1,pch=NA,errbar.col="gray",xlab="date",ylab="log of visit count",xaxt="n")
+
+axis.Date(1, x=predicted_Data[["ds"]],format="%Y-%m-%d")
+    points(x=predicted_Data[["ds"]],y=predicted_Data[["yhat"]], col="red")
+    points(x=as.Date(actual_Data[["date"]],format="%Y-%m-%d"),
+           y=actual_Data[["count"]],col="blue")
+    
+    title(main="Prophet Predicted Data vs Actual Data")
+    
+    legend("topleft",legend=c("actual data","predicted trend"), 
+           col=c("blue","red"),pch=1,cex=0.8)
+```
+    
+
+
+
+
+*****
+
+
+##  Forecast Growth Models:
+
+[Forecasting](https://facebookincubator.github.io/prophet/docs/forecasting_growth.html)
+
+*   By default, the  predications are made using a linear model or a [log function](https://facebookincubator.github.io/prophet/docs/forecasting_growth.html).
+
+*   The user can specify carry capacity in a column under the data, 
+    the maximum achievable amount. This must be done for logistic growth.
+    +   the carry capacity for each row can be defined.
+
+*   Changing the predications and setting carry capacity:
+```{r}
+
+    library(prophet);
+    library(dplyr)
+
+    df$cap <- 12##would be calculated using data normally
+    m1 <- prophet(df,growth = 'logistic')
+    
+    future1 <- make_future_dataframe(m1, periods = 365)
+    ##  must specify the caps for this df
+    future1$cap <- 12
+    
+    
+    forecast1 <- predict(m1, future1)
+    plot(m1,forecast1)
+    
+
+```
+
+
+
+
+
+***** 
+
+##  Trend Changepoints:
+
+[Trend Changepoints](https://facebookincubator.github.io/prophet/docs/trend_changepoints.html)
+
+*   Trend Changepoints are points that specifcy when the rate of the predictions
+    can change.
+    
+*   By default, prophet calculates many changepoints and uses as little as possible.
+
+*   It is possible to manually specify the changepoints via `n.changepoints` parameter
+    in the `prophet` function. To specify the location of changepoints,
+    use `changepoints` parameters.
+    
+*   To adjust the fitting (over fit or under fit) of trends, the 
+    `changepoint.prior.scale` parameter can be changed, default is 0.05. 
+    Increasing makes the trend more flexible (overfit potentially) and decreasing it
+    achieves the opposite effect.
+
+
+*****
+
+
+##  Holiday Effect:
+*   Please consult the [holidays documentation](https://facebookincubator.github.io/prophet/docs/holiday_effects.html).
+    The examples provided helps to make sense of the feature.
+
+*   This feature imposes "holiday effects" on the prediction.
+    From the provided example, it seems that it tends to spike up the prediction. 
+    __Still needs to confirm that the effect is only increasing prediction.__
+    
+    
+
+*****
+
+##  Uncertainty Intervals:
+
+*   [__Uncertainty Interval Documentation__](https://facebookincubator.github.io/prophet/docs/uncertainty_intervals.html)
+
+*   __3 major Uncertainties: trend, seasonality and noise:__
+
+*   trend:
+    +   assumes average frequency and magnitude of rate changes 
+        are the same as historical data.
+    +   project these trend changes forward, compute the distribution
+        and the result is an error.
+    +   changing changepoint prior scale affects
+        the uncertainty because higher scale factor,the more the rate
+        can change at the changepoint. 
+
+*   noise:
+    +   demands familiarity with some terms. Please refer to the 
+        prophet documentation listed above.
+        
+*****
+
+##  Outliers:
+*   [Outliers](https://facebookincubator.github.io/prophet/docs/outliers.html)
+
+*   __It is recommended to look through the examples provided to view the effects.__
+
+*   The authors of prophet recommends to remove outliers before prediction.
+    This is because prophet takes into outliers through changing
+    the forecast rate changes. This means outliers effects will be 
+    projected into the future permanently.
+    
+*  [Non-Daily Data](https://facebookincubator.github.io/prophet/docs/non-daily_data.html)
+
+
+
+
+***** 
+
+# Facebook Prophet Articles:
+*   [Facebook Forcasting At Scale](https://facebookincubator.github.io/prophet/static/prophet_paper_20170113.pdf)
+
+*   [Taking Prophet for a spin](http://blog.fastforwardlabs.com/2017/03/22/prophet.html?utm_campaign=Revue%20newsletter&utm_medium=Newsletter&utm_source=revue)
+    +   
+

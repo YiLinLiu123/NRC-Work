@@ -50,8 +50,11 @@ output: html_document
     #presenting information:
     frequency_table = table(webpage_Location)
     par(cex=0.75)
+    
+ 
     barplot(sort(frequency_table),las=2,main="Webpages that Mention Flowers by Country"
             ,ylab="Frequency",space=c(0.5))
+    
     
     ## Replotting graphs to exclude the top 4 Countries. 
     frequency_table1= frequency_table
@@ -60,6 +63,8 @@ output: html_document
         frequency_table1= subset(frequency_table1, 
                                  frequency_table1 < max(frequency_table1))
     }
+    
+    
     barplot(sort(frequency_table1),las=2,main="Webpages that Mention Flowers
             by Country Excluding Top 4",ylab="Frequency",space=c(0.5))
     

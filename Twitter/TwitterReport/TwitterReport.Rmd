@@ -3,10 +3,10 @@ title: "Twitter Report"
 author: "paul"
 date: "March 14, 2017"
 output:
-  pdf_document:
+  html_document:
     toc: yes
     toc_depth: '4'
-  html_document:
+  pdf_document:
     toc: yes
     toc_depth: '4'
 ---

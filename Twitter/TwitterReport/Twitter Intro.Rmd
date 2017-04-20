@@ -24,10 +24,11 @@ knitr::opts_chunk$set(echo = TRUE)
     +   [Tweets](https://dev.twitter.com/overview/api/tweets)  
     +   [Users](https://dev.twitter.com/overview/api/users)
     +   [Entities](https://dev.twitter.com/overview/api/entities):
-        metadata and contextual information. Often appears as a field in 
-        other objects.
+        metadata and contextual information, such as hashtags, media, url links. 
+        Often appears as a field in other objects.
     +   [Places](https://dev.twitter.com/overview/api/places): location 
-        information associated with endpoints.
+        information associated with endpoints. Tweets can attach places and places
+        can be searched. 
 
 *   Each object can be referenced by an unique ID. 
 
@@ -39,17 +40,18 @@ knitr::opts_chunk$set(echo = TRUE)
     +   _Streaming API:_ used for streaming _LIVE_ data from
         the twitter API stream. 
 
-*   Twitter goes beyond _OAuth_ for security purposes, twitter 
-    server will negotiate a cipher upon establishing connection. 
-    [TLS Information](https://dev.twitter.com/overview/api/tls)
-    +   This report likely uses pre-made packages and will not delve 
-    into the specifics for security. 
 
 *   Specific Twitter endpoints support pagination. To request for cursor results,
     add `&cursor=-1` to the request. If then endpoint/node support cursors, 
     the API will default `cursor` to `-1`. The response value for cursor can 
     be used to navigate. 
     +   [Cursors](https://dev.twitter.com/overview/api/cursoring)
+
+
+*   Twitter does an amazing job documenting the
+    [OAuth Request Parameters](https://dev.twitter.com/oauth/overview/introduction).
+    It is highly recommended to view. 
+    
     
     
 *****
@@ -75,6 +77,8 @@ knitr::opts_chunk$set(echo = TRUE)
 *   URLs in twitter are often shortened to "twitter format" but the expanded URL is 
     usually available in the response as well. 
 *   Includes the option to retrieve/post private messages (not very applicable).
+
+*****
 
 #### Search API:
 *   Essentially the search engine of twitter and will return 
@@ -117,7 +121,27 @@ knitr::opts_chunk$set(echo = TRUE)
 *   [Stream Message Types](https://dev.twitter.com/streaming/overview/messages-types)
     +   will contain blank messages (to sustain connection), 
         delete messages notifications, 
-        changes to tweets etc..
+        changes to tweets etc.
+        
+        
+
+*****
+
+### Other APIs/Commercial Usage:
+
+*   Twitter REST and Stream API does __not__ have a commercial version. The
+    REST and Stream API is to be used as is for commercial purposes.
+    Unlike Facebook API, there is no way to increase the overall rate limit 
+    cap. This is because the rate limit is targeted at each
+    user token, thus each user is subjected to its own limits, not the aggregate
+    like facebook.
+    
+    
+*   [Webhook API](https://dev.twitter.com/webhooks) allows updates/subjects of interest to be posted 
+    to an external URL upon verification.
+    
+
+*   [Ads API](https://dev.twitter.com/ads) used for managing ads on twitter.
     
 
 

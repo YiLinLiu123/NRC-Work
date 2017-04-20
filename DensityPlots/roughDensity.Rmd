@@ -1,0 +1,178 @@
+---
+title: "Rough Density Plot"
+author: "YiLin Liu"
+date: "April 11, 2017"
+output: 
+    html_document:
+    toc: true
+    toc_depth: 6
+---
+
+
+##  Rough Visulization
+    
+1: libraries
+
+```{r, warning=F, message = F}
+# 
+# require(devtools)
+# install_github('ramnathv/rCharts@dev')
+# install_github('ramnathv/rMaps') 
+# install.packages('ggmap')
+# install.packages('pryr')
+
+    rm(list = ls())
+
+    library(stam)
+    library(rMaps)
+    library(rCharts)
+    library(ggmap)
+    library(rCharts)
+    library(plyr)
+    library(pryr)
+```
+
+
+
+2: preparing data:
+*   STAM package, the ygrid is the columns, xgrid is the rows 
+*   xpoints are long, ypoints are lat
+
+```{r preparing data}
+ 
+    ## file paths
+    pointsPath <- "points.csv"
+    kernalPath <- "300SamplesWith6bins"
+    
+   
+    
+    ## loading data
+    points <- read.csv(pointsPath)
+    kernalData <- readRDS(kernalPath)
+    testData <- kernalData$dens[,,1]
+
+    ##  Making the correct points:
+    xincr <- (points$xpoints[11]-points$xpoints[1])/9
+    yincr <- (points$ypoints[11]-points$ypoints[1])/9
+    
+    xpoints <- seq(points$xpoints[1],points$xpoints[11],xincr)
+    ypoints <- seq(points$ypoints[1],points$ypoints[11],yincr)
+    
+    points <- data.frame(xpoints,ypoints)
+    
+    ## preparing data frame of lat,lng and density (height)
+        ## place holder lists
+        lat <- c()
+        long <- c()
+        density <- c()
+        index <- 1
+        
+    
+        ## navigating the testData by rows
+        ## start at 1st row, then go across, then go
+        ## to second row...
+        
+        for( i in 1: dim(testData)[1]){
+            for(j in 1:dim(testData)[2]){
+                
+                density[index] <- testData[i,j]
+                lat[index] <- points$ypoints[j]
+                long[index] <- points$xpoints[i]
+                ##increasing index 
+                index <- index+1
+            }
+        }
+    
+        formattedData <- data.frame(lat,long,density)
+        
+        plot(x=formattedData$lat,y = formattedData$long,"p")
+        
+        
+        ## simple colour contour
+        contour(x=points$xpoints,y=points$ypoints,
+                       z=testData)
+    
+    
+```
+
+
+
+
+
+2: Example:
+
+*   Set up basic Map:
+
+
+```{r load map}
+  
+  ## using the produced data for cities
+    dataSet <- formattedData
+    
+
+    L2 <- Leaflet$new()
+    L2$setView(c(median(dataSet$lat),  median(dataSet$long)), 6)
+    L2$tileLayer(provider = "OpenStreetMap.Mapnik")
+    L2
+
+```
+
+
+*   Data:
+    +   obtained form crime data form ggmap package.
+    
+```{r}
+   
+
+    dataSet_dat = ddply(dataSet, .(lat, long), summarise, count = density)
+    
+    ## produces JSON like nested list(array of objects), 
+    ## json: specifies if data is already in json.
+    dataSet_dat = rCharts::toJSONArray2(na.omit(dataSet), json = F, names = F)
+    head(dataSet_dat,n=2 )
+    
+    ##  showing the json styled dataSet.
+    cat(rjson::toJSON(dataSet_dat[1:2]))
+```
+
+
+
+*   plotting the maps:
+    *   Requires decent understanding of JavaScript. The author is
+        not familar with javascript. 
+    
+    *   The author has not been able to locate the documentation
+        for the methods used below.
+        [classes R](http://adv-r.had.co.nz/OO-essentials.html)
+        tutorial of `RC` object system is useful.
+        
+    *   Did not find a way to access source code or documentation
+        to the methods used.
+```{r}
+
+# Add leaflet-heat plugin. Thanks to Vladimir Agafonkin
+L2$addAssets(jshead = c(
+  "http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"
+))
+
+# Add javascript to modify underlying chart
+L2$setTemplate(afterScript = sprintf("
+<script>
+  var addressPoints = %s
+  var heat = L.heatLayer(addressPoints).addTo(map)           
+</script>
+", rjson::toJSON(dataSet_dat)
+))
+
+L2
+
+
+
+```
+
+
+
+##  R Kernel Density Functions:
+[R evaluation of Kernel Package ](http://vita.had.co.nz/papers/density-estimation.pdf)
+
+[Kernel Introduction](https://people.cs.pitt.edu/~milos/courses/cs3750-Fall2007/lectures/class-kernels.pdf)

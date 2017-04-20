@@ -20,9 +20,7 @@ output:
 
 ### Structure:
 
-The facebook API is in the form of a _graph_:
-
-*   __CHECKED__
+The facebook Graph API (API used to access general facebook data) is in the form of a _graph_:
 
 *   _nodes:_    Nodes are like Users, page, groups, comments etc.
     Each node has its' own unique ID that which is used to access itself via the Graph API.
@@ -49,8 +47,7 @@ the correct access token is provided.
 *  An OAuth access token is required to access any information, Rfacebook
     provides functionalities to handle tokens.
     
-*   __CHECKED__
-
+    
 ******
 
 ### Pagination:
@@ -65,7 +62,7 @@ facebook divides the data using several pagination techniques
     +   If the provided paging request call returns _NULL_, the end/very beginning
         of the data is reached.
 *   [Pagination](https://developers.facebook.com/docs/graph-API/using-graph-API)
-*   __CHECKED__
+
 
  
 ******  
@@ -79,7 +76,7 @@ facebook divides the data using several pagination techniques
 *   There is a tool that monitors the application's API calls 
 and it is located under the dashboard of the application. [Test Application](https://developers.facebook.com/apps/). 
 The user would need to be logged in.
-*   __CHECKED__
+
 
 ******
 
@@ -88,19 +85,29 @@ The user would need to be logged in.
 *   [facebook API Request Information](https://developers.facebook.com/docs/graph-API/using-graph-API)
 *   [facebook API Rate Limit](https://developers.facebook.com/docs/graph-API/advanced/rate-limiting)
 *   [facebook API Documentations](https://developers.facebook.com/docs/)
-*   __CHECKED__
 
+*****
 
+#   Other Facebook API:
+*   There is __not__ a paid Facebook Graph API.
+
+*   For commercial purposes, Facebook has another
+    API called [Marketing API](https://developers.facebook.com/docs/marketing-apis/)
+    which is used to manage ad campaigns. 
+    
+
+*   Another advertisment based API is the [atlas API](https://developers.facebook.com/docs/atlas-apis).
+    From a basic google search. [This page](https://www.quora.com/What-is-Facebooks-Atlas-exactly) says that the atlas API uses
+    identity of each user to target advertisment. 
 
 ******
 # Rfacebook Package:
 *   [Rfacebook](https://cran.r-project.org/web/packages/Rfacebook/index.html)
-*   __CHECKED__
+
 
 ******
 
 ## Summary of Findings For Rfacebook:
-*   __CHECKED__
 
 __Advantages:__
 *   Clear documentation.
@@ -119,7 +126,6 @@ __Disadvantages:__
 ******
 
 ## List of Deprecated Functions:
-*   __CHECKED__
 
 *   _getCheckins:_  deprecated.
 *   _getFQLS:_ deprecated.
@@ -157,7 +163,6 @@ __Disadvantages:__
 ******
 
 ## Creating token:
-*   __CHECKED__ 
 
 *   Normally, a temporary access token normally has a 2-hour expiration time. 
 A long-lived token (OAuth token) can be used for longer access. 
@@ -400,7 +405,15 @@ ___GOAL: To try and explore what the facebook API offer regarding extracting loc
     ## getPost function
     post_Information = lapply(post_Ids,getPost,n=100,token=token)
     
-    names(post_Information[[2]])
+   test <- post_Information[[2]]
+    
+    names(test)
+    
+    names(test$post)
+    
+    names(test$likes)
+    
+    names(test$comments)
      
 ```
     
@@ -421,6 +434,7 @@ ___GOAL: To try and explore what the facebook API offer regarding extracting loc
     ## First test the getCommentReplies with a single comment_Id:
     single_Comment_Reply = getCommentReplies(comments_Id[[1]],token=token)
     names(single_Comment_Reply)
+    names(single_Comment_Reply$replies)
     
     
     ##Now for all of the comment Ids via lapply.

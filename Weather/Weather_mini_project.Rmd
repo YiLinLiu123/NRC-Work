@@ -18,7 +18,8 @@ This weather analysis is to scrape the Environment Canada website
 for the hourly updated weather and 24 hour forecast using an automated script. 
 
 The overall purpose is to be introduced to web scraping as well as basic
-data exploration.
+data exploration. While exploring the accuracy of the predicted values for 
+each hour compared to the actual temperatures.
 
 
 *****
@@ -81,6 +82,7 @@ __ Script for scraping the web is a R file combining step 1 and step 2.
 
 
 2:  getting the data and appending it to the file:
+
 *   The file is named `temperature.csv`
 
 

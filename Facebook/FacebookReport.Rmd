@@ -19,9 +19,8 @@ output:
 
 ### Structure:
 
-The facebook API is in the form of a _graph_:
+The facebook Graph API (API used to access general facebook data) is in the form of a _graph_:
 
-*   __CHECKED__
 ```{r echo=FALSE,results="asis"}
     
     structure = c(
@@ -51,14 +50,15 @@ The facebook API is in the form of a _graph_:
 Methods like __GET,POST, DELETE, etc.__ can be used to retrieve 
 and modify information of facebook nodes through the API granted
 the correct access token is provided. 
+
 *   Format of a request:  
 `GET graph.facebook.com /{node-id}/{edge-name}?fields = {first-level fields}{Second-level fields}`.
     +   The levels of the fields form a pipeline where the fields of the first
         level fields can be accessed as the second level fields.
+        
 *  An OAuth access token is required to access any information, Rfacebook
     provides functionalities to handle tokens.
     
-*   __CHECKED__
 
 ******
 
@@ -66,15 +66,18 @@ the correct access token is provided.
 *   To manage the amount of information returned per API Call, 
 facebook divides the data using several pagination techniques
 (Cursors-based, Time-based and Offset-based).
+
 *   Most commonly used and the only ones encountered during this report 
     are the curosr based paginations. 
+    
 *   The information for pagination provides a _next_ token which is a HTTP 
     GET request for the next page of data and a _previous_ token 
     which is a HTTP GET request for the previous page of data. 
+    
     +   If the provided paging request call returns _NULL_, the end/very beginning
         of the data is reached.
+        
 *   [Pagination](https://developers.facebook.com/docs/graph-API/using-graph-API)
-*   __CHECKED__
 
  
 ******  
@@ -82,13 +85,17 @@ facebook divides the data using several pagination techniques
 ### Rate Limit:
 *   The type of rate limit dealt with mainly in this report is __Application-Level Rate Limiting__.
     Only the application access key was used. [Access Tokens](https://developers.facebook.com/docs/facebook-login/access-tokens)
+    
 *   The facebook API states that the limit for the application is
-    __200 calls per hour per user in aggregate.__
+    __200 calls per hour per user in aggregate.__ This however means
+    if more users uses the application, the rate limit cap increases.
+    
 *   However not all API calls are subjected to the rate limit. 
+
 *   There is a tool that monitors the application's API calls 
 and it is located under the dashboard of the application. [Test Application](https://developers.facebook.com/apps/). 
 The user would need to be logged in.
-*   __CHECKED__
+
 
 ******
 
@@ -97,19 +104,32 @@ The user would need to be logged in.
 *   [facebook API Request Information](https://developers.facebook.com/docs/graph-API/using-graph-API)
 *   [facebook API Rate Limit](https://developers.facebook.com/docs/graph-API/advanced/rate-limiting)
 *   [facebook API Documentations](https://developers.facebook.com/docs/)
-*   __CHECKED__
+
+*****
+
+#   Other Facebook API:
+*   There is __not__ a paid Facebook Graph API.
+
+*   For commercial purposes, Facebook has another
+    API called [Marketing API](https://developers.facebook.com/docs/marketing-apis/)
+    which is used to manage ad campaigns. 
+    
+
+*   Another advertisment based API is the [atlas API](https://developers.facebook.com/docs/atlas-apis).
+    From a basic google search. [This page](https://www.quora.com/What-is-Facebooks-Atlas-exactly) says that the atlas API uses
+    identity of each user to target advertisment. 
 
 
 
 ******
 # Rfacebook Package:
 *   [Rfacebook](https://cran.r-project.org/web/packages/Rfacebook/index.html)
-*   __CHECKED__
+
 
 ******
 
 ## Summary of Findings For Rfacebook:
-*   __CHECKED__
+
 ```{r echo=FALSE,results="asis"}
     
     advantages = c(
@@ -136,7 +156,7 @@ The user would need to be logged in.
 ******
 
 ## List of Deprecated Functions:
-*   __CHECKED__
+
 ```{r echo = FALSE,results="asis"}
 
     functions = c("getCheckins","getFQLS","getFriends","getNetwork","searchFacebook")
@@ -178,7 +198,7 @@ The user would need to be logged in.
 ******
 
 ## Creating token:
-*   __CHECKED__ 
+
 
 *   Normally, a temporary access token normally has a 2-hour expiration time. 
 A long-lived token (OAuth token) can be used for longer access. 
@@ -421,7 +441,15 @@ ___GOAL: To try and explore what the facebook API offer regarding extracting loc
     ## getPost function
     post_Information = lapply(post_Ids,getPost,n=100,token=token)
     
-    names(post_Information[[2]])
+    test <- post_Information[[2]]
+    
+    names(test)
+    
+    names(test$post)
+    
+    names(test$likes)
+    
+    names(test$comments)
      
 ```
     
@@ -442,6 +470,7 @@ ___GOAL: To try and explore what the facebook API offer regarding extracting loc
     ## First test the getCommentReplies with a single comment_Id:
     single_Comment_Reply = getCommentReplies(comments_Id[[1]],token=token)
     names(single_Comment_Reply)
+    names(single_Comment_Reply$replies)
     
     
     ##Now for all of the comment Ids via lapply.
@@ -521,9 +550,9 @@ using the getGroup function___
     data = searchPages(keyword,token, n=100)
     class(data)
    names(data)
-   rm(list = setdiff(ls(),c("folder_Path","token","FbObjectId") ))
 
 ```
+
 
 
 
